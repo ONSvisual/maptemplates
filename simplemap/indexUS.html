@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://d3js.org/topojson.v1.min.js"></script>
+
+<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+<script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.15.0/mapbox-gl.js'></script>
+<link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.15.0/mapbox-gl.css' rel='stylesheet' />
+
+<script src='//api.tiles.mapbox.com/mapbox.js/plugins/turf/v2.0.0/turf.min.js'></script>
+
+<style>
+    body { margin:0; padding:0; }
+    #map { position:absolute; top:0; bottom:0; width:100%; }
+</style>
+
+</head>
+<body>
+
+<div id='map'></div>
+<script>
+mapboxgl.accessToken = 'pk.eyJ1IjoiYWFyb25kZW5uaXMiLCJhIjoiem5LLURoYyJ9.T3tswGTI5ve8_wE-a02cMw';
+var map = new mapboxgl.Map({
+  container: 'map', // container id
+  style: 'mapbox://styles/mapbox/light-v8', //stylesheet location
+  center: [-98, 38], // starting position
+  zoom: 3.5 // starting zoom
+});
+
+color = d3.scale.category20();
+
+map.on('load', function() {
+  loadDistricts("cb_2014_500k.json", function(data) {
+
+    map.addSource('district', { 'type': 'geojson', 'data': data });
+
+    for (var i = 0; i < 10; i++) {
+      map.addLayer({
+          'id': 'districts' + i,
+          'type': 'fill',
+          'source': 'district',
+          'layout': {},
+          'paint': {
+              'fill-color': color(i),
+              'fill-opacity': 0.2
+          },
+          'filter': ['==', 'fill', color(i)]
+      }, 'admin-3-4-boundaries-bg');
+    }
+    map.addLayer({
+        'id': 'districts',
+        'type': 'line',
+        'source': 'district',
+        'layout': {},
+        'paint': {
+            'line-color': '#fff',
+            'line-opacity': 0.5,
+            'line-width': {
+              "stops": [[3, 0.5], [5, 1], [13, 3]]
+            }
+        },
+    }, 'admin-3-4-boundaries-bg');
+
+    var labels = { 'type': 'FeatureCollection', 'features':[] };
+    data.features.map(function(d) {
+      var pt = turf.pointOnSurface(d);
+      pt.properties = d.properties;
+      labels.features.push(pt);
+    });
+    console.log(labels);
+
+    map.addSource('district_labels', { 'type': 'geojson', 'data': labels });
+    for (var i = 0; i < 10; i ++) {
+      map.addLayer({
+          'id': 'district_labels' + i,
+          'type': 'symbol',
+          'source': 'district_labels',
+          'layout': {
+              "text-field": '{CD114FP}',
+              "text-font": ["DIN Offc Pro Medium","Arial Unicode MS Regular"],
+              "text-size": { "stops": [[2,8],[7,18]], "base": 0.9 }
+          },
+          'paint': {
+              "text-color": color(i),
+              "text-halo-color": "#fff",
+              "text-halo-width": 1,
+              "text-halo-blur": 1
+          },
+          'filter': ['==', 'fill', color(i)]
+      });
+    }
+  });
+});
+
+function loadDistricts(file, cb) {
+  d3.json(file, function(error, topoDistricts) {
+
+    var districts = topojson.feature(topoDistricts, topoDistricts.objects.cb_2014_500k),
+        neighbors = topojson.neighbors(topoDistricts.objects.cb_2014_500k.geometries);
+
+    districts.features.map(function(d,i) {
+      d.properties.fill = d3.max(neighbors[i], function(n) {
+        return districts.features[n].properties.fill >= 0 ? districts.features[n].properties.fill + 1 : 0;
+      });
+    });
+
+    districts.features.map(function(d,i) {
+      d.properties.fill = color(d.properties.fill);
+	  console.log(d.properties.fill);
+    });
+
+    cb(districts)
+  });
+}
+
+</script>
