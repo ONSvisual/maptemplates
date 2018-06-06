@@ -608,7 +608,7 @@ if(Modernizr.webgl) {
 
 							dataLayer.push({
 									'event': 'mapDropSelect',
-									'selected': areacode
+									'selected': params.selected
 							})
 					}
 					else {
