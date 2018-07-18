@@ -344,6 +344,14 @@
 
     /* Bootstrap Grid */
 
+    .row:before,
+    .row:after {
+     display: table;
+     content: " ";
+    }.row:after {
+     clear: both;
+    }
+
     .row {
       margin-right: 0px;
       margin-left: 0px;
