@@ -984,6 +984,8 @@ if (Modernizr.webgl) {
 					.tickValues(color.domain())
 					.tickFormat(legendformat);
 
+
+//Add
 				var xAxisTime = d3.axisBottom(x)
 					.tickSize(5)
 					.tickValues([dvc.timepoints[0], dvc.timepoints[10]])
