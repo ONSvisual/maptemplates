@@ -214,7 +214,10 @@ if(Modernizr.webgl) {
 			//set up d3 color scales
 			//Load colours
 			if(typeof dvc.varcolour === 'string') {
-				colour = colorbrewer[dvc.varcolour][dvc.numberBreaks];
+				color=chroma.scale(dvc.varcolour).colors(dvc.numberBreaks)
+				colour=[]
+				color.forEach(function(d){colour.push(chroma(d).darken(0.4).saturate(0.6).hex())})
+				// colour = colorbrewer[dvc.varcolour][dvc.numberBreaks];
 			} else {
 				colour = dvc.varcolour;
 			}
