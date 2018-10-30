@@ -317,9 +317,12 @@ if(Modernizr.webgl) {
 				disableMouseEvents();
 				newAREACD = e.features[0].properties.AREACD;
 
+			
 				if(newAREACD != oldAREACD) {
 					oldAREACD = e.features[0].properties.AREACD;
 					map.setFilter("state-fills-hover", ["==", "AREACD", e.features[0].properties.AREACD]);
+					
+					d3.selectAll(".cellsselected").classed("cellsselected",false)
 					d3.select(".cell" + e.features[0].properties.AREACD).classed("cellsselected",true)
 
 					selectArea(e.features[0].properties.AREACD);
@@ -335,12 +338,15 @@ if(Modernizr.webgl) {
 		function disableMouseEvents() {
 				map.off("mousemove", "area", onMove);
 				map.off("mouseleave", "area", onLeave);
+			d3.selectAll(".cells path").style("pointer-events","none")
+			
 		}
 
 		function enableMouseEvents() {
 				map.on("mousemove", "area", onMove);
 				map.on("click", "area", onClick);
 				map.on("mouseleave", "area", onLeave);
+			d3.selectAll(".cells path").style("pointer-events","auto")
 		}
 
 		function selectArea(code) {
