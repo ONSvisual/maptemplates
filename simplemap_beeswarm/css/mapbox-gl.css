@@ -1,5 +1,5 @@
 .mapboxgl-map {
-    font: 12px/20px 'Open Sans', Arial, Helvetica, sans-serif;
+    font: 14px/20px 'Open Sans', Arial, Helvetica, sans-serif;
     overflow: hidden;
     position: relative;
     -webkit-tap-highlight-color: rgba(0,0,0,0);

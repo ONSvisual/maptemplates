@@ -19,10 +19,12 @@
 		margin:0;
 		padding:0;
 		font-family: 'Open Sans', sans-serif;
-		max-width:800px;
+		max-width:944px;
 		margin: 0px auto;
 		display:block;
 	}
+	
+	
 
 	#header{
 		height:70px;
@@ -43,7 +45,7 @@
 			position:absolute;
 			top:0px;
 			left:0px;
-			width:85%;
+			width:55%;
 			height:40px;
 			background-color:rgba(255,255,255,0.8);
 			z-index:1;
@@ -51,17 +53,18 @@
 
 		#keydiv {
 			position:absolute;
-			top:40px;
+			top:15px;
 			left:0px;
-			width:35%;
+			width:65%;
 			height:80px;
 			background-color:rgba(255,255,255,0.8);
 			z-index:1;
+			font-size:12px;
 		}
 
 		#currVal {
 			font-size:14px;
-
+			font-weight: 700;
 		}
 	}
 
@@ -98,10 +101,12 @@
 			height:80px;
 			background-color:rgba(255,255,255,0.8);
 			z-index:1;
+			font-size:12px;
 		}
 
 		#currVal {
 			font-size:14px;
+			font-weight: 700;
 
 		}
 
@@ -565,8 +570,13 @@
       }
     }
 
-	
-	#label {
+	#info {
+	height:25px;
+	width:100%;
+	font-size:16px;
+}
+
+#label {
 	font-weight:bold;
 }
 
@@ -592,10 +602,13 @@
   pointer-events: all;
 }
 
-.cells :hover circle {
+
+.cellsselected {
   opacity:0.75;
   stroke-width: 2px;
+  r:6;
   stroke: #000;
+  fill:orange;
 }
 
 #source{
@@ -612,12 +625,12 @@
 	line-height: 15px;
 }
 
-.key label {
+.label {
 	white-space: nowrap;
 	font-size: 12px;
 	color: #333;
 	font-weight: normal;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: "Open Sans", Helvetica, sans-serif;
 }
 
 .key li/* required */
@@ -652,6 +665,7 @@
 	color: #333;
 	font-weight: normal;
 }
+	
 
 </style>
 
@@ -660,23 +674,29 @@
   <noscript>
     <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MBCBVQS" height="0" width="0" style="display:none;visibility:hidden"></iframe>
   </noscript>
-
-<div id='map' class="col-sm-6">
-	<div id='keydiv'></div>
-    <div id='selectNav'></div>
-
-
+<div class="col-sm-12">
+	<div id='selectNav'></div>	
+		
+	<div id="info"></div>
 </div>
-<div id="beeswarm" class="col-sm-6">
+<div id='map' class="col-sm-4">
+	<div id='keydiv'></div>
+</div>
+<div id="beeswarm" class="col-sm-8">
+<!--
 	<div id="legend">
 	</div>
-	<div id="info">
+	
+	<div id="dropdown">
 	</div>
+-->
+
+	
 	<div>
-		<svg width="100%" height="200"></svg>
+		<svg width="100%"></svg>
 	</div>
-	<div id="source"></div>	
 </div>
+<div id="source"></div>	
 <!--<script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="http://d3js.org/topojson.v1.min.js"></script>-->
 

@@ -8,16 +8,16 @@ if(Modernizr.webgl) {
 
 	//Load data and config file
 	d3.queue()
-		.defer(d3.csv, "data/chnglem.csv")
+		.defer(d3.csv, "data/data.csv")
 		.defer(d3.json, "data/config.json")	
-		.defer(d3.json, "data/geog.json")
-		.defer(d3.csv, "data/datapay.csv")
+		.defer(d3.json, "data/geogEngCUA2.json")
+		//.defer(d3.csv, "data/datapay.csv")
 	
 		.await(ready);
 
 
-	function ready (error, data, config, geog, graphic_data){
-		//graphic_data = data;
+	function ready (error, data, config, geog){
+		graphic_data = data;
 		//Set up global variables
 		dvc = config.ons;
 		oldAREACD = "";
@@ -29,7 +29,7 @@ if(Modernizr.webgl) {
 			if (column == 'AREACD') continue;
 			if (column == 'AREANM') continue;
 			if (column == 'id') continue;
-			if (column == 'unique') continue;
+			//if (column == 'unique') continue;
 			dvc.varname = column;
 		}
 
@@ -126,7 +126,7 @@ if(Modernizr.webgl) {
 		} else {
 			colour = dvc.varcolour;
 		}
-
+//colour = dvc.essential.colour_palette
 		//set up d3 color scales
 		color = d3.scaleThreshold()
 				.domain(breaks.slice(1))
@@ -275,6 +275,7 @@ if(Modernizr.webgl) {
 		function onMove(e) {
 				newAREACD = e.features[0].properties.AREACD;
 
+			
 				if(firsthover) {
             dataLayer.push({
                 'event': 'mapHoverSelect',
@@ -291,14 +292,17 @@ if(Modernizr.webgl) {
 
 					selectArea(e.features[0].properties.AREACD);
 					setAxisVal(e.features[0].properties.AREACD);
+					d3.selectAll(".cellsselected").classed("cellsselected",false)
+					d3.select(".cell" + e.features[0].properties.AREACD).classed("cellsselected",true)
 				}
 		};
 
 
-		function onLeave() {
+		function onLeave(e) {
 				map.setFilter("state-fills-hover", ["==", "AREACD", ""]);
 				oldAREACD = "";
 				$("#areaselect").val("").trigger("chosen:updated");
+				d3.selectAll(".cellsselected").classed("cellsselected",false)
 				hideaxisVal();
 		};
 
@@ -309,6 +313,7 @@ if(Modernizr.webgl) {
 				if(newAREACD != oldAREACD) {
 					oldAREACD = e.features[0].properties.AREACD;
 					map.setFilter("state-fills-hover", ["==", "AREACD", e.features[0].properties.AREACD]);
+					d3.select(".cell" + e.features[0].properties.AREACD).classed("cellsselected",true)
 
 					selectArea(e.features[0].properties.AREACD);
 					setAxisVal(e.features[0].properties.AREACD);
@@ -332,6 +337,7 @@ if(Modernizr.webgl) {
 		}
 
 		function selectArea(code) {
+			//console.log(code)
 			$("#areaselect").val(code).trigger("chosen:updated");
 		}
 
@@ -366,8 +372,8 @@ if(Modernizr.webgl) {
 				.style("opacity", function(){if(!isNaN(rateById[code])) {return 1} else{return 0}})
 				.transition()
 				.duration(400)
-				.attr("x1", function(){if(!isNaN(rateById[code])) {return x(rateById[code])} else{return x(midpoint)}})
-				.attr("x2", function(){if(!isNaN(rateById[code])) {return x(rateById[code])} else{return x(midpoint)}});
+				.attr("x1", function(){if(!isNaN(rateById[code])) {return xKey(rateById[code])} else{return xKey(midpoint)}})
+				.attr("x2", function(){if(!isNaN(rateById[code])) {return xKey(rateById[code])} else{return xKey(midpoint)}});
 
 
 			d3.select("#currVal")
@@ -375,7 +381,14 @@ if(Modernizr.webgl) {
 				.style("opacity",1)
 				.transition()
 				.duration(400)
-				.attr("x", function(){if(!isNaN(rateById[code])) {return x(rateById[code])} else{return x(midpoint)}});
+				.attr("x", function(){
+					if(!isNaN(rateById[code])) {
+						console.log(xKey(rateById[code]))
+						return xKey(rateById[code])
+					} else {
+						return xKey(midpoint)
+					}
+				});
 
 		}
 
@@ -403,12 +416,12 @@ if(Modernizr.webgl) {
 			   .range(colour);
 
 			// Set up scales for legend
-			x = d3.scaleLinear()
+			xKey = d3.scaleLinear()
 				.domain([breaks[0], breaks[dvc.numberBreaks]]) /*range for data*/
 				.range([0,keywidth-30]); /*range for pixels*/
 
 
-			var xAxis = d3.axisBottom(x)
+			var xAxisKey = d3.axisBottom(xKey)
 				.tickSize(15)
 				.tickValues(color.domain())
 				.tickFormat(legendformat);
@@ -423,8 +436,8 @@ if(Modernizr.webgl) {
 				.data(color.range().map(function(d,i) {
 
 				  return {
-					x0: i ? x(color.domain()[i+1]) : x.range()[0],
-					x1: i < color.domain().length ? x(color.domain()[i+1]) : x.range()[1],
+					x0: i ? xKey(color.domain()[i+1]) : xKey.range()[0],
+					x1: i < color.domain().length ? xKey(color.domain()[i+1]) : xKey.range()[1],
 					z: d
 				  };
 				}))
@@ -440,8 +453,8 @@ if(Modernizr.webgl) {
 
 			g2.append("line")
 				.attr("id", "currLine")
-				.attr("x1", x(10))
-				.attr("x2", x(10))
+				.attr("x1", xKey(10))
+				.attr("x2", xKey(10))
 				.attr("y1", -10)
 				.attr("y2", 8)
 				.attr("stroke-width","2px")
@@ -450,7 +463,7 @@ if(Modernizr.webgl) {
 
 			g2.append("text")
 				.attr("id", "currVal")
-				.attr("x", x(10))
+				.attr("x", xKey(10))
 				.attr("y", -15)
 				.attr("fill","#000")
 				.text("");
@@ -460,8 +473,8 @@ if(Modernizr.webgl) {
 			keyhor.selectAll("rect")
 				.data(color.range().map(function(d, i) {
 				  return {
-					x0: i ? x(color.domain()[i]) : x.range()[0],
-					x1: i < color.domain().length ? x(color.domain()[i+1]) : x.range()[1],
+					x0: i ? xKey(color.domain()[i]) : xKey.range()[0],
+					x1: i < color.domain().length ? xKey(color.domain()[i+1]) : xKey.range()[1],
 					z: d
 				  };
 				}))
@@ -469,7 +482,7 @@ if(Modernizr.webgl) {
 				.attr("width", function(d) { return d.x1 - d.x0; })
 				.style("fill", function(d) { return d.z; });
 
-			keyhor.call(xAxis).append("text")
+			keyhor.call(xAxisKey).append("text")
 				.attr("id", "caption")
 				.attr("x", -63)
 				.attr("y", -20)
@@ -481,7 +494,7 @@ if(Modernizr.webgl) {
 				.attr("height",0)
 				.attr("transform","translate(15,0)")
 				.style("fill", "#ccc")
-				.attr("x",x(0));
+				.attr("x",xKey(0));
 
 
 			if(dvc.dropticks) {
@@ -566,7 +579,7 @@ if(Modernizr.webgl) {
 	  disableMouseEvents();
 
 	  map.setFilter("state-fills-hover", ["==", "AREACD", features[0].properties.AREACD]);
-
+		d3.select(".cell" + features[0].properties.AREACD).classed("cellsselected",true)
 	  selectArea(features[0].properties.AREACD);
 	  setAxisVal(features[0].properties.AREACD);
 
@@ -603,7 +616,7 @@ if(Modernizr.webgl) {
 							disableMouseEvents();
 
 							map.setFilter("state-fills-hover", ["==", "AREACD", params.selected]);
-
+							d3.select(".cell" + params.selected).classed("cellsselected",true)
 							selectArea(params.selected);
 							setAxisVal(params.selected);
 
@@ -615,6 +628,8 @@ if(Modernizr.webgl) {
 							})
 					}
 					else {
+							d3.select(".cellsselected").classed("cellsselected",false)
+					
 							enableMouseEvents();
 							hideaxisVal();
 							onLeave();
@@ -630,10 +645,10 @@ if(Modernizr.webgl) {
 
 		function drawGraphic(){
 
-			  clicked = false;
+			 clicked = false;
 
 				var svg = d3.select("#beeswarm").select("svg"),
-					margin = {top: 20, right: 12, bottom: 40, left: 100},
+					margin = {top: 35, right: 12, bottom: 20, left: 140},
 
 					svgwidth =  parseInt(svg.style("width"));
 				heightper = dvc.essential.heightperstrip;
@@ -651,14 +666,16 @@ if(Modernizr.webgl) {
 
 				var formatValue = d3.format(",d");
 
-				var x = d3.scaleLinear()
+				 x = d3.scaleLinear()
 					.rangeRound([0, width]);
 
-				if(dvc.essential.xAxisScale == "auto") {
-				  x.domain(d3.extent(graphic_data, function(d) { return d.value; }));
-				} else {
+				//if(dvc.essential.xAxisScale == "auto") {
+				//  x.domain(d3.extent(graphic_data, function(d) { return d.value; }));
+				//} else {
 				  x.domain(dvc.essential.xAxisScale);
-				}
+				//}
+			
+			//x.domain([0,32])
 
 			  groupeddata = {}
 
@@ -669,16 +686,10 @@ if(Modernizr.webgl) {
 			  for(var j = 0; j < groups.length; j++) {
 
 			  groupeddata[j] =  graphic_data.filter(function(v,i) { return v.id == groups[j]; });
-	console.log(j)
-				 
+	
 			  if(j>0) {
 				runningtotal = runningtotal + groupeddata[j-1].length;
 			  }
-				  
-	console.log(groups.length)
-				  
-	
-				  
 				var g = svg.append("g")
 					.attr("transform", "translate(" + margin.left + "," + (margin.top + (separate*j)) + ")");
 
@@ -698,35 +709,46 @@ if(Modernizr.webgl) {
 
 
 		    g.append("text").attr("class","label").text(groups[j]).attr("y",(heightper/2)+5).attr("x",-margin.left)
-console.log(groupeddata[j])
-	  var cell = g.append("g")
+				  
+	  
+	var cell = g.append("g")
 		  .attr("class", "cells")
 		.selectAll("g").data(d3.voronoi()
 			.extent([[-margin.left, 0], [width + margin.right, heightper]])
 			.x(function(d) { return d.x; })
 			.y(function(d) { return d.y; })
-		  .polygons(groupeddata[j])).enter().append("g").attr("class", function(d,i){ console.log(d, i); return i})
-	  
-				  console.log()
-				  console.log('here')
+		  .polygons(groupeddata[j])).enter().append("g")
+				 
 				  
 				  cell.append("circle")
 					  .attr("r", dvc.essential.dotradius)
-					  .attr("cx", function(d) {console.log(d); return d.data.x; })
+					  .attr("cx", function(d) { return d.data.x; })
 					  .attr("cy", function(d) { return d.data.y; })
-					  .attr("class", function(d,i) { return "cell cell" + (runningtotal + i)})
-					  .attr("fill",function(d){return  dvc.essential.colour_palette[groups.indexOf(d.data.id)]});
+					  .attr("class", function(d,i) { return "cell cell" + (runningtotal + i)+" cell"+d.data.AREACD})
+					  .attr("fill",function(d){ 
+					  			//return  dvc.essential.colour_palette[groups.indexOf(d.data.id)]
+								console.log(d.data.value)
+					  			console.log(color(d.data.value))
+					  			return  color(d.data.value)			  
+						});
 
 				  cell.append("path")
 					  .attr("d", function(d) { return "M" + d.join("L") + "Z"; })
-				  .attr("class", function(d,i) { return "path" + (runningtotal + i)})
+				  .attr("class", function(d,i) { return "path" + (runningtotal + i)+" "+d.data.AREACD})
 				  .on("mouseover", function(d,i) {
 					pathidstr = d3.select(this).attr("class");
-					pathid = +pathidstr.substr(4);
+					
+					code = pathidstr.substr(pathidstr.indexOf(' ')).replace(/ /g,'')
+					
+					  changetext(d.data.value, d.data.AREACD);
+					  
+					  	  $("#areaselect").val(code).trigger("chosen:updated");
+					  	map.setFilter("state-fills-hover", ["==", "AREACD", code]);
+					  		//selectArea(params.selected);
+							setAxisVal(code);
 
-						  changetext(d.data.value, d.data.unique);
-						  $("#dropselect").val("id" + pathid).trigger("chosen:updated");
-						  d3.select(".cell" + pathid).classed("cellsselected",true)
+					  
+						  d3.select(".cell" + code).classed("cellsselected",true)
 					  })
 					  // .on("click", function(d) {
 				  //
@@ -737,17 +759,18 @@ console.log(groupeddata[j])
 					  // })
 					  .on("mouseout", function(d,i) {
 					pathidstr = d3.select(this).attr("class");
-					pathid = +pathidstr.substr(4);
+					code = pathidstr.substr(pathidstr.indexOf(' ')).replace(/ /g,'')
+					
 
 						  d3.select("#info").html("");
-					$("#dropselect").val("").trigger("chosen:updated");
-						  d3.select(".cell" + pathid).classed("cellsselected",false)
+					$("#areaselect").val("").trigger("chosen:updated");
+						  d3.select(".cell" + code).classed("cellsselected",false)
 
 						  if(clicked == true) {
-							 changetext(d.data.value, d.data.unique)
+							 changetext(d.data.value, d.data.AREACD)
 
-					  $("#dropselect").val("id" + pathid).trigger("chosen:updated");
-							  d3.select(".cell" + pathid).classed("cellsselected",true)
+					  
+							  d3.select(".cell" + code).classed("cellsselected",true)
 
 						  }
 					  })
@@ -763,7 +786,7 @@ console.log(groupeddata[j])
 					if(j==groups.length-1){
 					  g.append("g")
 						  .attr("class", "axis axis--x")
-						  .attr("transform", "translate(0," + (-heightper*(groups.length-1)) + ")")
+						  .attr("transform", "translate(0," + (-heightper*(groups.length-1)-margin.bottom) + ")")
 						  .call(d3.axisBottom(x)
 								.ticks(numberticks, ".0s")
 								.tickSize(height-heightper)
@@ -792,14 +815,14 @@ console.log(groupeddata[j])
 
 
 						for (var i = 0; i < words.length; i++) {
-						  var tspan = d3.select(this).append('tspan').text(words[i]);
+						  var tspan = d3.select(this).attr("transform","translate(10,0)").append('tspan').text(words[i]);
 						  if (i > 0) {
 							tspan.attr('x', xpos).attr('dy', '13');
 							}
 						}
 
 						if(words.length > 1) {
-							d3.select(this).attr("transform","translate(0,"+ ((words.length-1) * (-13/2)) + ")")
+							d3.select(this).attr("transform","translate(10,"+ ((words.length-1) * (-13/2)) + ")")
 						}
 
 					  };
@@ -877,7 +900,7 @@ console.log(groupeddata[j])
 					.text(dvc.essential.xAxisLabel);
 
 				//add source
-				  d3.select("#source").text("Source: " + dvc.essential.sourceText);
+				d3.select("#source").text("Source: " + dvc.essential.sourceText);
 
 				if (pymChild) {
 					pymChild.sendHeight();
