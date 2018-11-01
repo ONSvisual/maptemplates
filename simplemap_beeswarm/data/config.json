@@ -1,7 +1,7 @@
     {"ons":{
     "maptitle": "map about life expectancy",
     "varcolour": "Blues",
-    "varunit": "change in months",
+    "varunit": "OADR",
     "displaydecimals": 1,
     "legenddecimals": 0,
     "breaks": "equal",

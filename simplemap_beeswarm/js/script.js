@@ -346,7 +346,7 @@ if(Modernizr.webgl) {
 				map.on("mousemove", "area", onMove);
 				map.on("click", "area", onClick);
 				map.on("mouseleave", "area", onLeave);
-			d3.selectAll(".cells path").style("pointer-events","auto")
+			d3.selectAll(".cells path").style("pointer-events","all")
 		}
 
 		function selectArea(code) {
@@ -396,7 +396,7 @@ if(Modernizr.webgl) {
 				.duration(400)
 				.attr("x", function(){
 					if(!isNaN(rateById[code])) {
-						console.log(xKey(rateById[code]))
+						//console.log(xKey(rateById[code]))
 						return xKey(rateById[code])
 					} else {
 						return xKey(midpoint)
@@ -740,9 +740,10 @@ if(Modernizr.webgl) {
 					  .attr("class", function(d,i) { return "cell cell" + (runningtotal + i)+" cell"+d.data.AREACD})
 					  .attr("fill",function(d){ 
 					  			//return  dvc.essential.colour_palette[groups.indexOf(d.data.id)]
-								console.log(d.data.value)
-					  			console.log(color(d.data.value))
-					  			return  color(d.data.value)			  
+								//console.log(d.data.value)
+					  			//console.log(color(d.data.value))
+					  			//return  color(d.data.value)	
+					  			return "#666";
 						});
 
 				  cell.append("path")
