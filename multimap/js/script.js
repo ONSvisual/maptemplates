@@ -706,9 +706,6 @@ if(Modernizr.webgl) {
 			var areanames =  datacsv.map(function(d) { return d.AREANM; });
 			var menuarea = d3.zip(areanames,areacodes).sort(function(a, b){ return d3.ascending(a[0], b[0]); });
 
-			menuarea.shift();
-			menuarea.shift();
-
 			// Build option menu for occupations
 			var optns = d3.select("#selectNav").append("div").attr("id","sel").append("select")
 				.attr("id","areaselect")
