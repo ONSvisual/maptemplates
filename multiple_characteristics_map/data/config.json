@@ -18,5 +18,6 @@
 "columnMap": "percent_change",
 "numberLegends": 6,
 "textChartTitle": "Change between mid-2016 and mid-2026",
-"labelNames": ["Percent change", "Population change", "Natural change", "All migration net", "Within-UK net migration", "International net migration", "Births", "Deaths", "Internal inflow", "Internal outflow", "International inflow", "International outflow", "Cross-border inflow", "Cross-border outflow"]
+"labelNames": ["Percent change", "Population change", "Natural change", "All migration net", "Within-UK net migration", "International net migration", "Births", "Deaths", "Internal inflow", "Internal outflow", "International inflow", "International outflow", "Cross-border inflow", "Cross-border outflow"],
+"sourceText": "ONS"
 }}

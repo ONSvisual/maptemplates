@@ -287,6 +287,10 @@ if (Modernizr.webgl) {
         }
       });
 
+      // make source
+      d3.select("#source")
+        .text('Source: ' + dvc.sourceText)
+
 
       //test whether ie or not
       function detectIE() {

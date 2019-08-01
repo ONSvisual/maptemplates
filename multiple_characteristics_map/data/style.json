@@ -31,11 +31,11 @@
   "sources": {
     "openmaptiles": {
       "type": "vector",
-      "url": "https://free.tilehosting.com/data/v3.json?key=ZBXiR1SHvcgszCLwyOFe"
+      "url": "https://maps.tilehosting.com/data/v3.json?key=7rA0yA362pBi9PZxyYlY"
     }
   },
   "sprite": "https://openmaptiles.github.io/positron-gl-style/sprite",
-  "glyphs": "https://free.tilehosting.com/fonts/{fontstack}/{range}.pbf?key=ZBXiR1SHvcgszCLwyOFe",
+  "glyphs": "https://maps.tilehosting.com/fonts/{fontstack}/{range}.pbf?key=7rA0yA362pBi9PZxyYlY",
   "layers": [
     {
       "id": "background",
@@ -75,7 +75,7 @@
         "visibility": "visible"
       },
       "paint": {
-        "fill-color": "rgb(194, 200, 202)",
+        "fill-color": "rgb(220, 220, 220)",
         "fill-antialias": true
       }
     },
@@ -251,7 +251,7 @@
         "LineString"
       ],
       "layout": {
-        "text-field": "{name:latin}\n{name:nonlatin}",
+        "text-field": "{name:en}",
         "symbol-placement": "line",
         "text-rotation-alignment": "map",
         "symbol-spacing": 500,
@@ -1387,7 +1387,7 @@
         "visibility": "visible",
         "text-rotation-alignment": "map",
         "text-pitch-alignment": "viewport",
-        "text-field": "{name:latin} {name:nonlatin}"
+        "text-field": "{name:en}"
       },
       "paint": {
         "text-color": "#bbb",
@@ -1501,7 +1501,8 @@
       ],
       "layout": {
         "line-cap": "round",
-        "line-join": "round"
+        "line-join": "round",
+        "visibility": "none"
       },
       "paint": {
         "line-color": "rgb(230, 204, 207)",
@@ -1573,7 +1574,7 @@
           0
         ],
         "text-anchor": "center",
-        "text-field": "{name:latin}\n{name:nonlatin}",
+        "text-field": "{name:en}",
         "text-keep-upright": false
       },
       "paint": {
@@ -1619,7 +1620,7 @@
           0
         ],
         "text-anchor": "center",
-        "text-field": "{name:latin}\n{name:nonlatin}"
+        "text-field": "{name:en}"
       },
       "paint": {
         "text-color": "rgb(117, 129, 145)",
@@ -1665,7 +1666,7 @@
         ],
         "icon-size": 0.4,
         "text-anchor": "left",
-        "text-field": "{name:latin}\n{name:nonlatin}"
+        "text-field": "{name:en}"
       },
       "paint": {
         "text-color": "rgb(117, 129, 145)",
@@ -1737,7 +1738,7 @@
             ]
           ]
         },
-        "text-field": "{name:latin}\n{name:nonlatin}"
+        "text-field": "{name:en}"
       },
       "paint": {
         "text-color": "rgb(117, 129, 145)",
@@ -1822,7 +1823,7 @@
             ]
           ]
         },
-        "text-field": "{name:latin}\n{name:nonlatin}"
+        "text-field": "{name:en}"
       },
       "paint": {
         "text-color": "rgb(117, 129, 145)",
@@ -1902,7 +1903,7 @@
             ]
           ]
         },
-        "text-field": "{name:latin}\n{name:nonlatin}"
+        "text-field": "{name:en}"
       },
       "paint": {
         "text-color": "rgb(117, 129, 145)",
@@ -1987,7 +1988,7 @@
             ]
           ]
         },
-        "text-field": "{name:latin}\n{name:nonlatin}"
+        "text-field": "{name:en}"
       },
       "paint": {
         "text-color": "rgb(117, 129, 145)",
@@ -2021,7 +2022,7 @@
       ],
       "layout": {
         "visibility": "visible",
-        "text-field": "{name:latin}\n{name:nonlatin}",
+        "text-field": "{name:en}",
         "text-font": [
           "Metropolis Regular",
           "Open Sans Regular"
@@ -2064,7 +2065,7 @@
       ],
       "layout": {
         "visibility": "visible",
-        "text-field": "{name:latin}",
+        "text-field": "{name:en}",
         "text-font": [
           "Metropolis Light Italic",
           "Open Sans Italic"
@@ -2135,7 +2136,7 @@
       ],
       "layout": {
         "visibility": "visible",
-        "text-field": "{name:latin}",
+        "text-field": "{name:en}",
         "text-font": [
           "Metropolis Regular",
           "Open Sans Regular"
@@ -2206,7 +2207,7 @@
       ],
       "layout": {
         "visibility": "visible",
-        "text-field": "{name:latin}",
+        "text-field": "{name:en}",
         "text-font": [
           "Open Sans Regular",
           "Open Sans Regular"
