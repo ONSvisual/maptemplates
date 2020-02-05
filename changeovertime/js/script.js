@@ -993,7 +993,7 @@ if (Modernizr.webgl) {
 //Add
 				var xAxisTime = d3.axisBottom(x)
 					.tickSize(5)
-					.tickValues([dvc.timepoints[0], dvc.timepoints[10]])
+					.tickValues(dvc.timelineLabelsDT)
 					.tickFormat(legendformat);
 
 				var g = svgkey.append("g").attr("id","vert")
