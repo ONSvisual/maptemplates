@@ -950,6 +950,9 @@ if (Modernizr.webgl) {
 
       d3.select("#currVal").text("")
         .style("opacity", 0);
+
+      d3.select("#currVal2")
+        .style("opacity", 0);
     }
 
     function createKey(config, i) {
@@ -1115,7 +1118,7 @@ if (Modernizr.webgl) {
           .style("opacity", 0.3)
           .attr("fill", "#666")
           .attr("text-anchor", "middle")
-          .text("E&W Average");
+          .text(dvc.averageText);
 
       } else {
         // Horizontal legend
