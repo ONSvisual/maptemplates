@@ -311,9 +311,11 @@ if (Modernizr.webgl) {
       //Load colours
       if (typeof dvc.varcolour === 'string') {
         // colour = colorbrewer[dvc.varcolour][dvc.numberBreaks];
-        color=chroma.scale(dvc.varcolour).colors(dvc.numberBreaks)
-  			colour=[]
-  		  color.forEach(function(d){colour.push(chroma(d).darken(0.4).saturate(0.6).hex())})
+        color = chroma.scale(dvc.varcolour).colors(dvc.numberBreaks)
+        colour = []
+        color.forEach(function(d) {
+          colour.push(chroma(d).darken(0.4).saturate(0.6).hex())
+        })
 
 
       } else {
@@ -460,7 +462,7 @@ if (Modernizr.webgl) {
     function onchange(i) {
 
       chartDrawn = false;
-
+      navvalue = i;
       //load new csv file
 
       filepth = "data/data" + i + ".csv"
@@ -966,43 +968,43 @@ if (Modernizr.webgl) {
 
         keywidth = d3.select("#keydiv").node().getBoundingClientRect().width;
 
-				svgkey = d3.select("#keydiv")
-					.append("svg")
-					.attr("id", "key")
-					.attr("width", keywidth)
-					.attr("height",keyheight + 30);
+        svgkey = d3.select("#keydiv")
+          .append("svg")
+          .attr("id", "key")
+          .attr("width", keywidth)
+          .attr("height", keyheight + 30);
 
-				// Set up scales for legend
-				y = d3.scaleLinear()
-					.domain([breaks[0], breaks[dvc.numberBreaks]]) /*range for data*/
-					.range([keyheight, 0]); /*range for pixels*/
+        // Set up scales for legend
+        y = d3.scaleLinear()
+          .domain([breaks[0], breaks[dvc.numberBreaks]]) /*range for data*/
+          .range([keyheight, 0]); /*range for pixels*/
 
-				// Set up scales for chart
-				x = d3.scalePoint()
-					.domain(dvc.timepoints) /*range for data*/
-					.range([0,keywidth-60])
-					.align(0.5); /*range for pixels*/
-
-
-				var yAxis = d3.axisLeft(y)
-					.tickSize(15)
-					.tickValues(color.domain())
-					.tickFormat(legendformat);
+        // Set up scales for chart
+        x = d3.scalePoint()
+          .domain(dvc.timepoints) /*range for data*/
+          .range([0, keywidth - 60])
+          .align(0.5); /*range for pixels*/
 
 
-//Add
-				var xAxisTime = d3.axisBottom(x)
-					.tickSize(5)
-					.tickValues(dvc.timelineLabelsDT)
-					.tickFormat(legendformat);
+        var yAxis = d3.axisLeft(y)
+          .tickSize(15)
+          .tickValues(color.domain())
+          .tickFormat(legendformat);
 
-				var g = svgkey.append("g").attr("id","vert")
-					.attr("transform", "translate(45,10)")
-					.attr("font-weight","600")
-					.style("font-family","'open sans'")
-					.style("font-size","12px");
 
-					d3.selectAll("path").attr("display", "none")
+        //Add
+        var xAxisTime = d3.axisBottom(x)
+          .tickSize(5)
+          .tickValues(dvc.timelineLabelsDT)
+          .tickFormat(legendformat);
+
+        var g = svgkey.append("g").attr("id", "vert")
+          .attr("transform", "translate(45,10)")
+          .attr("font-weight", "600")
+          .style("font-family", "'open sans'")
+          .style("font-size", "12px");
+
+        d3.selectAll("path").attr("display", "none")
 
         g.selectAll("rect")
           .data(color.range().map(function(d, i) {
@@ -1035,7 +1037,7 @@ if (Modernizr.webgl) {
           .call(xAxisTime)
 
 
-				//
+        //
         // g.append("line")
         //   .attr("id", "currLine")
         //   .attr("y1", y(10))
@@ -1046,68 +1048,74 @@ if (Modernizr.webgl) {
         //   .attr("stroke", "#000")
         //   .attr("opacity", 0);
 
-				g.append("text")
-					.attr("id", "currVal")
-					.attr("y", y(11))
-					.attr("fill","#000")
-					.attr("paint-order","stroke")
-					.attr("stroke","#fff")
-					.attr("stroke-width","5px")
-					.attr("stroke-linecap","butt")
-					.attr("stroke-linejoin","miter")
-					.text("");
+        g.append("text")
+          .attr("id", "currVal")
+          .attr("y", y(11))
+          .attr("fill", "#000")
+          .attr("paint-order", "stroke")
+          .attr("stroke", "#fff")
+          .attr("stroke-width", "5px")
+          .attr("stroke-linecap", "butt")
+          .attr("stroke-linejoin", "miter")
+          .text("");
 
 
-				g.append("text")
-					.attr("id", "currVal2")
-					.attr("y", y(11))
-					.attr("fill","#000")
-					.text("");
+        g.append("text")
+          .attr("id", "currVal2")
+          .attr("y", y(11))
+          .attr("fill", "#000")
+          .text("");
 
-				g.append("circle")
-					.attr("id", "currPoint")
-					.attr("r","4px")
-					.attr("cy", y(10))
-					.attr("cx", x(dvc.timepoints[a]))
-					.attr("fill","#666")
-					.attr("opacity",0);
+        g.append("circle")
+          .attr("id", "currPoint")
+          .attr("r", "4px")
+          .attr("cy", y(10))
+          .attr("cx", x(dvc.timepoints[a]))
+          .attr("fill", "#666")
+          .attr("opacity", 0);
+
+        if (typeof navvalue === 'undefined') {
+          linedata2 = d3.zip(dvc.timepoints, dvc.average[0]);
+        } else {
+          linedata2 = d3.zip(dvc.timepoints, dvc.average[navvalue]);
+        };
+
+        line2 = d3.line()
+          .defined(function(d) {
+            return !isNaN(d[0]);
+          })
+          .x(function(d) {
+            return x(d[0]);
+          })
+          .y(function(d) {
+            return y(d[1]);
+          });
 
 
+        svgkey.append("g")
+          .attr("transform", "translate(45,10)")
+          .attr("id", "chartgroup")
+          .append("path")
+          .attr("id", "line2")
+          .style("opacity", 0.3)
+          .attr("d", line2(linedata2))
+          .attr("stroke", "#666")
+          .attr("stroke-width", "2px")
+          .attr("fill", "none");
 
-
-					if (typeof navvalue === 'undefined' ){
-						linedata2 = d3.zip(dvc.timepoints, dvc.average[0]);
-
-					} else {
-
-					 	linedata2 = d3.zip(dvc.timepoints, dvc.average[navvalue]); };
-
-										line2 = d3.line()
-														.defined(function(linedata2){return !isNaN(linedata2[0]); })
-														.x(function(d,i) { return x(linedata2[i][0]); })
-														.y(function(d,i) { return y(linedata2[i][1]); });
-
-
-										svgkey.append("g")
-															.attr("transform", "translate(45,10)")
-															.attr("id","chartgroup")
-															.append("path")
-															.attr("id","line2")
-															.style("opacity",0.3)
-															.attr("d", line2(linedata2))
-															.attr("stroke", "#666")
-															.attr("stroke-width", "2px")
-															.attr("fill","none");
-
-											svgkey.append("text")
-													.attr("id", "averagelabel")
-													.attr("x", function(d){ return x(linedata2[linedata2.length-1][0])})
-													.attr("y", function(d) { return y(linedata2[linedata2.length-1][1])})
-													.attr("font-size", "12px")
-													.style("opacity",0.3)
-													.attr("fill","#666")
-													.attr("text-anchor", "middle")
-													.text("E&W Average");
+        svgkey.append("text")
+          .attr("id", "averagelabel")
+          .attr("x", function(d) {
+            return x(linedata2[linedata2.length - 1][0])
+          })
+          .attr("y", function(d) {
+            return y(linedata2[linedata2.length - 1][1])
+          })
+          .attr("font-size", "12px")
+          .style("opacity", 0.3)
+          .attr("fill", "#666")
+          .attr("text-anchor", "middle")
+          .text("E&W Average");
 
       } else {
         // Horizontal legend
@@ -1216,12 +1224,12 @@ if (Modernizr.webgl) {
           .style("fill", "#ccc")
           .attr("x", xkey(0));
 
-					d3.select("#keydiv")
-						.append("p")
-						.attr("id","keyunit")
-						.style("margin-top","-10px")
-						.style("margin-left","10px")
-						.text(dvc.varunit[b]);
+        d3.select("#keydiv")
+          .append("p")
+          .attr("id", "keyunit")
+          .style("margin-top", "-10px")
+          .style("margin-left", "10px")
+          .text(dvc.varunit[b]);
 
 
         if (dvc.dropticks) {
@@ -1310,23 +1318,16 @@ if (Modernizr.webgl) {
 
 
     };
-		function setSource() {
 
-
-					d3.select("#source")
-						.append("h6")
-						.attr("class", "source")
-						.attr("text-anchor", "start")
-						.style("font-size", "14px")
-						.style("fill", "#666")
-						.style("font-weight", 700)
-						.text("Source: ")
-						.append("a")
-						.style("fill", "#4774cc")
-						.attr("href", dvc.sourceURL)
-						.attr("target", "_blank")
-						.text(dvc.sourcetext);
-	}
+    function setSource() {
+      d3.select("#source")
+        .append("h5")
+        .attr("class", "source")
+        .style("font-size", "14px")
+        .style("fill", "#323132")
+        .style("font-weight", 700)
+        .text("Source: "+dvc.sourcetext)
+    }
 
     function selectlist(datacsv) {
 
