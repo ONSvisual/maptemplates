@@ -31,11 +31,11 @@
   "sources": {
     "openmaptiles": {
       "type": "vector",
-      "url": "https://maps.tilehosting.com/data/v3.json?key=7rA0yA362pBi9PZxyYlY"
+      "url": "https://api.maptiler.com/tiles/v3/tiles.json?key=Qi2gszp5uSG09U66VCvH"
     }
   },
   "sprite": "https://openmaptiles.github.io/positron-gl-style/sprite",
-  "glyphs": "https://maps.tilehosting.com/fonts/{fontstack}/{range}.pbf?key=7rA0yA362pBi9PZxyYlY",
+  "glyphs": "https://api.maptiler.com/fonts/{fontstack}/{range}.pbf?key=Qi2gszp5uSG09U66VCvH",
   "layers": [
     {
       "id": "background",
@@ -251,7 +251,7 @@
         "LineString"
       ],
       "layout": {
-        "text-field": "{name:en}",
+        "text-field": "{name:latin}\n{name:nonlatin}",
         "symbol-placement": "line",
         "text-rotation-alignment": "map",
         "symbol-spacing": 500,
@@ -1387,7 +1387,7 @@
         "visibility": "visible",
         "text-rotation-alignment": "map",
         "text-pitch-alignment": "viewport",
-        "text-field": "{name:en}"
+        "text-field": "{name:latin} {name:nonlatin}"
       },
       "paint": {
         "text-color": "#bbb",
@@ -1574,7 +1574,7 @@
           0
         ],
         "text-anchor": "center",
-        "text-field": "{name:en}",
+        "text-field": "{name:latin}\n{name:nonlatin}",
         "text-keep-upright": false
       },
       "paint": {
@@ -1620,7 +1620,7 @@
           0
         ],
         "text-anchor": "center",
-        "text-field": "{name:en}"
+        "text-field": "{name:latin}\n{name:nonlatin}"
       },
       "paint": {
         "text-color": "rgb(117, 129, 145)",
@@ -1666,7 +1666,7 @@
         ],
         "icon-size": 0.4,
         "text-anchor": "left",
-        "text-field": "{name:en}"
+        "text-field": "{name:latin}\n{name:nonlatin}"
       },
       "paint": {
         "text-color": "rgb(117, 129, 145)",
@@ -1738,7 +1738,7 @@
             ]
           ]
         },
-        "text-field": "{name:en}"
+        "text-field": "{name:latin}\n{name:nonlatin}"
       },
       "paint": {
         "text-color": "rgb(117, 129, 145)",
@@ -1823,7 +1823,7 @@
             ]
           ]
         },
-        "text-field": "{name:en}"
+        "text-field": "{name:latin}\n{name:nonlatin}"
       },
       "paint": {
         "text-color": "rgb(117, 129, 145)",
@@ -1903,7 +1903,7 @@
             ]
           ]
         },
-        "text-field": "{name:en}"
+        "text-field": "{name:latin}\n{name:nonlatin}"
       },
       "paint": {
         "text-color": "rgb(117, 129, 145)",
@@ -1988,7 +1988,7 @@
             ]
           ]
         },
-        "text-field": "{name:en}"
+        "text-field": "{name:latin}\n{name:nonlatin}"
       },
       "paint": {
         "text-color": "rgb(117, 129, 145)",
@@ -2022,7 +2022,7 @@
       ],
       "layout": {
         "visibility": "visible",
-        "text-field": "{name:en}",
+        "text-field": "{name:latin}\n{name:nonlatin}",
         "text-font": [
           "Metropolis Regular",
           "Open Sans Regular"
@@ -2065,7 +2065,7 @@
       ],
       "layout": {
         "visibility": "visible",
-        "text-field": "{name:en}",
+        "text-field": "{name:latin}",
         "text-font": [
           "Metropolis Light Italic",
           "Open Sans Italic"
@@ -2136,7 +2136,7 @@
       ],
       "layout": {
         "visibility": "visible",
-        "text-field": "{name:en}",
+        "text-field": "{name:latin}",
         "text-font": [
           "Metropolis Regular",
           "Open Sans Regular"
@@ -2207,7 +2207,7 @@
       ],
       "layout": {
         "visibility": "visible",
-        "text-field": "{name:en}",
+        "text-field": "{name:latin}",
         "text-font": [
           "Open Sans Regular",
           "Open Sans Regular"
