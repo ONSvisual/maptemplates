@@ -1236,7 +1236,7 @@ if (Modernizr.webgl) {
 
 
         if (dvc.dropticks) {
-          d3.select("#horiz").selectAll("text").attr("transform", function(d, i) {
+          d3.select("#timeaxis").selectAll("text").attr("transform", function(d, i) {
             // if there are more that 4 breaks, so > 5 ticks, then drop every other.
             if (i % 2) {
               return "translate(0,10)"
