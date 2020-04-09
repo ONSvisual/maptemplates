@@ -1,10 +1,9 @@
-# Common map templates
+# Change over time for the Google mobility data as extracted by the DSC
 
-## Contains 3 map templates:
+[link](http://www.henrylau.co.uk/maptemplates/changeovertime/index.html)
 
-- [Simple map](https://onsvisual.github.io/maptemplates/simplemap/index.html)
-- [Map with line chart showing change over time](https://onsvisual.github.io/maptemplates/changeovertime/index.html)
-- [Multiple maps ](https://onsvisual.github.io/maptemplates/multimap/index.html)
-- [Simple map with beeswarm ](https://onsvisual.github.io/maptemplates/simplemap_beeswarm/index.html)
-- [Mutiple characteristics map ](https://onsvisual.github.io/maptemplates/multiple_characteristics_map/index.html)
-- [Side by side map](https://onsvisual.github.io/maptemplates/Side-by-side-map/index.html)
+## to do
+- Use custom breaks
+- Fix the styling on the mobile dropdown
+- Fix the colours
+- Fix the no data colour

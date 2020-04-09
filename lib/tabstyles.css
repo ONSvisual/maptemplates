@@ -1,0 +1,77 @@
+/* Individual tab styles */
+
+
+/*****************************/
+/* Falling Icon, from http://vintageproductions.eu/grid/interactivity/ */ 
+/*****************************/
+
+.tabs-style-iconfall {
+	overflow: visible;
+}
+
+.tabs-style-iconfall nav a {
+	display: inline-block;
+	overflow: visible;
+	color: #74777b;
+/*	padding-left: 29%;
+	padding-right: 29%;*/
+/*	line-height: 1;*/
+	height: 46px;
+/*	-webkit-transition: color 0.3s cubic-bezier(0.7,0,0.3,1); 
+	transition: color 0.3s cubic-bezier(0.7,0,0.3,1);*/
+}
+
+/*.tabs-style-iconfall nav a:hover,
+.tabs-style-iconfall nav a:focus,
+.tabs-style-iconfall nav li.tab-current a {
+	color: #1586CE;
+}*/
+
+.tabs-style-iconfall nav a span {
+	font-weight: 700;
+}
+
+/*.tabs-style-iconfall nav li::before {
+	position: absolute;
+	bottom: 1em;
+	left: 50%;
+	margin-left: -20px;
+	width: 40px;
+	height: 4px;
+	background-color: #000;
+	-webkit-transition: -webkit-transform 0.2s ease-in;
+	transition: transform 0.2s ease-in;
+	-webkit-transform: scale3d(0,1,1);
+	transform: scale3d(0,1,1);
+}*/
+
+.tabs-style-iconfall nav li.tab-current::before {
+	opacity: 1;
+/*	-webkit-transform: scale3d(1,1,1);
+	transform: scale3d(1,1,1);*/
+}
+
+.tabs-style-iconfall .icon::before {
+	display: block;
+/*	margin: 0 0 0.35em;*/
+/*	opacity: 0;*/
+/*	-webkit-transition: -webkit-transform 0.2s, opacity 0.2s;
+	transition: transform 0.2s, opacity 0.2s;*/
+	-webkit-transform: translate3d(0,-100px,0);
+	transform: translate3d(0,-100px,0);
+	pointer-events: none;
+}
+
+.tabs-style-iconfall nav li.tab-current .icon::before {
+	opacity: 1;
+	-webkit-transform: translate3d(0,0,0);
+	transform: translate3d(0,0,0);
+}
+
+@media screen and (max-width: 58em) {
+	.tabs-style-iconfall nav li .icon::before {
+		opacity: 1;
+		-webkit-transform: translate3d(0,0,0);
+		transform: translate3d(0,0,0);
+	}
+}
