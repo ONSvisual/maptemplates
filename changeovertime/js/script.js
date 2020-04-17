@@ -634,7 +634,7 @@ if (Modernizr.webgl) {
       map.getCanvasContainer().style.cursor = null;
       map.setFilter("state-fills-hover", ["==", "AREACD", ""]);
       oldAREACD = "";
-      $("#areaselect").val(null).trigger('change.select2');
+      $("#areaselect").val(null).trigger('chosen:updated');
       hideaxisVal();
     };
 
@@ -676,15 +676,10 @@ if (Modernizr.webgl) {
     }
 
     function selectArea(code) {
-      $("#areaselect").val(code).trigger('change.select2');
+      $("#areaselect").val(code).trigger('chosen:updated');
     }
 
-    $('#areaselect').on('select2:unselect', function() {
-      dataLayer.push({
-        'event': 'deselectCross',
-        'selected': 'deselect'
-      })
-    });
+
 
     function zoomToArea(code) {
 
@@ -1364,10 +1359,9 @@ if (Modernizr.webgl) {
 
       myId = null;
 
-      $('#areaselect').select2({
-        placeholder: "Select an area",
-        allowClear: true,
-        dropdownParent: $('#sel')
+      $('#areaselect').chosen({
+        placeholder_text_single: "Select an area",
+        allow_single_deselect: true
       })
 
       $('#areaselect').on('change', function() {
@@ -1392,6 +1386,12 @@ if (Modernizr.webgl) {
             'selected': areacode
           })
         } else {
+
+          dataLayer.push({
+            'event': 'deselectCross',
+            'selected': 'deselect'
+          })
+
           enableMouseEvents();
           hideaxisVal();
           onLeave();

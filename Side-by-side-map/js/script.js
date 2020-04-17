@@ -29,7 +29,7 @@ if(Modernizr.webgl) {
 
 		//set map labels
 		d3.select("#yearlabel").text(dvc.mapLeftLabel)
-		d3.select("#yearlabel2").text(dvc.mapRightLabel)	
+		d3.select("#yearlabel2").text(dvc.mapRightLabel)
 
 
 		//get column name
@@ -451,7 +451,7 @@ d3.select("#mapRight").style("top","130px")
 				map.setFilter("state-fills-hover", ["==", "AREACD", ""]);
 				mapRight.setFilter("state-fills-hover-Right", ["==", "AREACD", ""]);
 				oldAREACD = "";
-				$("#areaselect").val(null).trigger("change.select2");
+				$("#areaselect").val(null).trigger("chosen:updated");
 				hideaxisVal();
 		};
 
@@ -487,7 +487,7 @@ d3.select("#mapRight").style("top","130px")
 		}
 
 		function selectArea(code) {
-			$("#areaselect").val(code).trigger("change.select2");
+			$("#areaselect").val(code).trigger("chosen:updated");
 		}
 
 		function zoomToArea(code) {
@@ -782,7 +782,7 @@ d3.select("#mapRight").style("top","130px")
 
 			// myId=null;
 
-			$('#areaselect').select2({placeholder:"Choose an area",allowClear:true,dropdownParent:$('#sel')}).on('change',function(){
+			$('#areaselect').chosen({placeholder_text_single:"Choose an area",allow_single_deselect:true}).on('change',function(){
 
 					if($('#areaselect').val() !="") {
 							disableMouseEvents();
@@ -805,17 +805,6 @@ d3.select("#mapRight").style("top","130px")
 			});
 
 	};//end of selectlist
-
-	//some code to stop select2 opening when clearing
-	$('#areaselect').on('select2:unselecting', function(ev) {
-	    if (ev.params.args.originalEvent) {
-	        // When unselecting (in multiple mode)
-	        ev.params.args.originalEvent.stopPropagation();
-	    } else {
-	        // When clearing (in single mode)
-	        $(this).one('select2:opening', function(ev) { ev.preventDefault(); });
-	    }
-	});
 
 	}
 
