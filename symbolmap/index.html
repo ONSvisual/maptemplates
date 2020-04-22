@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>Coronavirus UK - Stacked Bar Chart</title>
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.1/mapbox-gl.css" rel="stylesheet" />
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height:500px;
+    }
+
+    #map {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 100%;
+
+    }
+
+    #key {
+      background-color: rgba(0, 0, 0, 0.8);
+      width: 22.22%;
+      height: auto;
+      overflow: auto;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .total {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: 15px;
+    }
+
+    .table {
+      font-family: 'Montserrat', sans-serif;
+      color: white;
+      border-collapse: collapse;
+    }
+
+    #keydiv {
+      position:absolute;
+      top:0px;
+      left:0px;
+      width:100%;
+      height:40px;
+      background-color:rgba(255,255,255,0.8);
+      z-index:1;
+      font-size:18px;
+      font-weight:bold;
+    }
+
+    h4{
+      margin-top:0px;
+    }
+
+  </style>
+</head>
+
+<body>
+  <div id="map">
+    <div id='keydiv'>
+      <h4 id="keyvalue"></h4>
+    </div>
+  </div>
+  <div id="key"></div>
+
+  <script defer src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.1/mapbox-gl.js"></script>
+  <script defer src="https://d3js.org/d3.v4.min.js"></script>
+  <script defer src="https://cdn.ons.gov.uk/vendor/pym/1.3.2/pym.min.js"></script>
+  <script defer src="js/d3-queue.min.js"></script>
+  <script defer src="js/topojson.v2.min.js"></script>
+  <script defer src="main.js"></script>
+</body>
+
+</html>

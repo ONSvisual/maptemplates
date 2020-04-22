@@ -1,0 +1,21 @@
+{
+"type": "FeatureCollection",
+"name": "countyuascot",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "ctyua19cd": "S08000015", "ctyua19nm": "Ayrshire and Arran", "Shape_Leng": 679782.30448399996, "Shape_Area": 3408802228.8800001 }, "geometry": { "type": "Point", "coordinates": [ -4.626422291236982, 55.45068234354747 ] } },
+{ "type": "Feature", "properties": { "ctyua19cd": "S08000016", "ctyua19nm": "Borders", "Shape_Leng": 525406.70759699994, "Shape_Area": 4742684960.3000002 }, "geometry": { "type": "Point", "coordinates": [ -2.788468497519887, 55.576240592029457 ] } },
+{ "type": "Feature", "properties": { "ctyua19cd": "S08000017", "ctyua19nm": "Dumfries and Galloway", "Shape_Leng": 830301.19566700002, "Shape_Area": 6676314851.3699999 }, "geometry": { "type": "Point", "coordinates": [ -3.959345119123675, 55.071121277483044 ] } },
+{ "type": "Feature", "properties": { "ctyua19cd": "S08000019", "ctyua19nm": "Forth Valley", "Shape_Leng": 430568.33592099999, "Shape_Area": 2733658721.1999998 }, "geometry": { "type": "Point", "coordinates": [ -4.240745360840495, 56.210178886833219 ] } },
+{ "type": "Feature", "properties": { "ctyua19cd": "S08000020", "ctyua19nm": "Grampian", "Shape_Leng": 802844.27130999998, "Shape_Area": 8800885267.6700001 }, "geometry": { "type": "Point", "coordinates": [ -2.783463329208989, 57.29959278060047 ] } },
+{ "type": "Feature", "properties": { "ctyua19cd": "S08000022", "ctyua19nm": "Highland", "Shape_Leng": 8486537.6750099994, "Shape_Area": 33637044520.099998 }, "geometry": { "type": "Point", "coordinates": [ -4.931823601532905, 57.264214615436323 ] } },
+{ "type": "Feature", "properties": { "ctyua19cd": "S08000024", "ctyua19nm": "Lothian", "Shape_Leng": 378923.09707299998, "Shape_Area": 1760804005.6500001 }, "geometry": { "type": "Point", "coordinates": [ -3.096723128697197, 55.903956177128102 ] } },
+{ "type": "Feature", "properties": { "ctyua19cd": "S08000025", "ctyua19nm": "Orkney", "Shape_Leng": 1589228.1773600001, "Shape_Area": 1086210772.1700001 }, "geometry": { "type": "Point", "coordinates": [ -3.036009029552589, 59.029152771291137 ] } },
+{ "type": "Feature", "properties": { "ctyua19cd": "S08000026", "ctyua19nm": "Shetland", "Shape_Leng": 2211513.8981900001, "Shape_Area": 1656618008.29 }, "geometry": { "type": "Point", "coordinates": [ -1.254045133039723, 60.394893427115015 ] } },
+{ "type": "Feature", "properties": { "ctyua19cd": "S08000028", "ctyua19nm": "Western Isles", "Shape_Leng": 3723205.0575199998, "Shape_Area": 3268473326.0799999 }, "geometry": { "type": "Point", "coordinates": [ -6.874604125908181, 57.907632674859542 ] } },
+{ "type": "Feature", "properties": { "ctyua19cd": "S08000029", "ctyua19nm": "Fife", "Shape_Leng": 367934.32408799999, "Shape_Area": 1373332396.3499999 }, "geometry": { "type": "Point", "coordinates": [ -3.124770464857156, 56.229039878996282 ] } },
+{ "type": "Feature", "properties": { "ctyua19cd": "S08000030", "ctyua19nm": "Tayside", "Shape_Leng": 677992.59199800005, "Shape_Area": 7684366162.9399996 }, "geometry": { "type": "Point", "coordinates": [ -3.55436957158873, 56.610814858504334 ] } },
+{ "type": "Feature", "properties": { "ctyua19cd": "S08000031", "ctyua19nm": "Greater Glasgow and Clyde", "Shape_Leng": 308045.84692799998, "Shape_Area": 1150742248.03 }, "geometry": { "type": "Point", "coordinates": [ -4.448670559932191, 55.88186454466431 ] } },
+{ "type": "Feature", "properties": { "ctyua19cd": "S08000032", "ctyua19nm": "Lanarkshire", "Shape_Leng": 377969.16405100003, "Shape_Area": 2246331440.3899999 }, "geometry": { "type": "Point", "coordinates": [ -3.83941501952648, 55.667777449712922 ] } }
+]
+}
