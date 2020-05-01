@@ -9,10 +9,10 @@ if(Modernizr.webgl) {
 	//Load data and config file
 	d3.queue()
 		.defer(d3.csv, "data/data.csv")
-		.defer(d3.json, "data/config.json")	
+		.defer(d3.json, "data/config.json")
 		.defer(d3.json, "data/geogEngCUA2.json")
 		//.defer(d3.csv, "data/datapay.csv")
-	
+
 		.await(ready);
 
 
@@ -123,13 +123,13 @@ if(Modernizr.webgl) {
 		//Load colours
 		if(typeof dvc.varcolour === 'string') {
 			//colour = colorbrewer[dvc.varcolour][dvc.numberBreaks];
-			
+
 			color=chroma.scale(dvc.varcolour).colors(dvc.numberBreaks)
   			colour=[]
 			  color.forEach(function(d){
 				  colour.push(chroma(d).darken(0.4).saturate(0.6).hex())
 			  })
-			
+
 		} else {
 			colour = dvc.varcolour;
 		}
@@ -282,7 +282,7 @@ if(Modernizr.webgl) {
 		function onMove(e) {
 				newAREACD = e.features[0].properties.AREACD;
 
-			
+
 				if(firsthover) {
             dataLayer.push({
                 'event': 'mapHoverSelect',
@@ -317,11 +317,11 @@ if(Modernizr.webgl) {
 				disableMouseEvents();
 				newAREACD = e.features[0].properties.AREACD;
 
-			
+
 				if(newAREACD != oldAREACD) {
 					oldAREACD = e.features[0].properties.AREACD;
 					map.setFilter("state-fills-hover", ["==", "AREACD", e.features[0].properties.AREACD]);
-					
+
 					d3.selectAll(".cellsselected").classed("cellsselected",false)
 					d3.select(".cell" + e.features[0].properties.AREACD).classed("cellsselected",true)
 
@@ -339,7 +339,7 @@ if(Modernizr.webgl) {
 				map.off("mousemove", "area", onMove);
 				map.off("mouseleave", "area", onLeave);
 			d3.selectAll(".cells path").style("pointer-events","none")
-			
+
 		}
 
 		function enableMouseEvents() {
@@ -622,7 +622,7 @@ if(Modernizr.webgl) {
 
 			myId=null;
 
-			$('#areaselect').chosen({width: "98%", allow_single_deselect:true}).on('change',function(evt,params){
+			$('#areaselect').chosen({width: "98%", allow_single_deselect:true,placeholder_text_single:"Choose an area"}).on('change',function(evt,params){
 
 					if(typeof params != 'undefined') {
 
@@ -642,7 +642,7 @@ if(Modernizr.webgl) {
 					}
 					else {
 							d3.select(".cellsselected").classed("cellsselected",false)
-					
+
 							enableMouseEvents();
 							hideaxisVal();
 							onLeave();
@@ -654,7 +654,7 @@ if(Modernizr.webgl) {
 	};
 
 		drawGraphic()
-		
+
 
 		function drawGraphic(){
 
@@ -687,7 +687,7 @@ if(Modernizr.webgl) {
 				//} else {
 				  x.domain(dvc.essential.xAxisScale);
 				//}
-			
+
 			//x.domain([0,32])
 
 			  groupeddata = {}
@@ -699,7 +699,7 @@ if(Modernizr.webgl) {
 			  for(var j = 0; j < groups.length; j++) {
 
 			  groupeddata[j] =  graphic_data.filter(function(v,i) { return v.id == groups[j]; });
-	
+
 			  if(j>0) {
 				runningtotal = runningtotal + groupeddata[j-1].length;
 			  }
@@ -722,8 +722,8 @@ if(Modernizr.webgl) {
 
 
 		    g.append("text").attr("class","label").text(groups[j]).attr("y",(heightper/2)+5).attr("x",-margin.left)
-				  
-	  
+
+
 	var cell = g.append("g")
 		  .attr("class", "cells")
 		.selectAll("g").data(d3.voronoi()
@@ -731,18 +731,18 @@ if(Modernizr.webgl) {
 			.x(function(d) { return d.x; })
 			.y(function(d) { return d.y; })
 		  .polygons(groupeddata[j])).enter().append("g")
-				 
-				  
+
+
 				  cell.append("circle")
 					  .attr("r", dvc.essential.dotradius)
 					  .attr("cx", function(d) { return d.data.x; })
 					  .attr("cy", function(d) { return d.data.y; })
 					  .attr("class", function(d,i) { return "cell cell" + (runningtotal + i)+" cell"+d.data.AREACD})
-					  .attr("fill",function(d){ 
+					  .attr("fill",function(d){
 					  			//return  dvc.essential.colour_palette[groups.indexOf(d.data.id)]
 								//console.log(d.data.value)
 					  			//console.log(color(d.data.value))
-					  			//return  color(d.data.value)	
+					  			//return  color(d.data.value)
 					  			return "#666";
 						});
 
@@ -751,17 +751,17 @@ if(Modernizr.webgl) {
 				  .attr("class", function(d,i) { return "path" + (runningtotal + i)+" "+d.data.AREACD})
 				  .on("mouseover", function(d,i) {
 					pathidstr = d3.select(this).attr("class");
-					
+
 					code = pathidstr.substr(pathidstr.indexOf(' ')).replace(/ /g,'')
-					
+
 					  changetext(d.data.value, d.data.AREACD);
-					  
+
 					  	  $("#areaselect").val(code).trigger("chosen:updated");
 					  	map.setFilter("state-fills-hover", ["==", "AREACD", code]);
 					  		//selectArea(params.selected);
 							setAxisVal(code);
 
-					  
+
 						  d3.select(".cell" + code).classed("cellsselected",true)
 					  })
 					  // .on("click", function(d) {
@@ -774,7 +774,7 @@ if(Modernizr.webgl) {
 					  .on("mouseout", function(d,i) {
 					pathidstr = d3.select(this).attr("class");
 					code = pathidstr.substr(pathidstr.indexOf(' ')).replace(/ /g,'')
-					
+
 
 						  d3.select("#info").html("");
 					$("#areaselect").val("").trigger("chosen:updated");
@@ -783,7 +783,7 @@ if(Modernizr.webgl) {
 						  if(clicked == true) {
 							 changetext(d.data.value, d.data.AREACD)
 
-					  
+
 							  d3.select(".cell" + code).classed("cellsselected",true)
 
 						  }

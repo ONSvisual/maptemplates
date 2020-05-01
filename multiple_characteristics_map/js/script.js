@@ -849,7 +849,8 @@ if (Modernizr.webgl) {
 
       $('#areaselect').chosen({
         width: "98%",
-        allow_single_deselect: true
+        allow_single_deselect: true,
+        placeholder_text_single:"Choose an area"
       }).on('change', function(evt, params) {
 
         if (typeof params != 'undefined') {
