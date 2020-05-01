@@ -596,7 +596,7 @@ if(Modernizr.webgl) {
 
 			myId=null;
 
-			$('#areaselect').chosen({width: "98%", allow_single_deselect:true}).on('change',function(evt,params){
+			$('#areaselect').chosen({width: "98%", allow_single_deselect:true,placeholder_text_single:"Choose an area"}).on('change',function(evt,params){
 
 					if(typeof params != 'undefined') {
 
