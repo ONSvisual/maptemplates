@@ -1,0 +1,39 @@
+{
+  "ons": {
+    "map": {
+      "maptitle": "Industries and public transport",
+      "varcolour": "Blues",
+      "varunit": "% bus and rail",
+      "mapVarName": "mapvar",
+      "displaydecimals": 1,
+      "legenddecimals": 0,
+      "breaks": [0,5,10,20,50,85],
+      "dropticks": false,
+      "numberBreaks": 5
+    },
+    "bar" : {
+      "graphic_data_url": "data.csv",
+      "colour_palette": {
+        "1": "#24A79B",
+        "0": "#ABC149"
+      },
+      "legendLabels": {
+        "Bus": "0",
+        "Rail": "1"
+      },
+      "sourceText":["ONS 2011 Census"],
+      "xAxisLabel":"% of local workforce",
+      "xAxisScale": [0,5],
+      "heightperstrip":35,
+      "dotradius":3,
+      "barMargin": {"top": 5, "right": 10, "bottom": 30, "left": 140},
+      "defaultBarVar": "default",
+      "stackVar": "Method",
+      "lineVar": "GB",
+      "lineColour": "#005D60",
+      "lineLegendLabel": "England & Wales average bus and rail",
+      "mobileBreakpoint" : 610,
+      "x_num_ticks_sm_md" : [3,4]
+    }
+  }
+}
