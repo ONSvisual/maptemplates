@@ -125,32 +125,73 @@ if(Modernizr.webgl) {
 
 		function buildNav() {
 
-		formgroup = d3.select('#nav')
-					.append('form')
-					.attr('class','btn-form-fullwidth')
-					.attr('role','radiogroup')
-					.selectAll('div')
-					.data(dvc.varlabels)
-					.enter()
-					.append('div')
-					.attr("class",'form-group-fullwidth')
-					.attr("role","radio")
-					.attr("tabindex", function(d,i){return i+1})
+			fieldset=d3.select('#nav').append('fieldset');
 
-		formgroup.append('input')
-			.attr("id",function(d,i){return "button" + i})
-			.attr('class','radio-primary-fullwidth')
-			.attr("type","radio")
-			.attr("name","button")
-			.attr("value",function(d,i){return i})
-			.attr("aria-checked", function(d,i){if(i == dvc.varload){return true}})
-			.property("checked", function(d, i) {return i===dvc.varload;})
+			fieldset
+			.append('legend')
+			.attr('class','visuallyhidden')
+			.html('Choose a variable');
 
-		formgroup.append('label')
-			.attr('class','label-primary-fullwidth')
-			.attr("for",function(d,i){return "button" + i})
-			.text(function(d,i){return dvc.varlabels[i]})
-			.on('click',function(d,i){onchange(i)})
+			fieldset
+			.append("div")
+			.attr('class','visuallyhidden')
+			.attr('aria-role','polite')
+			.append('span')
+			.attr('id','selected');
+
+			grid=fieldset.append('div')
+			.attr('class','grid grid--full large-grid--fit');
+
+			cell=grid.selectAll('div')
+			.data(dvc.varlabels)
+			.enter()
+			.append('div')
+			.attr('class','grid-cell');
+
+			cell.append('input')
+			.attr('type','radio')
+			.attr('id',function(d,i){return 'button'+i;})
+			.attr('value',function(d,i){return i;})
+			.attr('name','button');
+
+			cell.append('label')
+			.attr('for',function(d,i){return 'button'+i;})
+			.html(function(d){return d;});
+
+			d3.selectAll('input[type="radio"]').on('change', function(d) {
+				onchange(document.querySelector('input[name="button"]:checked').value);
+				d3.select('#selected').text(dvc.varlabels[document.querySelector('input[name="button"]:checked').value] + " is selected");
+			});
+
+			d3.select('#button'+dvc.varload).property('checked',true);
+			d3.select('#selected').text(dvc.varlabels[document.querySelector('input[name="button"]:checked').value] + " is selected");
+
+		// formgroup = d3.select('#nav')
+		// 			.append('form')
+		// 			.attr('class','btn-form-fullwidth')
+		// 			.attr('role','radiogroup')
+		// 			.selectAll('div')
+		// 			.data(dvc.varlabels)
+		// 			.enter()
+		// 			.append('div')
+		// 			.attr("class",'form-group-fullwidth')
+		// 			.attr("role","radio")
+		// 			.attr("tabindex", function(d,i){return 0})
+		//
+		// formgroup.append('input')
+		// 	.attr("id",function(d,i){return "button" + i})
+		// 	.attr('class','radio-primary-fullwidth')
+		// 	.attr("type","radio")
+		// 	.attr("name","button")
+		// 	.attr("value",function(d,i){return i})
+		// 	.attr("aria-checked", function(d,i){if(i == dvc.varload){return "true"}})
+		// 	.property("checked", function(d, i) {return i===dvc.varload;})
+		//
+		// formgroup.append('label')
+		// 	.attr('class','label-primary-fullwidth')
+		// 	.attr("for",function(d,i){return "button" + i})
+		// 	.text(function(d,i){return dvc.varlabels[i]})
+		// 	.on('click',function(d,i){onchange(i)})
 
 
 		selectgroup = d3.select('#selectnav')
@@ -513,6 +554,7 @@ if(Modernizr.webgl) {
 			var svgkey = d3.select("#keydiv")
 				.append("svg")
 				.attr("id", "key")
+				.attr('aria-hidden',true)
 				.attr("width", keywidth)
 				.attr("height",65);
 
@@ -609,10 +651,9 @@ if(Modernizr.webgl) {
 						if(i % 2){return "translate(0,10)"} }
 				);
 			}
-			//Temporary	hardcode unit text
-			dvc.unittext = "change in life expectancy";
 
-			d3.select("#keydiv").append("p").attr("id","keyunit").style("margin-top","-10px").style("margin-left","10px").text(dvc.varunit[a]);
+			//label the units
+			d3.select("#keydiv").append("p").attr("id","keyunit").attr('aria-hidden',true).style("margin-top","-10px").style("margin-left","10px").text(dvc.varunit[a]);
 
 	} // Ends create key
 
@@ -717,6 +758,9 @@ if(Modernizr.webgl) {
 			myId=null;
 
 			 $('#areaselect').chosen({placeholder_text_single:"Select an area",allow_single_deselect:true})
+
+			 d3.select('input.chosen-search-input').attr('id','chosensearchinput')
+	     d3.select('div.chosen-search').insert('label','input.chosen-search-input').attr('class','visuallyhidden').attr('for','chosensearchinput').html("Type to select an area")
 
 			$('#areaselect').on('change',function(){
 
