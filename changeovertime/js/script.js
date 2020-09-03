@@ -178,6 +178,7 @@ if (Modernizr.webgl) {
 
       cell.append('input')
       .attr('type','radio')
+      .attr('class','visuallyhidden')
       .attr('id',function(d,i){return 'button'+i;})
       .attr('value',function(d,i){return i;})
       .attr('name','button');
@@ -742,11 +743,11 @@ if (Modernizr.webgl) {
       d3.select('#accessibilityInfo').select('p.visuallyhidden')
       .text(function(){
         if (!isNaN(rateById[code])) {
-          return areaById[code]+": "+ displayformat(rateById[code]) +" "+ dvc.varunit[b]
+          return areaById[code]+": "+ displayformat(rateById[code]) +" "+ dvc.varunit[b];
         } else {
-          return "Data unavailable"
+          return "Data unavailable";
         }
-       })
+      });
 
 
       if (mobile == false) {
