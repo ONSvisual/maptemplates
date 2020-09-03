@@ -135,7 +135,7 @@ if(Modernizr.webgl) {
 			fieldset
 			.append("div")
 			.attr('class','visuallyhidden')
-			.attr('aria-role','polite')
+			.attr('aria-live','polite')
 			.append('span')
 			.attr('id','selected');
 
