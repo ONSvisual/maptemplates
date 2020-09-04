@@ -94,6 +94,12 @@
       pointer-events: none;
     }
 
+    #selectNav {
+      position:relative;
+      left:4px;
+      width: calc(100% - 8px);
+    }
+
     @media (min-width: 600px) {
       #map {
         height: 500px;
@@ -131,6 +137,18 @@
 
       #controls {
         display: none;
+      }
+
+      #selectnav{
+        left:4px;
+        top:4px;
+        width:calc(100% - 8px);
+        margin-bottom:10px;
+      }
+
+      #selectnav:focus-within{
+        box-shadow: 0 0 0px 3pt orange;
+
       }
 
       #selectNav {
@@ -248,6 +266,10 @@
       font-size: 16px;
     }
 
+    .btn:focus {
+      box-shadow: 0 0 0px 3pt orange;
+    }
+
     /* Primary */
     .btn--primary {
       background-color: #0F8243;
@@ -353,6 +375,11 @@
       padding: 0;
     }
 
+    .tick text{
+      font-size: 14px;
+      font-weight: 400;
+    }
+
     @media (max-width: 767px){
       #footer a {
           font-size: 16px;
@@ -424,17 +451,9 @@
 
       .grid-cell{
         position: relative;
-        margin-left: 10px;
-        margin-right:10px;
+        margin-left: 5px;
+        margin-right:5px;
         text-align: center;
-      }
-
-      .grid-cell:first-child{
-        margin-left: 3px;
-      }
-
-      .grid-cell:last-child{
-        margin-right: 3px;
       }
 
       .grid--full > .grid-cell {
