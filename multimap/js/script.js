@@ -497,7 +497,12 @@ if(Modernizr.webgl) {
 
 		function selectArea(code) {
 			$("#areaselect").val(code).trigger('chosen:updated');
-
+			d3.select('abbr').on('keypress',function(evt){
+				if(d3.event.keyCode==13 || d3.event.keyCode==32){
+					console.log('clear')
+					$("#areaselect").val("").trigger('chosen:updated');
+				}
+			})
 		}
 
 
@@ -567,7 +572,7 @@ if(Modernizr.webgl) {
 				.attr("id", "key")
 				.attr('aria-hidden',true)
 				.attr("width", keywidth)
-				.attr("height",65);
+				.attr("height",75);
 
 
 			var color = d3.scaleThreshold()
@@ -586,7 +591,7 @@ if(Modernizr.webgl) {
 				.tickFormat(legendformat);
 
 			var g2 = svgkey.append("g").attr("id","horiz")
-				.attr("transform", "translate(15,30)");
+				.attr("transform", "translate(15,35)");
 
 
 			keyhor = d3.select("#horiz");
@@ -627,8 +632,6 @@ if(Modernizr.webgl) {
 				.attr("fill","#000")
 				.text("");
 
-
-
 			keyhor.selectAll("rect")
 				.data(color.range().map(function(d, i) {
 				  return {
@@ -664,7 +667,7 @@ if(Modernizr.webgl) {
 			}
 
 			//label the units
-			d3.select("#keydiv").append("p").attr("id","keyunit").attr('aria-hidden',true).style("margin-top","-10px").style("margin-left","10px").text(dvc.varunit[a]);
+			d3.select("#keydiv").append("p").attr("id","keyunit").attr('aria-hidden',true).style("margin-top","-10px").style("margin-left","10px").style('font-size','14px').text(dvc.varunit[a]);
 
 	} // Ends create key
 
@@ -754,7 +757,7 @@ if(Modernizr.webgl) {
 			// Build option menu for occupations
 			var optns = d3.select("#selectNav").append("div").attr("id","sel").append("select")
 				.attr("id","areaselect")
-				.attr("style","width:98%")
+				.attr("style","width:calc(100% - 6px)")
 				.attr("class","chosen-select");
 
 			optns.append("option")
@@ -776,10 +779,6 @@ if(Modernizr.webgl) {
 			$('#areaselect').on('change',function(){
 
 					if($('#areaselect').val() != "") {
-					//if(typeof params != 'undefined') {
-
-							//d3.select("#map").node().focus();
-
 							areacode = $('#areaselect').val()
 
 							disableMouseEvents();
@@ -794,8 +793,6 @@ if(Modernizr.webgl) {
                   'event': 'mapDropSelect',
                   'selected': areacode
               })
-
-
 					}
 					else {
 							dataLayer.push({
@@ -807,14 +804,10 @@ if(Modernizr.webgl) {
 							hideaxisVal();
 							onLeave();
 							resetZoom();
-
 					}
-
 			});
-
-	};
-
-	}
+	};//end selectlist
+}//end ready
 
 } else {
 
