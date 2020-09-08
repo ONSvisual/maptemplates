@@ -1,0 +1,1271 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600|Open+Sans+Condensed:300' rel='stylesheet' type='text/css'>
+
+    <title>Girls names map - Percentages of babies with given name by local authority</title>
+
+    <meta name="description" content="">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" />
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+    <link rel="stylesheet" href="../lib/globalStyle.css" />
+
+	  <link rel="stylesheet" href="../lib/styles.css" media="screen">
+    <link rel="stylesheet" href="../lib/jquery-ui-1.10.4.custom.min.css">
+    <link rel="stylesheet" href="../lib/chosen.css">
+    <!-- <link rel="stylesheet" href="../lib/select2.min.css" /> -->
+
+    <style type="text/css">
+
+/*		.key b {
+			display: inline-block;
+			width: 12px;
+			height: 12px;
+			margin-right: 6px;
+			float: left;
+			background-color: none;
+}*/
+
+/*		ul {
+			list-style-type:none;
+		}
+
+		.key{
+			line-height: 10px;
+		}*/
+
+
+    .select2-search:focus {
+        outline: 3px orange solid;
+        margin-left:3px;
+    }
+
+		body{
+			max-width:900px;
+  			 min-height: 240px;
+		}
+
+		#areanm {
+			font-size: 18px;
+			font-weight: 700;
+			color:#206095;
+			margin-top:5px;
+			margin-bottom:10px;
+			height:20px;
+		}
+
+				#submitbut {
+			background-color:#0F8243;
+			display:block;
+			width:200px;
+			text-align:center;
+			font-size:14px;
+			color:white;
+			font-weight:100;
+			text-decoration:underline;
+			width:70px;
+			height:43px;
+			padding:12px 0px;
+			margin-right:6px;
+			float:left;
+		}
+		#submitbut:hover {
+			cursor:hand;
+			cursor:pointer;
+			display:block;
+			background-color:rgb(11,93,48)!important;
+			width:200px;
+			text-align:center;
+			font-size:14px;
+			color:white;
+			font-weight:100;
+			text-decoration:underline;
+			width:70px;
+			height:43px;
+			padding-top:12px;
+			margin-right:6px;
+			float:left;
+		}
+
+		@media (min-width: 1000px) {
+
+			#yearLabel{
+				font-family:"open_sansbold",sans-serif,Helvetica,Arial;
+				font-size:7.5em;
+				color:red;
+				vertical-align:middle;
+				text-align:center;
+			}
+
+		} /* end @media (min-width: 1000px) */
+
+
+		@media screen and (min-width: 599px) {
+
+			#yearLabel{
+				font-family:"open_sansbold",sans-serif,Helvetica,Arial;
+				font-size:7.5em;
+				color:blue;
+				vertical-align:middle;
+				text-align:center;
+			}
+
+		} /* end @media screen and (min-width: 599px) */
+
+
+		@media (min-width: 700px) {
+
+			#yearLabel{
+				font-family:"open_sansbold",sans-serif,Helvetica,Arial;
+				font-size:7.5em;
+				color:green;
+				vertical-align:middle;
+				text-align:center;
+			}
+
+		} /* end @media (min-width: 700px) */
+
+
+
+
+		@media (max-width: 400px) {
+
+			#yearLabel{
+				font-family:"open_sansbold",sans-serif,Helvetica,Arial;
+				font-size:7.5em;
+				color:black;
+				vertical-align:middle;
+				text-align:center;
+			}
+
+
+		} /* end @media (min-width: 400px) */
+
+
+		@media (min-width: 401px) {
+
+			#yearLabel{
+				font-family:"open_sansbold",sans-serif,Helvetica,Arial;
+				font-size:3.5em;
+				color:#666;
+				vertical-align:middle;
+				text-align:center;
+			}
+
+
+			.text{
+				font-family:"open_sansbold",sans-serif,Helvetica,Arial;
+				font-size:1.0em;
+				color:green;
+				vertical-align:middle;
+				text-align:center;
+			}
+
+		} /* end @media (min-width: 401px) */
+
+
+		@media (min-width: 599px) {
+
+			#yearLabel{
+				font-family:"open_sansbold",sans-serif,Helvetica,Arial;
+				font-size:4.0em;
+				color:#666;
+				vertical-align:middle;
+				text-align:center;
+			}
+
+
+			.text{
+				font-family:"open_sansbold",sans-serif,Helvetica,Arial;
+				font-size:1.0em;
+				color:red;
+				vertical-align:middle;
+				text-align:center;
+			}
+
+		} /* end @media (min-width: 599px) */
+
+
+
+		 .keys path {
+		  display: none;
+
+		}
+
+		 .keys line {
+		  stroke: #000;
+		  shape-rendering: crispEdges;
+		}
+
+	 .keys {
+			font-size:10px;
+			fill:#666;
+		}
+
+		.selected{
+			stroke:#999;
+			stroke-width:2px;
+		}
+
+		#key rect {
+			stroke:#666;
+			stroke-width:0.5px;
+			z-index:+1;
+		}
+
+
+
+    	.line-0 { stroke:#274796; }
+    	.line-1 { stroke:#F90; }
+    	.line-2 { stroke:#F00; }
+
+
+    	.circle {
+			fill:#F90;
+			stroke:#F90;
+		}
+
+		.svgRect{
+			fill: white;
+			fill-opacity:0.0;
+		}
+
+		.yearLines {
+			stroke:#666;
+			stroke-width:2px;
+			display:none;
+			stroke-dasharray:10 5;
+		}
+
+
+		#header{
+			padding-bottom:15px;
+		}/*
+
+		.text{
+			color:#666;
+			font-size:16px;
+			font-weight:bold;
+		}*/
+
+		.area {
+		    fill: lightsteelblue;
+		    stroke-width: 2px;
+		}
+
+		.area.above {
+			fill: #E89B9B;
+		}
+
+		.area.below {
+			fill: blue;
+		}
+
+		.bars{
+			stroke:none;
+			fill:#274796;
+			fill-opacity:0.5;
+		}
+
+
+		.circle:hover,
+		.bars:hover
+		{
+			cursor:pointer;
+		}
+
+		/*
+		#yearLabel{
+			color:#666;
+			font-size:56px;
+			font-weight:bolder;
+		}*/
+
+	/* Zoom CSS */
+
+		.zoom-control-zoom a, .zoom-control-layers-toggle {
+		background-position: 50% 50%;
+		background-repeat: no-repeat;
+		display: block;
+		}
+		.zoom-control-zoom a {
+    border: 1px solid #59a4da;
+		width: 22px;
+		height: 22px;
+		text-align: center;
+		text-decoration: none;
+		color: #5381ca;
+		}
+
+		.zoom-control-zoom-in {
+		cursor:pointer;
+		font: bold 18px/24px Arial, Helvetica, sans-serif;
+		}
+
+		.zoom-control-zoom-in:hover {
+			color: #fff;
+			background-color: #5381ca;
+		}
+		.zoom-bar-part-top {
+		}
+		.zoom-bar-part {
+		background-color: rgba(255, 255, 255, 0.8);
+		border-bottom: 1px solid #aaa;
+		}
+
+		.zoom-control-zoom-out {
+		cursor:pointer;
+		font: bold 23px/20px Tahoma, Verdana, sans-serif;
+		}
+
+		.zoom-control-zoom-out:hover {
+			color: #fff;
+			background-color: #5381ca;
+		}
+		.zoom-bar-part-bottom {
+		border-bottom: none;
+		}
+
+		.zoom-container {
+		margin-left: 13px;
+		margin-top: 0px;
+		position: absolute;
+		left: 0px;
+		top: 0px;
+		}
+
+		.zoom-bar {
+
+		/* border: 1px solid #59a4da; */
+		}
+		.zoom-popup-pane, .zoom-control {
+		cursor: auto;
+		}
+		.zoom-control {
+		float: left;
+		clear: both;
+		}
+		.zoom-control {
+
+		z-index: 7;
+		pointer-events: auto;
+		}
+
+
+    .zoom-control-zoom-in:focus {
+      outline: orange 2px solid;
+    }
+
+    .zoom-control-zoom-out:focus {
+     outline: orange 2px solid;
+   }
+
+		.areaname{
+			margin:0px;
+			font-size:12px;
+		}
+
+		.graphUnitSVGs {
+			border: 2px solid #fff;
+		}
+
+
+		.graphUnitSVGs text, .keys text{
+			font-size:16px;
+			fill:#626161;
+		}
+
+
+
+		.graphUnitSVGs line, .keys line{
+			font-size:11px;
+			stroke:#AAAAAA;
+		}
+
+		.svgTitle{
+			text-anchor:start;
+			fill:#206095!important;
+			font-size:16px!important;
+			font-weight:600;
+		}
+
+		.LA_value{
+			text-anchor:start;
+
+		}
+
+		.loading{
+			height:50px;
+			padding-left:10px;
+			padding-top:20px;
+		}
+
+		#graphic{
+			min-height:300px;
+		}
+
+        #legend{
+            color: grey;
+            font-size: 12px;
+        }
+
+		input.default {
+			/* width: 190px !important; */
+		}
+
+    .search-choice-close:focus {
+        outline: orange 2px solid;
+      }
+
+
+#sel{padding-left:0px!important;}
+
+#areaselect{
+	width:100%!important;
+}
+
+.zoom-control {
+    top: 185px;
+    left: 186px;
+}
+
+#instructions {
+	font-weight:bold;
+	font-family: 'Open Sans';
+	padding-bottom: 15px;
+	font-size: 16px;
+
+}
+
+.visuallyhidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+    </style>
+
+    <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-MBCBVQS');</script>
+    <!-- End Google Tag Manager -->
+
+	</head>
+
+	<body>
+
+    <noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MBCBVQS" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
+
+        <div>
+
+          <h5 class="visuallyhidden">This graphic allows users to see the geographical spread of a selected name across England and Wales. See the accompanying data for the underlying figures.</h5>
+        <div class="container-fluid" id="small_multiples" aria-hidden="true">
+        	<div id="ieMsg" style="display:none;">
+            	<div id="suptext">
+                      <p class="IE_P">For a safer, faster, better experience online you should upgrade your browser. You will then be able to play with lovely interactive graphics such as this one. </p><br>
+                      <p  class="IE_P"> <a href="https://www.gov.uk/support/browsers" target="_blank">Find out more about browsers</a></p>
+                </div><!--end suptext div-->
+                <div id="altImage"><img id="thumbNail" src="fallback.png"></div>
+            </div>
+           <div id="wrapper" style="display:none;">
+                <div class="row" id="header">
+                  <label id="instructions" for="selectmenu">Type some names, or select from the dropdown</label>
+
+                              <div id="chosensel">
+
+                              </div>
+                </div>
+
+              <div class="row"
+                    <div class="col-xs-10 col-sm-10 col-md-8" id="areanm">  </div>
+               </div>
+
+                <div class="row">
+                        <div id="new">
+
+                        </div>
+                </div>
+           </div>
+       	 </div>
+
+
+
+
+
+    <script src="https://cdn.ons.gov.uk/vendor/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://cdn.ons.gov.uk/vendor/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="../lib/modernizr.custom.56904.js"></script>
+    <script src="https://cdn.ons.gov.uk/vendor/d3/3.5.17/d3.min.js" type='text/javascript'></script>
+    <script src="https://cdn.ons.gov.uk/vendor/pym/1.3.2/pym.v1-3-2.min.js" charset="utf-8"></script>
+	  <script src="https://cdn.ons.gov.uk/vendor/jquery-ui/1.12.1/jquery-ui.min.js"></script>
+    <script src="../lib/chosen.jquery.js" type="text/javascript"></script>
+    <script src="../lib/queue.js" charset="utf-8"></script>
+    <script src="../lib/topojson.js"></script>
+		<script src="../lib/ss.js"></script>
+		<script src="../lib/d3-jetpack.js"></script>
+
+    <script>
+//            var header = $('#header');
+//            var graphic = $('#graphic');
+
+      var pymChild = null;
+      var height;
+      var dvc = {}; // global object variable to contain all variables prefixed with 'dvc.'
+			var headers = [];
+			var mapScale;
+
+			dvc.data;
+
+			var numFormat = d3.format(".1f");
+
+
+			listnames = [];
+
+      function setupdropdown(){
+
+		d3.select("#chosensel").selectAll("*").remove();
+        variables = [];
+
+        for (var column in dvc.data[0]) {
+            if (column == 'AREACD') continue;
+            if (column == 'AREANM') continue;
+            variables.push(column);
+        }
+
+        // var optns = d3.select("#chosensel");
+        //
+        // optns.append("option")
+        //     .attr("value","first")
+        //     .text("");
+        //
+        // optns.selectAll("p").data(variables).enter().append("option")
+        //     .attr("value", function(d,i){ return i})
+        //     .text(function(d){ return d});
+
+        console.log(variables)
+
+        var optns = d3.select("#chosensel").append("div").attr("id","sel").append("select")
+        				.attr("id","selectmenu")
+        				.attr("style","width:98%")
+        				.attr("multiple",true)
+        				.attr("class","chosen-select");
+
+                optns.append("option")
+          				.attr("value","first")
+          				.text("");
+
+                  optns.selectAll("p").data(variables).enter().append("option")
+                       .attr("value", function(d,i){ return i})
+                       .text(function(d){ return d});
+
+
+  				$('#selectmenu').chosen({width: "98%", max_selected_options: 6, placeholder_text_multiple: "Type some names, or choose an option.",/*, allow_single_deselect:true*/}).on('change',function(evt,params){
+
+           if(typeof params.selected != 'undefined') {
+  				 var allselections = $(this).val();
+           console.log(params)
+  				 var lastselection =params.selected;
+
+
+  				 var svgSel = d3.select("#svg"+lastselection)
+  			   var parentDiv = d3.select("#svg"+lastselection).select(function() { return this.parentNode; })
+
+           if($(".container-fluid").width()<600){
+           	parentDiv.classed("col-xs-10", true)
+           } else if($(".container-fluid").width()<750){
+           	parentDiv.classed("col-sm-4", true)
+           } else if($(".container-fluid").width()<945){
+           	parentDiv.classed("col-md-3", true)
+           }
+
+           drawGraphic2(lastselection);
+           svgSel.classed("hide", false);
+           d3.select(".zoom-container").classed("hide", false)
+           listnames.push(lastselection);
+
+           console.log(listnames)
+
+           d3.selectAll(".search-choice-close").attr("aria-label", function(d,i) {return "close selection - " + variables[listnames[i]]})
+
+           if (pymChild) {
+             setTimeout(function(){  pymChild.sendHeight(); }, 300);
+           }
+
+         } else {
+
+          var deselection = params.deselected;
+
+          var parentDiv = d3.select("#svg"+deselection).select(function() { return this.parentNode; })
+           d3.select("#svg"+deselection).classed("hide", true);
+
+           if($(".container-fluid").width()<600){
+           	parentDiv.classed("col-xs-10", false)
+           } else if($(".container-fluid").width()<750){
+           	parentDiv.classed("col-sm-4", false)
+           } else if($(".container-fluid").width()<945){
+           	parentDiv.classed("col-md-3", false)
+           }
+
+
+           var index = listnames.indexOf(deselection);
+           listnames.splice(index, 1);
+
+           if(listnames.length < 1) {
+             d3.select(".zoom-container").classed("hide", true)
+           }
+
+         }
+          //
+
+          //
+  				// drawGraphic2(lastselection);
+  				// svgSel.classed("hide", false);
+  				// d3.select(".zoom-container").classed("hide", false)
+  				// listnames.push(lastselection);
+          //
+  				// window.location.hash = listnames;
+
+
+  			// } else {
+        //
+        //
+        //
+  			// 	var allselections = $(this).val();
+  			// 	var lastselection =e.params.data.id
+        //
+        //
+  			// 	var svgSel = d3.select("#svg"+lastselection)
+  			// 	svgSel.classed("hide",true);
+  			// 	if(allselections ==null){
+  			// 		d3.select(".zoom-container").classed("hide", true)
+  			// 	}
+        //
+  			// 	var parentDiv = d3.select("#svg"+lastselection).select(function() { return this.parentNode; })
+        //
+  			// 	if($(".container-fluid").width()<600){
+  			// 		parentDiv.classed("col-xs-10", false)
+  			// 	} else if($(".container-fluid").width()<750){
+  			// 		parentDiv.classed("col-sm-4", false)
+  			// 	} else if($(".container-fluid").width()<945){
+  			// 		parentDiv.classed("col-md-3", false)
+  			// 	}
+        //
+  			// 	var index = listnames.indexOf(lastselection);
+        //
+        //
+        //
+        //
+  			// 	if (index > -1) {
+  			// 			listnames.splice(index, 1);
+        //
+  			// 	}
+        //
+  			// 	window.location.hash = listnames;
+        //
+        //
+  			//
+        //}
+    })
+
+
+    d3.select('.container-fluid').selectAll("*").attr('aria-hidden','true')
+
+      }
+
+
+			function createStructure(){
+
+	        setupdropdown();
+
+				d3.select("#new").selectAll("*").remove();
+
+				 d3.select("#new").selectAll("div")
+						.data(headers)
+						.enter()
+						.append("div")
+						.attr("class", "graphic col-xs-10 col-sm-4 col-md-3")
+
+				var threshold_md = 750;
+				var threshold_sm = 600;
+
+				 if($(".container-fluid").width()<600){
+					var mapScale = 3500;
+				} else {
+					var mapScale = 2300;
+				}
+
+				margin = {	top:+dvc.essential.margins[0], right:+dvc.essential.margins[1], bottom:+dvc.essential.margins[2], left: +dvc.essential.margins[3]};
+		 		chart_width = parseInt(d3.select('.graphic').style("width")) - margin.left - margin.right;
+
+//				if ($(".container-fluid").width()< threshold_sm) {
+//					height = (Math.ceil((chart_width * dvc.essential.aspectRatio[0][1]) / dvc.essential.aspectRatio[0][0]) - margin.top - margin.bottom);
+//				} else if ($(".container-fluid").width()< threshold_md){
+//					height = (Math.ceil((chart_width * dvc.essential.aspectRatio[1][1]) / dvc.essential.aspectRatio[1][0]) - margin.top - margin.bottom);
+//				} else {
+					height = (Math.ceil((chart_width * dvc.essential.aspectRatio[1]) / dvc.essential.aspectRatio[0]) - margin.top - margin.bottom);
+//				}
+
+
+				d3.selectAll(".graphic").append("svg")
+						.attr("id", function(d,i){ return "svg"+i })
+						.attr("class" , "hide graphUnitSVGs")
+				//		.append("g")
+				//		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+				d3.selectAll(".graphic").classed("col-xs-10", false);
+				d3.selectAll(".graphic").classed("col-sm-4", false);
+				d3.selectAll(".graphic").classed("col-md-3", false);
+
+
+
+
+				zoom = d3.behavior.zoom()
+					.scaleExtent([0.1, 12])
+					.on("zoom", zoomed);
+
+				projection = d3.geo.albers()
+					.center([0.4, 54.2])
+					.rotate([3.2, 1])
+					.parallels([50, 60])
+					.scale(mapScale)
+					.translate([chart_width / 2, height / 2]);
+
+
+				// Set up a scaling variable effectively tells D3 how to interpret your lat - long coordinates into pixel positions.
+				path = d3.geo.path().projection(projection);
+
+				// clear out existing graphics
+//				graphic.empty();
+//				keypoints.empty();
+//				footer.empty();
+
+				d3.select("#footer").append("p").text("LQ > 1.0 indicates a relative concentration of the industry in the geographic area");
+				//d3.selectAll(".graphUnitSVGs").remove();
+				checkUrl()
+			}//end createStructure()
+
+
+			function drawGraphic2(params){
+
+				rateById = {};
+				dvc.data.forEach(function(d,i) { rateById[d.AREACD] = [d[headers[params]]]; });
+
+				var values =  dvc.data.map(function(d) { return +d[headers[params]]; }).filter(function(d){  return !isNaN(d)}).sort(d3.ascending);
+				//console.log(values)
+
+				if(dvc.essential.breaksAll =="jenks"){
+					breaks = ss.jenks(values, dvc.essential.breakDivisions);
+					var fmt = d3.format(".1f")
+					breaks[breaks.length-1] =  fmt((breaks[breaks.length-1])+0.1)
+				} else {
+					breaks = dvc.essential.breaksAll;
+				}
+
+
+				color = d3.scale.threshold()
+						.domain(breaks)
+						.range(dvc.essential.colour);
+
+				d3.select("#svg"+params).selectAll("*").remove();
+
+
+				g = d3.select("#svg"+params)
+						.attr("width", chart_width + margin.left + margin.right)
+						.attr("height", height + margin.top + margin.bottom)
+						.append("g").attr("id", "group_"+params);
+
+
+				d3.select("#svg"+params)
+						.append("g")
+						.append("rect")
+						.attr("class", "white_rect")
+						.attr("width", "52px")
+						.attr("height", height)
+						.attr("x", -1)
+						.attr("y", -1)
+						.attr("fill", "white")
+
+				d3.select("#svg"+params)
+						.append("g")
+						.append("rect")
+						.attr("class", "white_rect")
+						.attr("width", chart_width+10)
+						.attr("height", "35px")
+						.attr("x", 0)
+						.attr("y", -1)
+						.attr("fill", "white")
+
+				zoomed();
+
+
+
+				g.attr("class", "pcon")
+					.selectAll("path")
+					.data(topojson.feature(dvc.pcon, dvc.pcon.objects.la2019EW).features)
+					.enter()
+					.append("path")
+					.attr("id",function(d,i){
+									return "reg" + d.properties.AREACD})
+					.attr("class",function(d,i){
+									return "reg" + d.properties.AREACD})
+					.attr("data-nm",function(d){
+									return d.properties.AREANM})
+					.attr("data_val", function(d) {
+									return rateById[d.properties.AREACD]})
+					.attr("d" , path)
+					.style("stroke",function(d) {
+						if(rateById[d.properties.AREACD] ==".."||rateById[d.properties.AREACD] ==undefined){
+							return "#ccc"
+						} else {
+							return "#ccc";
+						}
+					})
+					.style("fill", function(d) {
+						if(rateById[d.properties.AREACD] ==".."||rateById[d.properties.AREACD] ==undefined){
+							return "white"
+						} else {
+							return color(rateById[d.properties.AREACD]);
+						}
+					})
+					.on("mouseout",unhighlight)
+					.on("mouseover",function(d){
+						//console.log($(this).parent().attr("id"));
+						highlight(d.properties.AREACD);
+						plot($(this).parent().attr("id"), d.properties.AREACD);
+					});
+
+//					// draw text in upper right corner of each graph with the associated title from data.csv
+//						cards.append("rect")/*
+//							.data(headers)*/
+//							.attr("x", 0)
+//							.attr("y", 0 )
+//							.attr("height",18)
+//							.attr("width", 40)
+//							.style("fill", "#fff")
+//							.style("stroke","none")
+//							.style("opacity",0.8);
+
+
+
+
+						// draw text in upper right corner of each graph with the associated value from data.csv
+//						d3.select("#svg"+params).append("text")
+////							.data(headers)
+//							.attr("x" , chart_width-5)
+//							.attr("y" , 15 )
+//							.style("display" , "inline")
+//							.attr("class", "svgValue")
+//						.attr("id", "areanm")
+//							.style("pointer-events" , "none")
+//							.style("text-anchor","end")
+//							.text(function(){
+//								var fmt = d3.format(".2f")
+//								if(linevalues[0][vals[i]]=="null"||[vals[i]]=="undefined"){
+//									return headers[i].substr(2, 5);
+//								} else if(linevalues[0][vals[i]]=="0"){
+//									return "less than 0.01% "+ headers[i];;
+//								} else {
+//									return /*numFormat*/fmt(linevalues[0][vals[i]])+"% "+headers[i];;
+//								}
+//							});
+//							.text("") ;
+
+							//function(d,i){return currclass});
+
+							//.text(function(d,i){ return headers[k];
+							////return headers[k].substring(0,  headers[k].indexOf(', '));
+							//});
+
+						d3.select("#svg"+params).append("text")/*
+							.data(headers)*/
+							.attr("x" , 0)
+							.attr("y" , 12 )
+							.style("display" , "inline")
+							.attr("class", "svgTitle")
+							.style("pointer-events" , "none")
+							.text(function(d,i){
+								return headers[params];
+								//return headers[k].substring(0,  headers[k].indexOf(', '));
+							})
+//							.each(function(d,i){
+//
+//								d3.select(this)
+//									.text('')                        //clear existing text
+//									.tspans(d3.wordwrap(headers[params], 30)) //wrap after xx char
+//								});
+
+						d3.selectAll(".svgTitle")
+							.selectAll("tspan")
+							.attr("x" , 0)
+
+						d3.select("#svg"+params).append("text")/*
+							.data(headers)*/
+							.attr("x" , 0)
+							.attr("y" , 27 )
+							.style("display" , "inline")
+							.attr("class", "LA_value")
+							.attr("id", "LA_value_"+params)
+							.style("pointer-events" , "none")
+
+//				var texty  = d3.selectAll(".tick").select("text");
+//
+//				texty[0].forEach(function(d,i){
+//
+//					if(d3.select(d).text() == "15") {
+//						d3.select(d).text("15+");
+//					};
+//
+//
+//				}
+//
+//				)
+
+				center = [chart_width/ 2, chart_width/ 2];
+
+			d3.selectAll(".graphUnitSVGs").call(zoom)
+				.call(zoom.event);
+
+				d3.selectAll(".name").classed("hide", true);
+
+
+
+				d3.select("#svg"+params)
+						.append("g")
+						.attr("id", "key_"+params)
+						.attr("class", "key")
+						.attr("transform", "translate(40,45)scale(0.8)");
+
+
+				y = d3.scale.linear()
+					.domain([breaks[0], breaks[dvc.essential.breakDivisions]]) /*range for data*/
+					.range([height + margin.top + margin.bottom, 0]); /*range for pixels*/
+
+
+				var yAxis = d3.svg.axis()
+					.scale(y)
+					.orient("left")
+					.tickSize(0)
+					.tickFormat(function(d,i){
+
+						if (i==0 || i==5 || i==7 || i==8 || i==9){
+							return numFormat(d) }
+
+						}
+						)
+					.tickValues(color.domain());
+
+				d3.select("#key_"+params).selectAll("rect")
+					.data(color.range().map(function(d, i) {
+					  return {
+						y0: i ? y(color.domain()[i-1]) : y.range()[0],
+						y1: i < color.domain().length ? y(color.domain()[i]) : y.range()[1],
+						z: d
+					  };
+					}))
+					.enter().append("rect")
+					.attr("width", 5)
+					.attr("y", function(d,i) { return d.y1; })
+					.attr("height", function(d) { return d.y0 - d.y1; })
+					.style("fill", function(d) {  return d.z; });
+
+				d3.select("#key_"+params).call(yAxis).append("text").text("%").attr("dy","-0.5em");
+
+
+				//checkUrl()
+				//showMaps();
+
+				//use pym to calculate chart dimensions
+				if (pymChild) {
+					setTimeout(function(){  pymChild.sendHeight(); }, 300);
+				}
+
+			}
+
+
+	 function checkUrl() {
+
+		urlLocal = window.location.href;
+
+		var listnamesLocal = urlLocal.split("#")[1];
+
+		if(listnamesLocal != undefined) {
+
+			listnamesA = listnamesLocal.split(',').slice(0).join(',');
+			//console.log(listnamesA)
+			listnames = 	listnamesA.split(',');
+
+			$("#areaselect").val(listnames);
+			$("#areaselect").trigger("change");
+			//$("#occselect").setSelectionOrder(listnames);
+			showMaps(listnames);
+		}
+
+	}
+
+
+	 function showMaps(listnames) {
+
+		 listnames.forEach(function(d,i){
+			// console.log(d, "just before drawGraphic2")
+			 var parentDiv = d3.select("#svg"+d).select(function() { return this.parentNode; })
+
+			 if($(".container-fluid").width()<600){
+				parentDiv.classed("col-xs-10", true)
+			} else if($(".container-fluid").width()<750){
+				parentDiv.classed("col-sm-4", true)
+			}else if($(".container-fluid").width()<945){
+				parentDiv.classed("col-md-3", true)
+			}
+			d3.select("#svg"+ d).classed("hide", false);
+
+			 drawGraphic2(d);
+		 });
+	 }
+
+	 	function plot  (parent, area){
+
+			linevalues =  dvc.data.map(function(d) { return d; }).filter(function(d){ return d.AREACD== area});
+
+			vals = d3.keys(linevalues[0]).filter(function(key) {
+							if ( dvc.essential.fieldsToIgnore.indexOf(key) == -1 ) { return key; }
+						});
+
+			for (i = 0; i < headers.length; i++) {
+
+
+				var values =  dvc.data.map(function(d) { return +d[headers[i]]; }).filter(function(d){ return !isNaN(d)}).sort(d3.ascending);
+			}
+		}
+
+	 	function highlight(area) {
+			var reg=document.getElementById("reg" + area);
+
+
+			var name =d3.select(".reg" + area).attr("data-nm")
+			var val =d3.selectAll(".reg" + area).attr("data_val")
+
+			 d3.selectAll('.pcon')
+					.append("path")
+					.attr("d", d3.select(reg).attr("d"))
+					.attr("id","selected")
+					.attr("class", "arcSelection")
+					.attr("pointer-events", "none")
+					.style("fill", "none")
+					.style("stroke", "#666")
+					.style("stroke-width", 1/dvc.scale);
+
+			details = d3.select("#details")
+			d3.selectAll("#areanm").text(name);
+
+			vals_array =[]
+
+			d3.selectAll(".reg" + area).each(function(d,i){
+				vals_array.push(d3.select(this).attr("data_val"))
+
+			})
+
+			count_array =[];
+			d3.selectAll(".svgTitle").each(function(d,i){
+
+				name = d;
+
+
+				count_data.filter(function(d,j){
+					if(d.AREACD==area){
+
+						if( d[name] != ""){
+							 count_array.push(d[name]);
+						} else {
+							count_array.push("Fewer than 3")
+						}
+						total=d.Total
+							d3.selectAll(".LA_value").text(function(d,j){
+								if(vals_array[j]=="..") {
+									return count_array[j] +" of "+ total +" babies "
+								 } else {
+									return count_array[j] +" of "+ total +" babies ("+ vals_array[j] +"%) "
+								 }
+							})
+					}
+				})
+			})
+
+
+
+
+
+		}
+
+		/* Remove the current selected polygon */
+		function unhighlight() {
+			d3.selectAll('#selected').remove();
+			d3.selectAll("#areanm").text("");
+			d3.selectAll(".LA_value").text("");
+		}
+
+		 function zoomed() {
+
+			  dvc.scale = zoom.scale();
+
+			  d3.selectAll(".pcon").style("stroke-width",(0.5/zoom.scale()))
+				.attr("transform", "translate(" + zoom.translate() + ")scale(" + zoom.scale() + ")");
+
+
+		}
+
+
+	 function zoom_by(factor){
+
+				var scale = zoom.scale(),
+					extent = zoom.scaleExtent(),
+					translate = zoom.translate(),
+					x = translate[0], y = translate[1],
+					target_scale = scale * factor;
+
+				// If we're already at an extent, done
+				if (target_scale === extent[0] || target_scale === extent[1]) { return false; }
+				// If the factor is too much, scale it down to reach the extent exactly
+				var clamped_target_scale = Math.max(extent[0], Math.min(extent[1], target_scale));
+				if (clamped_target_scale != target_scale){
+					target_scale = clamped_target_scale;
+					factor = target_scale / scale;
+				}
+
+				// Center each vector, stretch, then put back
+				x = (x - center[0]) * factor + center[0];
+				y = (y - center[1]) * factor + center[1];
+
+				dvc.scale = zoom.scale();
+				dvc.translate = zoom.translate();
+
+
+				// Enact the zoom immediately
+				zoom.scale(target_scale)
+					.translate([x,y]);
+
+				zoomed();
+
+
+			}
+
+	function zoomcontrols(){
+	 if(listnames.length > 0){
+		zoomcontrols = d3.select("#new").append('div').attr("class","zoom-container zoom-control-zoom zoom-bar zoom-control");
+	} else {
+		zoomcontrols = d3.select("#new").append('div').attr("class","hide zoom-container zoom-control-zoom zoom-bar zoom-control");
+	}
+
+		zoomcontrols.append("a").attr("id","zoom_in").attr("class","zoom-control-zoom-in zoom-bar-part zoom-bar-part-top").attr("title","Zoom in").attr("tabindex",0).text("+").attr("aria-label","Zoom in").attr("role","button")
+		zoomcontrols.append("a").attr("id","zoom_out").attr("class","zoom-control-zoom-out zoom-bar-part zoom-bar-part-bottom").attr("title","Zoom out").attr("tabindex",0).text("-").attr("aria-label","Zoom out").attr("role","button")
+
+	var intervalID;
+
+	d3.selectAll('.zoom-bar-part').on('mousedown', function(){
+
+		d3.event.preventDefault();
+		var factor = (this.id === 'zoom_in') ? 1.1 : 1/1.1;
+		intervalID = setInterval(zoom_by, 40, factor);
+
+	}).on('mouseup', function(){
+		d3.event.preventDefault();
+		clearInterval(intervalID);
+		intervalID = undefined;
+	}).on('keydown',function(evt){
+				if(d3.event.keyCode==13 || d3.event.keyCode==32){
+
+          d3.event.preventDefault();
+          var factor = (this.id === 'zoom_in') ? 1.1 : 1/1.1;
+          intervalID = setInterval(zoom_by, 40, factor);
+
+
+				}
+	}).on('keyup',function(evt){
+
+      d3.event.preventDefault();
+  		clearInterval(intervalID);
+  		intervalID = undefined;
+})
+	}
+
+
+
+
+
+			//then, onload, check to see if the web browser can handle 'inline svg'
+			if (Modernizr.inlinesvg==true)	{
+
+				$("#wrapper").fadeIn(1000);
+
+				// open and load configuration file.
+				d3.json("configall.json", function(error, json)
+				{
+					// strore read in json data from config file as as global dvc. variable ...
+					dvc = json;
+
+					d3.csv(dvc.essential.graphic_data_url, function(error, data) {
+
+						graphic_data = data;
+						dvc.data = graphic_data;
+
+						headers = d3.keys(graphic_data[0]).filter(function(key) {
+							if ( dvc.essential.fieldsToIgnore.indexOf(key) == -1 ) { return key; }// end else ...
+							else { } // end else ...
+						});
+
+						queue()
+							.defer(d3.json, "geography.json")
+							.defer(d3.csv, "datapercent.csv")
+							.await(ready);
+
+							d3.csv("datacount.csv", function(error, data) {
+								count_data = data;
+
+							})
+					})
+				})
+
+			} // end if ... error
+			else
+			{
+				$("#ieMsg").fadeIn(1000);
+
+				//use pym to create iframe containing fallback image (which is set as default)
+				pymChild = new pym.Child();
+				if (pymChild) { pymChild.sendHeight(); }
+
+			}// end else ...
+
+
+			function ready(error, pcon, data) {
+
+				dvc.pcon = pcon;
+				dvc.data = data;
+
+				pymChild = new pym.Child({renderCallback: createStructure});
+
+				var IE = (!! window.ActiveXObject && +(/msie\s(\d+)/i.exec(navigator.userAgent)[1])) || NaN;
+				if (IE != 9) {
+					zoomcontrols();
+				}
+
+			}
+
+
+		</script>
+
+
+  </body>
+</html>
