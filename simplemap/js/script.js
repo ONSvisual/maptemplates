@@ -23,15 +23,12 @@ if(Modernizr.webgl) {
 		firsthover = true;
 
 		//Get column names
-		variables = [];
+		variable = null;
 		for (var column in data[0]) {
 			if (column == 'AREACD') continue;
 			if (column == 'AREANM') continue;
-			variables.push(column);
+			variable = column;
 		}
-
-		a = dvc.varload;
-
 
 		//set title of page
 		//Need to test that this shows up in GA
@@ -124,12 +121,12 @@ if(Modernizr.webgl) {
 			rateById = {};
 			areaById = {};
 
-			data.forEach(function(d) {rateById[d.AREACD] = +d[variables[a]]; areaById[d.AREACD] = d.AREANM}); //change to brackets
+			data.forEach(function(d) {rateById[d.AREACD] = +d[variable]; areaById[d.AREACD] = d.AREANM}); //change to brackets
 
 
 			//Flatten data values and work out breaks
 			if(config.ons.breaks =="jenks" || config.ons.breaks =="equal") {
-				var values =  data.map(function(d) { return +d[variables[a]]; }).filter(function(d) {return !isNaN(d)}).sort(d3.ascending);
+				var values =  data.map(function(d) { return +d[variable]; }).filter(function(d) {return !isNaN(d)}).sort(d3.ascending);
 			};
 
 			if(config.ons.breaks =="jenks") {
@@ -148,7 +145,7 @@ if(Modernizr.webgl) {
 			else if (config.ons.breaks == "equal") {
 				breaks = ss.equalIntervalBreaks(values, dvc.numberBreaks);
 			}
-			else {breaks = config.ons.breaks[a];};
+			else {breaks = config.ons.breaks;};
 
 
 			//round breaks to specified decimal places
@@ -438,7 +435,7 @@ if(Modernizr.webgl) {
 			d3.select('#accessibilityInfo').select('p.visuallyhidden')
 			.text(function(){
 				if (!isNaN(rateById[code])) {
-					return areaById[code]+": "+ displayformat(rateById[code]) +" "+ dvc.varunit[a];
+					return areaById[code]+": "+ displayformat(rateById[code]) +" "+ dvc.varunit;
 				} else {
 					return "Data unavailable";
 				}
@@ -576,7 +573,7 @@ if(Modernizr.webgl) {
 			}
 
 			//label the units
-			d3.select("#keydiv").append("p").attr("id","keyunit").attr('aria-hidden',true).style("margin-top","-10px").style("margin-left","10px").style('font-size','14px').text(dvc.varunit[a]);
+			d3.select("#keydiv").append("p").attr("id","keyunit").attr('aria-hidden',true).style("margin-top","-10px").style("margin-left","10px").style('font-size','14px').text(dvc.varunit);
 
 	} // Ends create key
 
