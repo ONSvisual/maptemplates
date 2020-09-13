@@ -545,17 +545,6 @@
             variables.push(column);
         }
 
-        // var optns = d3.select("#chosensel");
-        //
-        // optns.append("option")
-        //     .attr("value","first")
-        //     .text("");
-        //
-        // optns.selectAll("p").data(variables).enter().append("option")
-        //     .attr("value", function(d,i){ return i})
-        //     .text(function(d){ return d});
-
-        console.log(variables)
 
         var optns = d3.select("#chosensel").append("div").attr("id","sel").append("select")
         				.attr("id","selectmenu")
@@ -596,7 +585,6 @@
            d3.select(".zoom-container").classed("hide", false)
            listnames.push(lastselection);
 
-           console.log(listnames)
 
            d3.selectAll(".search-choice-close").attr("aria-label", function(d,i) {return "close selection - " + variables[listnames[i]]})
 
