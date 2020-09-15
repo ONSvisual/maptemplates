@@ -407,6 +407,8 @@ if(Modernizr.webgl) {
 				if(d3.event.keyCode==13 || d3.event.keyCode==32){
 					console.log('clear')
 					$("#areaselect").val("").trigger('chosen:updated');
+					onLeave();
+					resetZoom();
 				}
 			})
 		}
