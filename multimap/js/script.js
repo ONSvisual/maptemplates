@@ -500,8 +500,7 @@ if(Modernizr.webgl) {
 			d3.select('abbr').on('keypress',function(evt){
 				if(d3.event.keyCode==13 || d3.event.keyCode==32){
 					d3.event.preventDefault();
-					$("#areaselect").val("").trigger('chosen:updated');
-					hideaxisVal();
+					onLeave();
 					resetZoom();
 				}
 			})
