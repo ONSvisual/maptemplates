@@ -501,6 +501,8 @@ if(Modernizr.webgl) {
 				if(d3.event.keyCode==13 || d3.event.keyCode==32){
 					d3.event.preventDefault();
 					$("#areaselect").val("").trigger('chosen:updated');
+					hideaxisVal();
+					resetZoom();
 				}
 			})
 		}
