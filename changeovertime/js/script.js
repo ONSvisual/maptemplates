@@ -436,7 +436,8 @@ if (Modernizr.webgl) {
       //Add click event
       map.on("click", "area", onClick);
 
-
+      // start playing map by default
+      onPlay()
 
 
     }
@@ -498,57 +499,7 @@ if (Modernizr.webgl) {
     }
 
     function setButtons() {
-      d3.select("#play").on("click", function() {
-        if(d3.select("#play").classed('playing')===true){
-          d3.select("#play").classed('playing',false);
-          d3.select("#play").attr('aria-checked',"false");
-
-          d3.select("#playImage").attr("src", "images/play.svg");
-          setButtons();
-          clearInterval(animating);
-          d3.selectAll(".btn--neutral").classed("btn--neutral-disabled", false);
-
-        }else{
-          d3.select("#play").attr('aria-checked',"true");
-          d3.select("#play").classed('playing',true);
-
-
-          animating = setInterval(function() {
-            animate();
-          }, 2000);
-          d3.selectAll(".btn--neutral").classed("btn--neutral-disabled", true);
-          d3.select("#playImage").attr("src", "images/pause.svg");
-
-        }
-
-        // d3.select("#play").attr("aria-checked",d3.select(this).attr("aria-checked")? false : true);
-
-        // dataLayer.push({
-        //   'event': 'playButton',
-        //   'selected': 'play'
-        // });
-
-
-        // d3.select("#play").attr("id", "pause");
-
-        // d3.select("#pause").on("click", function() {
-        //   // dataLayer.push({
-        //   //   'event': 'playButton',
-        //   //   'selected': 'pause'
-        //   // });
-        //
-        //   d3.select("#pause").attr("aria-checked",d3.select(this).attr("aria-checked")? false : true);
-        //
-        //
-        //   d3.select("#pause").attr("id", "play");
-        //   d3.select("#playImage").attr("src", "images/play.svg");
-        //   setButtons();
-        //   clearInterval(animating);
-        //   d3.selectAll(".btn--neutral").classed("btn--neutral-disabled", false);
-        // });
-
-
-      })
+      d3.select("#play").on("click", onPlay)
 
       d3.select("#forward").on("click", animate);
 
@@ -556,64 +507,63 @@ if (Modernizr.webgl) {
 
     }
 
+    function onPlay() {
+      // if playing, pause
+      if(d3.select("#play").classed('playing')===true){
+        d3.select("#play").classed('playing',false);
+        d3.select("#play").attr('aria-checked',"false");
+
+        d3.select("#playImage").attr("src", "images/play.svg");
+        setButtons();
+        clearInterval(animating);
+        d3.selectAll(".btn--neutral").classed("btn--neutral-disabled", false);
+
+      // if paused, play
+      }else{
+        d3.select("#play").attr('aria-checked',"true");
+        d3.select("#play").classed('playing',true);
+
+        animate()
+        animating = setInterval(function() {
+          animate();
+        }, 2000);
+        d3.selectAll(".btn--neutral").classed("btn--neutral-disabled", true);
+        d3.select("#playImage").attr("src", "images/pause.svg");
+
+      }
+    }
+
     function animate() {
 
       if (a < variables.length - 1) {
         a = a + 1;
-        setRates(thisdata);
-        updateLayers();
-        updateTimeLabel();
-
-        if (selected) {
-          setAxisVal($("#areaselect").val());
-          if (mobile == false) {
-            updateChart($("#areaselect").val());
-          }
-        }
       } else {
         a = 0;
-        setRates(thisdata);
-        updateLayers();
-        updateTimeLabel();
-
-        if (selected) {
-          setAxisVal($("#areaselect").val());
-          if (mobile == false) {
-            updateChart($("#areaselect").val());
-          }
-        }
       }
-
+      updateFrame();
     }
 
     function rev_animate() {
 
       if (a > 0) {
         a = a - 1;
-        setRates(thisdata);
-        updateLayers();
-        updateTimeLabel();
-
-        if (selected) {
-          setAxisVal($("#areaselect").val());
-          if (mobile == false) {
-            updateChart($("#areaselect").val());
-          }
-        }
       } else {
         a = variables.length - 1;
-        setRates(data);
-        updateLayers();
-        updateTimeLabel();
+      }
+      updateFrame();
+    }
 
-        if (selected) {
-          setAxisVal($("#areaselect").val());
-          if (mobile == false) {
-            updateChart($("#areaselect").val());
-          }
+    function updateFrame() {
+      setRates(thisdata);
+      updateLayers();
+      updateTimeLabel();
+
+      if (selected) {
+        setAxisVal($("#areaselect").val());
+        if (mobile == false) {
+          updateChart($("#areaselect").val());
         }
       }
-
     }
 
     function updateTimeLabel() {
@@ -934,10 +884,11 @@ if (Modernizr.webgl) {
           });
 
 
-        svgkey.append("g")
+        var gline1 = svgkey.append("g")
           .attr("transform", "translate(45,10)")
           .attr("id", "chartgroup")
-          .append("path")
+
+        gline1.append("path")
           .attr("id", "line1")
           .style("opacity", 1)
           .attr("d", line1(linedata))
@@ -945,6 +896,13 @@ if (Modernizr.webgl) {
           .attr("stroke-width", "2px")
           .attr("fill", "none");
 
+        // gline1.append("circle")
+        //   .attr("id", "currPoint")
+        //   .attr("r", "4px")
+        //   .attr("cy", y(linedata[a][1]))
+        //   .attr("cx", x(dateparse(variables[a])))
+        //   .attr("fill", "#999")
+        //   .attr("stroke", "black")
 
       } else {
 
