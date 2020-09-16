@@ -1,6 +1,6 @@
 {"ons":{
 "maptitle": "Multi Map about life expectancy",
-"varcolour": "YlGnBu",
+"varcolour": ["YlGnBu",["#8c510a","#d8b365","#f6e8c3"],"YlGnBu","YlGnBu"],
 "varlabels": ["House prices","Average Salary","Public sector employment","% with degree"],
 "varload": 2,
 "varunit": ["£'s","£'s per week","per cent" ,"per cent"],
@@ -8,5 +8,5 @@
 "legenddecimals": 0,
 "breaks": ["jenks","equal",[0,20,40,50,60,100],"jenks"],
 "dropticks": true,
-"numberBreaks": 5
+"numberBreaks": [5,3,5,6]
 }}
