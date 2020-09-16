@@ -219,11 +219,11 @@ if(Modernizr.webgl) {
 
 
 			//Flatten data values and work out breaks
-			if(config.ons.breaks =="jenks" || config.ons.breaks =="equal") {
+			if(config.ons.breaks[a] =="jenks" || config.ons.breaks[a] =="equal") {
 				var values =  data.map(function(d) { return +d[variables[a]]; }).filter(function(d) {return !isNaN(d)}).sort(d3.ascending);
 			};
 
-			if(config.ons.breaks =="jenks") {
+			if(config.ons.breaks[a] =="jenks") {
 				breaks = [];
 
 				ss.ckmeans(values, (dvc.numberBreaks)).map(function(cluster,i) {
@@ -236,7 +236,7 @@ if(Modernizr.webgl) {
 					}
 				});
 			}
-			else if (config.ons.breaks == "equal") {
+			else if (config.ons.breaks[a] == "equal") {
 				breaks = ss.equalIntervalBreaks(values, dvc.numberBreaks);
 			}
 			else {breaks = config.ons.breaks[a];};
