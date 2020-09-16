@@ -564,6 +564,15 @@ if (Modernizr.webgl) {
           updateChart($("#areaselect").val());
         }
       }
+      if (mobile == false) {
+        console.log(x(dvc.timepoints[a]))
+        console.log(y(dvc.average[0][a]))
+        d3.select("#currPoint2")
+          .transition()
+          .duration(300)
+          .attr("cx", x(dvc.timepoints[a]))
+          .attr("cy", y(dvc.average[0][a]))
+      }
     }
 
     function updateTimeLabel() {
@@ -896,13 +905,14 @@ if (Modernizr.webgl) {
           .attr("stroke-width", "2px")
           .attr("fill", "none");
 
-        // gline1.append("circle")
-        //   .attr("id", "currPoint")
-        //   .attr("r", "4px")
-        //   .attr("cy", y(linedata[a][1]))
-        //   .attr("cx", x(dateparse(variables[a])))
-        //   .attr("fill", "#999")
-        //   .attr("stroke", "black")
+        gline1.append("circle")
+          .attr("id", "currPoint")
+          .attr("r", "4px")
+          .attr("cy", y(linedata[a][1]))
+          .attr("cx", x(dvc.timepoints[a]))
+          .attr("fill", "#999")
+          .attr("stroke", "black")
+          .style("opacity", 0)
 
       } else {
 
@@ -995,6 +1005,11 @@ if (Modernizr.webgl) {
           .tickValues(dvc.timelineLabelsDT)
           .tickFormat(legendformat);
 
+        // create g2 before g so that its contents sit behind
+        var g2 = svgkey.append("g")
+          .attr("transform", "translate(45,10)")
+          .attr("id", "chartgroup")
+
         var g = svgkey.append("g").attr("id", "vert")
           .attr("transform", "translate(45,10)")
           .attr("font-weight", "600")
@@ -1063,14 +1078,6 @@ if (Modernizr.webgl) {
           .attr("fill", "#000")
           .text("");
 
-        g.append("circle")
-          .attr("id", "currPoint")
-          .attr("r", "4px")
-          .attr("cy", y(10))
-          .attr("cx", x(dvc.timepoints[a]))
-          .attr("fill", "#666")
-          .attr("opacity", 0);
-
         if (typeof navvalue === 'undefined') {
           linedata2 = d3.zip(dvc.timepoints, dvc.average[0]);
         } else {
@@ -1089,16 +1096,22 @@ if (Modernizr.webgl) {
           });
 
 
-        svgkey.append("g")
-          .attr("transform", "translate(45,10)")
-          .attr("id", "chartgroup")
-          .append("path")
+        g2.append("path")
           .attr("id", "line2")
           .style("opacity", 0.3)
           .attr("d", line2(linedata2))
           .attr("stroke", "#666")
           .attr("stroke-width", "2px")
           .attr("fill", "none");
+
+        // add time dot for line2
+        g2.append("circle")
+          .attr("id", "currPoint2")
+          .attr('r',"4px")
+          .attr("cy", y(dvc.average[0][a])) // set start position
+          .attr("cx", x(dvc.timepoints[a]))
+          .attr("fill", "#cacaca")
+          .attr("stroke", "black")
 
         svgkey.append("text")
           .attr("id", "averagelabel")
