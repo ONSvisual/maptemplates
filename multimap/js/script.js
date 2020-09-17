@@ -195,17 +195,25 @@ if(Modernizr.webgl) {
 		// 	.on('click',function(d,i){onchange(i)})
 
 
-		selectgroup = d3.select('#selectnav')
-						.append('select')
-						.attr('class','dropdown')
-						.on('change', onselect)
-						.selectAll("option")
-						.data(dvc.varlabels)
-						.enter()
-						.append('option')
-						.attr("value", function(d,i){return i})
-						.property("selected", function(d, i) {return i===dvc.varload;})
-						.text(function(d,i){return dvc.varlabels[i]});
+			var container = d3.select('#selectnav')
+
+			container.append('label')
+				.attr('for', 'selectlistMobile')
+				.attr('class', 'visuallyhidden')
+				.text('Choose from selection');
+
+			selectgroup = container
+				.append('select')
+				.attr('class', 'dropdown')
+				.attr('id', 'selectlistMobile')
+				.on('change', onselect)
+				.selectAll("option")
+				.data(dvc.varlabels)
+				.enter()
+				.append('option')
+				.attr("value", function (d, i) { return i })
+				.property("selected", function (d, i) { return i === dvc.varload; })
+				.text(function (d, i) { return dvc.varlabels[i] });
 
 
 		}
@@ -756,17 +764,11 @@ if(Modernizr.webgl) {
 			var menuarea = d3.zip(areanames,areacodes).sort(function(a, b){ return d3.ascending(a[0], b[0]); });
 
 			// Build option menu for occupations
-			var container = d3.select("#selectNav").append("div").attr("id", "sel")
-
-			var optns = container.append("select")
+			var optns = d3.select("#selectNav").append("div").attr("id", "sel")
+				.append("select")
 				.attr("id", "areaselect")
 				.attr("style", "width:calc(100% - 6px)")
 				.attr("class", "chosen-select");
-
-			container.append('label')
-				.attr('for', 'areaselect')
-				.attr('class', 'visuallyhidden')
-				.text('Select an area');
 
 			optns.append("option")
 				// .attr("value","first")
