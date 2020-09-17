@@ -195,17 +195,25 @@ if(Modernizr.webgl) {
 		// 	.on('click',function(d,i){onchange(i)})
 
 
-		selectgroup = d3.select('#selectnav')
-						.append('select')
-						.attr('class','dropdown')
-						.on('change', onselect)
-						.selectAll("option")
-						.data(dvc.varlabels)
-						.enter()
-						.append('option')
-						.attr("value", function(d,i){return i})
-						.property("selected", function(d, i) {return i===dvc.varload;})
-						.text(function(d,i){return dvc.varlabels[i]});
+			var container = d3.select('#selectnav')
+
+			container.append('label')
+				.attr('for', 'selectlistMobile')
+				.attr('class', 'visuallyhidden')
+				.text('Choose from selection');
+
+			selectgroup = container
+				.append('select')
+				.attr('class', 'dropdown')
+				.attr('id', 'selectlistMobile')
+				.on('change', onselect)
+				.selectAll("option")
+				.data(dvc.varlabels)
+				.enter()
+				.append('option')
+				.attr("value", function (d, i) { return i })
+				.property("selected", function (d, i) { return i === dvc.varload; })
+				.text(function (d, i) { return dvc.varlabels[i] });
 
 
 		}
@@ -219,15 +227,15 @@ if(Modernizr.webgl) {
 
 
 			//Flatten data values and work out breaks
-			if(config.ons.breaks[a] =="jenks" || config.ons.breaks[a] =="equal") {
+			if(config.ons.breaks =="jenks" || config.ons.breaks =="equal") {
 				var values =  data.map(function(d) { return +d[variables[a]]; }).filter(function(d) {return !isNaN(d)}).sort(d3.ascending);
 			};
 
-			if(config.ons.breaks[a] =="jenks") {
+			if(config.ons.breaks =="jenks") {
 				breaks = [];
 
-				ss.ckmeans(values, (dvc.numberBreaks[a])).map(function(cluster,i) {
-					if(i<dvc.numberBreaks[a]-1) {
+				ss.ckmeans(values, (dvc.numberBreaks)).map(function(cluster,i) {
+					if(i<dvc.numberBreaks-1) {
 						breaks.push(cluster[0]);
 					} else {
 						breaks.push(cluster[0])
@@ -236,8 +244,8 @@ if(Modernizr.webgl) {
 					}
 				});
 			}
-			else if (config.ons.breaks[a] == "equal") {
-				breaks = ss.equalIntervalBreaks(values, dvc.numberBreaks[a]);
+			else if (config.ons.breaks == "equal") {
+				breaks = ss.equalIntervalBreaks(values, dvc.numberBreaks);
 			}
 			else {breaks = config.ons.breaks[a];};
 
@@ -248,20 +256,20 @@ if(Modernizr.webgl) {
 			});
 
 			//work out halfway point (for no data position)
-			midpoint = breaks[0] + ((breaks[dvc.numberBreaks[a]] - breaks[0])/2)
+			midpoint = breaks[0] + ((breaks[dvc.numberBreaks] - breaks[0])/2)
 
 		}
 
 		function setupScales() {
 			//set up d3 color scales
 			//Load colours
-			if(typeof dvc.varcolour[a] === 'string') {
-				color=chroma.scale(dvc.varcolour[a]).colors(dvc.numberBreaks[a])
+			if(typeof dvc.varcolour === 'string') {
+				color=chroma.scale(dvc.varcolour).colors(dvc.numberBreaks)
 				colour=[]
 				color.forEach(function(d){colour.push(chroma(d).darken(0.4).saturate(0.6).hex())})
-				// colour = colorbrewer[dvc.varcolour[a]][dvc.numberBreaks];
+				// colour = colorbrewer[dvc.varcolour][dvc.numberBreaks];
 			} else {
-				colour = dvc.varcolour[a];
+				colour = dvc.varcolour;
 			}
 
 			//set up d3 color scales
@@ -582,7 +590,7 @@ if(Modernizr.webgl) {
 
 			// Set up scales for legend
 			x = d3.scaleLinear()
-				.domain([breaks[0], breaks[dvc.numberBreaks[a]]]) /*range for data*/
+				.domain([breaks[0], breaks[dvc.numberBreaks]]) /*range for data*/
 				.range([0,keywidth-30]); /*range for pixels*/
 
 
@@ -756,10 +764,11 @@ if(Modernizr.webgl) {
 			var menuarea = d3.zip(areanames,areacodes).sort(function(a, b){ return d3.ascending(a[0], b[0]); });
 
 			// Build option menu for occupations
-			var optns = d3.select("#selectNav").append("div").attr("id","sel").append("select")
-				.attr("id","areaselect")
-				.attr("style","width:calc(100% - 6px)")
-				.attr("class","chosen-select");
+			var optns = d3.select("#selectNav").append("div").attr("id", "sel")
+				.append("select")
+				.attr("id", "areaselect")
+				.attr("style", "width:calc(100% - 6px)")
+				.attr("class", "chosen-select");
 
 			optns.append("option")
 				// .attr("value","first")
