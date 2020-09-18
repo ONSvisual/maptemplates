@@ -26,6 +26,7 @@ if (Modernizr.webgl) {
     chartDrawn = false;
     thisdata = data;
     overallwidth = d3.select("body").node().getBoundingClientRect().width;
+    navvalue = 0;
 
     if (overallwidth < 600) {
       mobile = true;
@@ -436,9 +437,10 @@ if (Modernizr.webgl) {
       //Add click event
       map.on("click", "area", onClick);
 
-      // start playing map by default
-      onPlay()
-
+      // start playing map by default. no controls on mobile so don't play.
+      if (mobile == false) {
+        onPlay();
+      }
 
     }
 
@@ -565,13 +567,13 @@ if (Modernizr.webgl) {
         }
       }
       if (mobile == false) {
-        console.log(x(dvc.timepoints[a]))
-        console.log(y(dvc.average[0][a]))
-        d3.select("#currPoint2")
-          .transition()
-          .duration(300)
-          .attr("cx", x(dvc.timepoints[a]))
-          .attr("cy", y(dvc.average[0][a]))
+        if (dvc.average[navvalue] != null) {
+          d3.select("#currPoint2")
+            .transition()
+            .duration(300)
+            .attr("cx", x(dvc.timepoints[a]))
+            .attr("cy", y(dvc.average[navvalue][a]))
+        }
       }
     }
 
@@ -759,7 +761,8 @@ if (Modernizr.webgl) {
             } else {
               return y(midpoint)
             }
-          });
+          })
+          .attr("text-anchor", "middle");
 
         d3.select("#currVal2")
           .text(function() {
@@ -779,7 +782,8 @@ if (Modernizr.webgl) {
             } else {
               return y(midpoint)
             }
-          });
+          })
+          .attr("text-anchor", "middle");
 
         d3.select("#currPoint")
           .text(function() {
@@ -901,7 +905,7 @@ if (Modernizr.webgl) {
           .attr("id", "line1")
           .style("opacity", 1)
           .attr("d", line1(linedata))
-          .attr("stroke", "#666")
+          .attr("stroke", "black")
           .attr("stroke-width", "2px")
           .attr("fill", "none");
 
@@ -910,7 +914,7 @@ if (Modernizr.webgl) {
           .attr("r", "4px")
           .attr("cy", y(linedata[a][1]))
           .attr("cx", x(dvc.timepoints[a]))
-          .attr("fill", "#999")
+          .attr("fill", "#666")
           .attr("stroke", "black")
           .style("opacity", 0)
 
@@ -1003,7 +1007,6 @@ if (Modernizr.webgl) {
         var xAxisTime = d3.axisBottom(x)
           .tickSize(5)
           .tickValues(dvc.timelineLabelsDT)
-          .tickFormat(legendformat);
 
         // create g2 before g so that its contents sit behind
         var g2 = svgkey.append("g")
@@ -1078,54 +1081,61 @@ if (Modernizr.webgl) {
           .attr("fill", "#000")
           .text("");
 
-        if (typeof navvalue === 'undefined') {
-          linedata2 = d3.zip(dvc.timepoints, dvc.average[0]);
-        } else {
-          linedata2 = d3.zip(dvc.timepoints, dvc.average[navvalue]);
-        };
+        varNum = navvalue;
 
-        line2 = d3.line()
-          .defined(function(d) {
-            return !isNaN(d[0]);
-          })
-          .x(function(d) {
-            return x(d[0]);
-          })
-          .y(function(d) {
-            return y(d[1]);
-          });
+        // check there are average values
+        if (dvc.average[varNum] != null) {
+          linedata2 = d3.zip(dvc.timepoints, dvc.average[varNum]);
+
+          line2 = d3.line()
+            .defined(function(d) {
+              return !isNaN(d[0]);
+            })
+            .x(function(d) {
+              return x(d[0]);
+            })
+            .y(function(d) {
+              return y(d[1]);
+            });
 
 
-        g2.append("path")
-          .attr("id", "line2")
-          .style("opacity", 0.3)
-          .attr("d", line2(linedata2))
-          .attr("stroke", "#666")
-          .attr("stroke-width", "2px")
-          .attr("fill", "none");
+            g2.append("path")
+              .attr("id", "line2")
+              .attr("d", line2(linedata2))
+              .attr("stroke", "#aaa")
+              .attr("stroke-width", "2px")
+              .attr("fill", "none");
 
-        // add time dot for line2
-        g2.append("circle")
-          .attr("id", "currPoint2")
-          .attr('r',"4px")
-          .attr("cy", y(dvc.average[0][a])) // set start position
-          .attr("cx", x(dvc.timepoints[a]))
-          .attr("fill", "#cacaca")
-          .attr("stroke", "black")
+            // add time dot for line2
+            g2.append("circle")
+              .attr("id", "currPoint2")
+              .attr('r',"4px")
+              .attr("cy", function() {
+                if (dvc.average[navvalue] != null) {
+                  return y(dvc.average[navvalue][a]) // set start position
+                } else {
+                  return y(0) // placeholder because no data for this variable
+                }
+              })
+              .attr("cx", x(dvc.timepoints[a]))
+              .attr("fill", "#b0b0b0")
+              .attr("stroke", "black")
 
-        svgkey.append("text")
-          .attr("id", "averagelabel")
-          .attr("x", function(d) {
-            return x(linedata2[linedata2.length - 1][0])
-          })
-          .attr("y", function(d) {
-            return y(linedata2[linedata2.length - 1][1])
-          })
-          .attr("font-size", "12px")
-          .style("opacity", 0.3)
-          .attr("fill", "#666")
-          .attr("text-anchor", "middle")
-          .text(dvc.averageText);
+              svgkey.append("text")
+                .attr("id", "averagelabel")
+                .attr("x", function(d) {
+                  return x(linedata2[linedata2.length - 1][0])
+                })
+                .attr("y", function(d) {
+                  return y(linedata2[linedata2.length - 1][1])
+                })
+                .attr("font-size", "12px")
+                .attr("fill", "#757575")
+                .attr("text-anchor", "middle")
+                .text(dvc.averageText);
+
+            }
+
 
       } else {
         // Horizontal legend
