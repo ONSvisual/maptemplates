@@ -573,7 +573,7 @@ if(Modernizr.webgl) {
 				.attr("id", "key")
 				.attr('aria-hidden',true)
 				.attr("width", keywidth)
-				.attr("height",75);
+				.attr("height",80);
 
 
 			var color = d3.scaleThreshold()
@@ -663,7 +663,7 @@ if(Modernizr.webgl) {
 			if(dvc.dropticks) {
 				d3.select("#horiz").selectAll("text").attr("transform",function(d,i){
 						// if there are more that 4 breaks, so > 5 ticks, then drop every other.
-						if(i % 2){return "translate(0,10)"} }
+						if(i % 2){return "translate(0,13)"} }
 				);
 			}
 
