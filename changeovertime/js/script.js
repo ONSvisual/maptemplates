@@ -778,7 +778,7 @@ if (Modernizr.webgl) {
             // if value is greater than threshold, put it below the line
             var yThreshold = ( y.domain()[0] + y.domain()[1] ) * 2 / 3
             if (rateById[code] > yThreshold ) {
-              yAdjustment = 12
+              yAdjustment = 22
             } else { // otherwise it goes above
               yAdjustment = -12
             }
@@ -987,10 +987,10 @@ if (Modernizr.webgl) {
           .attr('aria-hidden',true)
           .attr("id", "key")
           .attr("width", keywidth)
-          .attr("height", keyheight + 70)
+          .attr("height", keyheight + 30)
 
         svgkeyGroup = svgkey.append("g")
-          .attr("transform", "translate(45,50)");
+          .attr("transform", "translate(45,10)");
 
         // Set up scales for legend
         y = d3.scaleLinear()
