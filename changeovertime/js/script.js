@@ -665,7 +665,9 @@ if (Modernizr.webgl) {
       $("#areaselect").val(code).trigger('chosen:updated');
       d3.select('abbr').on('keypress',function(evt){
 				if(d3.event.keyCode==13 || d3.event.keyCode==32){
-					$("#areaselect").val("").trigger('chosen:updated');
+          d3.event.preventDefault();
+					onLeave();
+          resetZoom();
 				}
 			})
     }
