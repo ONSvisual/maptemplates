@@ -755,13 +755,7 @@ if (Modernizr.webgl) {
           .transition()
           .duration(300)
           .attr("x", x(dvc.timepoints[a]))
-          .attr("y", function() {
-            if (!isNaN(rateById[code])) {
-              return y(rateById[code]) - 20
-            } else {
-              return y(midpoint)
-            }
-          })
+          .attr("y", findCurrValy )
           .attr("text-anchor", "middle");
 
         d3.select("#currVal2")
@@ -776,14 +770,23 @@ if (Modernizr.webgl) {
           .transition()
           .duration(300)
           .attr("x", x(dvc.timepoints[a]))
-          .attr("y", function() {
-            if (!isNaN(rateById[code])) {
-              return y(rateById[code]) - 20
-            } else {
-              return y(midpoint)
-            }
-          })
+          .attr("y", findCurrValy)
           .attr("text-anchor", "middle");
+
+        function findCurrValy() {
+          if (!isNaN(rateById[code])) { // if there exists a numerical value
+            // if value is greater than threshold, put it below the line
+            var yThreshold = ( y.domain()[0] + y.domain()[1] ) * 2 / 3
+            if (rateById[code] > yThreshold ) {
+              yAdjustment = 12
+            } else { // otherwise it goes above
+              yAdjustment = -12
+            }
+            return y(rateById[code]) + yAdjustment
+          } else { // if there is no numerical value
+            return y(midpoint)
+          }
+        }
 
         d3.select("#currPoint")
           .text(function() {
@@ -897,9 +900,10 @@ if (Modernizr.webgl) {
           });
 
 
-        var gline1 = svgkey.append("g")
-          .attr("transform", "translate(45,10)")
-          .attr("id", "chartgroup")
+        var gline1 = svgkeyGroup.select("#chartgroup")
+        // var gline1 = svgkeyGroup.append("g")
+          // .attr("transform", "translate(45,10)")
+          // .attr("id", "chartgroup")
 
         gline1.append("path")
           .attr("id", "line1")
@@ -983,7 +987,10 @@ if (Modernizr.webgl) {
           .attr('aria-hidden',true)
           .attr("id", "key")
           .attr("width", keywidth)
-          .attr("height", keyheight + 30);
+          .attr("height", keyheight + 70)
+
+        svgkeyGroup = svgkey.append("g")
+          .attr("transform", "translate(45,50)");
 
         // Set up scales for legend
         y = d3.scaleLinear()
@@ -1009,12 +1016,12 @@ if (Modernizr.webgl) {
           .tickValues(dvc.timelineLabelsDT)
 
         // create g2 before g so that its contents sit behind
-        var g2 = svgkey.append("g")
-          .attr("transform", "translate(45,10)")
+        var g2 = svgkeyGroup.append("g")
+          // .attr("transform", "translate(45,10)")
           .attr("id", "chartgroup")
 
-        var g = svgkey.append("g").attr("id", "vert")
-          .attr("transform", "translate(45,10)")
+        var g = svgkeyGroup.append("g").attr("id", "vert")
+          // .attr("transform", "translate(45,10)")
           .attr("font-weight", "600")
           .style("font-family", "'open sans'")
           .style("font-size", "12px");
@@ -1044,8 +1051,8 @@ if (Modernizr.webgl) {
 
         g.call(yAxis).append("text");
 
-        svgkey.append("g").attr("id", "timeaxis")
-          .attr("transform", "translate(45," + (10 + keyheight) + ")")
+        svgkeyGroup.append("g").attr("id", "timeaxis")
+          .attr("transform", "translate(0," + keyheight + ")")
           .attr("font-weight", "600")
           .style("font-family", "'open sans'")
           .style("font-size", "12px")
@@ -1121,17 +1128,17 @@ if (Modernizr.webgl) {
               .attr("fill", "#b0b0b0")
               .attr("stroke", "black")
 
-              svgkey.append("text")
+              svgkeyGroup.append("text")
                 .attr("id", "averagelabel")
                 .attr("x", function(d) {
                   return x(linedata2[linedata2.length - 1][0])
                 })
                 .attr("y", function(d) {
-                  return y(linedata2[linedata2.length - 1][1])
+                  return y(linedata2[linedata2.length - 1][1]) - 10 // use this number at end to adjust height of label
                 })
                 .attr("font-size", "12px")
                 .attr("fill", "#757575")
-                .attr("text-anchor", "middle")
+                .attr("text-anchor", "end")
                 .text(dvc.averageText);
 
             }
