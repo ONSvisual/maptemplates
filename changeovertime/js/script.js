@@ -1128,7 +1128,7 @@ if (Modernizr.webgl) {
               .attr("fill", "#b0b0b0")
               .attr("stroke", "black")
 
-              svgkeyGroup.append("text")
+            g2.append("text")
                 .attr("id", "averagelabel")
                 .attr("x", function(d) {
                   return x(linedata2[linedata2.length - 1][0])
