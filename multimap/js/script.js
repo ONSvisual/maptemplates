@@ -193,11 +193,15 @@ if(Modernizr.webgl) {
 		// 	.attr("for",function(d,i){return "button" + i})
 		// 	.text(function(d,i){return dvc.varlabels[i]})
 		// 	.on('click',function(d,i){onchange(i)})
-
+		d3.select('#selectnav').append('label')
+		.attr('for','dropdown')
+		.attr('class','visuallyhidden')
+		.text('Choose a variable')
 
 		selectgroup = d3.select('#selectnav')
 						.append('select')
 						.attr('class','dropdown')
+						.attr('id','dropdown')
 						.on('change', onselect)
 						.selectAll("option")
 						.data(dvc.varlabels)
