@@ -2,15 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta http-equiv="content-type" content="text/html" />
   <title>Side by side map</title>
-  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-
+  <meta name='viewport' content='initial-scale=1' />
   <link href='css/mapbox-gl.css' rel='stylesheet'/>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
   <link href="css/chosen.css" rel="stylesheet" />
   <link rel="stylesheet" type="text/css" href="css/bootstrap-grid.css">
-  <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-compare/v0.1.0/mapbox-gl-compare.css' type='text/css' />
+  <link rel='stylesheet' href='css/mapbox-gl-compare.css' type='text/css'/>
 
 <style>
     body {
@@ -21,7 +20,8 @@
 		margin: 0px auto;
 		display:table;
     /* overflow: hidden; */
-    width:100%
+    width:100%;
+    height:700px;
 	}
 
 	#header{
@@ -31,11 +31,11 @@
 
   #yearlabel, #yearlabel2 {
 		font-size:24px;
-		height:40px;
+		/* height:40px;
 		pointer-events:none;
 		line-height: 40px;
 		text-align:center;
-    vertical-align: middle;
+    vertical-align: middle; */
 	}
 
 
@@ -49,6 +49,18 @@
     bottom: 0;
     height: 500px;
     width: 100%;
+  }
+
+  #sidebyside{
+    height:500px;
+  }
+
+  .tick text{
+    font-size: 14px;
+  }
+
+  #labels{
+    margin-top:20px;
   }
 
 	@media (min-width: 599px) {
@@ -93,15 +105,25 @@
     #mapRight{
       left: 50%;
     }
+
+    #yearlabel{
+      float:left;
+    }
+
+    #yearlabel2{
+      text-align: right;
+      margin-top:90px;
+    }
+
 	}
 
-	@media (max-width: 600px) {
-
+	@media (max-width: 599px) {
+/* mobile view */
 		 body {
 			height: 620px;
 		}
 
-	  #map #mapRight{
+	  #map, #mapRight{
 			top:80px;
 			margin-top:120px;
 		}
@@ -124,7 +146,7 @@
 
 		#keydiv {
 			position:absolute;
-		  top:40px;
+		  top:50px;
 			left:0px;
 			width:100%;
 			height:110px;
@@ -133,7 +155,9 @@
 		}
 
     #yearlabel, #yearlabel2 {
+      position:absolute;
       font-size:16px;
+      margin-top: 150px;
       /* height:20px; */
       text-align:left;
       vertical-align: top;
@@ -141,6 +165,7 @@
 
     #yearlabel2 {
       font-size:16px;
+      right:0;
       /* height:20px; */
       text-align:right;
     }
@@ -154,101 +179,16 @@
 			display:none !important;
 		}
 
-    .mapboxgl-ctrl-top-right{
-      margin-top: 150px;
+    /* .mapboxgl-ctrl-top-right{
+      margin-top: 50px;
+    } */
+
+    .mapboxgl-compare{
+      margin-top:180px;
+      height:500px;
     }
 	}
 
-
-  /*  SELECT DROPBOX */
-  .select2-dropdown {
-    border: 1px solid #FF9933;
-  }
-
-  .select2-search__field{
-    border: 1px solid #FF9933!important;
-  }
-
-  .select2-container--default .select2-selection--single {
-      background-color: #EDEDED!important;
-      border: 1px #FF9933 !important;
-  }
-
-  .select2-container .select2-selection--single {
-      height: 36px!important;
-  }
-
-  .select2-container--default .select2-selection--single .select2-selection__placeholder {
-      color: #4A494B!important;
-  }
-
-  .select2-container--default .select2-selection--single .select2-selection__rendered {
-      line-height: 36px!important;
-  }
-
-  .select2-dropdown.select2-dropdown--below{
-        /* width: 148px !important; */
-  }
-
-  .select2-container--default .select2-selection--single{
-      /* padding:6px; */
-      /* height: 37px; */
-      /* width: 148px; */
-      /* font-size: 1.2em; */
-      position: relative;
-  }
-
-  .select2-container--default .select2-selection--single .select2-selection__arrow {
-      background-image: -khtml-gradient(linear, left top, left bottom, from(#3b7a9e), to(#3b7a9e));
-      background-image: -moz-linear-gradient(top, #3b7a9e, #3b7a9e);
-      background-image: -ms-linear-gradient(top, #3b7a9e, #3b7a9e);
-      background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #3b7a9e), color-stop(100%, #3b7a9e));
-      background-image: -webkit-linear-gradient(top, #3b7a9e, #3b7a9e);
-      background-image: -o-linear-gradient(top, #3b7a9e, #3b7a9e);
-      background-image: linear-gradient(#3b7a9e, #3b7a9e);
-      /* width: 40px; */
-      /* color: #fff; */
-      /* font-size: 1.3em; */
-      padding: 0px 6px;
-      /* height: 27px; */
-      position: absolute;
-      top: 0px;
-      right: 0px;
-      /* width: 20px; */
-  }
-
-  /*.select2-container--default .select2-selection--single .select2-selection__rendered {
-    line-height: 25px !important;
-  }*/
-
-  .select2-selection__arrow b {
-    border-color: white transparent transparent transparent !important;
-    border-width: 7px 6px 0px 6px !important;
-    left: 48% !important;
-    top: 45% !important;
-  }
-
-  .select2-selection__clear {
-    padding-right: 15px !important;
-    color: #3b7a9e !important;
-    font-size: 25px !important;
-    line-height: 24px !important;
-
-  }
-
-
-  .select2-container--default .select2-selection--single .select2-selection__arrow {
-      height: 36px!important;
-      width: 30px!important;
-  }
-
-  .select2-selection__clear {
-      padding-right: 25px !important;
-      color: #3b7a9e !important;
-      font-size: 36px !important;
-      line-height: 35px !important;
-  }
-  /*  SELECT DROPBOX END */
 
 </style>
 
@@ -259,9 +199,14 @@
 </noscript>
 <div id='keydiv'></div>
     <div id='selectNav'></div>
-    <div id="map"><div id="yearlabel"></div></div>
-    <div id="mapRight"><div id="yearlabel2"></div></div>
-
+    <div id="labels">
+      <div id="yearlabel"></div>
+      <div id="yearlabel2"></div>
+    </div>
+    <div id="sidebyside">
+      <div id="map" class="map"></div>
+      <div id="mapRight" class="map"></div>
+    </div>
 
 <script src="https://cdn.ons.gov.uk/vendor/d3/4.2.7/d3.min.js"></script>
 <script src="js/topojson.v2.min.js"></script>
@@ -277,7 +222,8 @@
 
 
 <script src='js/mapbox-gl.js'></script>
-<script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-compare/v0.1.0/mapbox-gl-compare.js'></script>
+<script src='js/mapbox-gl-compare.js'></script>
+<script src='js/mapbox-gl-sync-move.js'></script>
 <script src='js/turf.min.js'></script>
 <script src="js/script.js"></script>
 

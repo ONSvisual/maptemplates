@@ -15,8 +15,6 @@ if(Modernizr.webgl) {
 
 
 	function ready (error, data, config, geog){
-
-
 		// create blank svg to get correct height
 		d3.select("body")
 			.append('svg')
@@ -70,8 +68,6 @@ if(Modernizr.webgl) {
 		  attributionControl: false
 		});
 
-
-
 		//add fullscreen option
 		// map.addControl(new mapboxgl.FullscreenControl());
 
@@ -110,7 +106,6 @@ if(Modernizr.webgl) {
 			compact: true
 		}));
 
-
 		//get column names and store them in an array
 		var columnNames = [];
 
@@ -129,7 +124,6 @@ if(Modernizr.webgl) {
 				dataByColumn[columnNames[i]] = +d[columnNames[i]]
 			}
 		})
-
 
 		var values ={}
 		allvalues = [];
@@ -160,7 +154,6 @@ if(Modernizr.webgl) {
 			breaks = ss.equalIntervalBreaks(allvalues, dvc.numberBreaks);
 		}
 		else {breaks = config.ons.breaks;};
-
 
 		//round breaks to specified decimal places
 		breaks = breaks.map(function(each_element){
@@ -196,9 +189,6 @@ if(Modernizr.webgl) {
 		//Work out extend of loaded geography file so we can set map to fit total extent
 		bounds = turf.extent(areas);
 
-
-
-
 		//and add properties to the geojson based on the csv file we've read in
 		areas.features.map(function(d,i) {
 			d.properties.fill = color(dataById[d.properties.AREACD][dvc.varname1])
@@ -206,9 +196,7 @@ if(Modernizr.webgl) {
 		});
 
 		map.on('load', function() {
-
 			map.addSource('area', { 'type': 'geojson', 'data': areas });
-
 			  map.addLayer({
 				  'id': 'area',
 				  'type': 'fill',
@@ -349,48 +337,50 @@ if(Modernizr.webgl) {
 
 
 
-		if(parseInt(d3.select('body').style("width"))<600){
-	  new mapboxgl.Compare(map, mapRight);
-		d3.select("#map").style("top","150px")
-		d3.select("#mapRight").style("top","150px")
+	if(parseInt(d3.select('body').style("width"))<=598){
+	  new mapboxgl.Compare(map, mapRight,"#sidebyside",{orientation:"vertical"});
+		// d3.select("#map").style("top","50px")
+		// d3.select("#mapRight").style("top","50px")
 	}else{
 
 
 		//from http://bl.ocks.org/boeric/f6ddea14600dc5093506
 		// coordination between the two maps
-			var disable = false;
-			map.on("move", function() {
-			  if (!disable) {
-			    var center = map.getCenter();
-			    var zoom = map.getZoom();
-			    var pitch = map.getPitch();
-			    var bearing = map.getBearing();
 
-			    disable = true;
-			    mapRight.setCenter(center);
-			    mapRight.setZoom(zoom);
-			    mapRight.setPitch(pitch);
-			    mapRight.setBearing(bearing);
-			    disable = false;
-			  }
-			})
-
-			mapRight.on("move", function() {
-			  if (!disable) {
-			    var center = mapRight.getCenter();
-			    var zoom = mapRight.getZoom();
-			    var pitch = mapRight.getPitch();
-			    var bearing = mapRight.getBearing();
-
-			    disable = true;
-			    map.setCenter(center);
-			    map.setZoom(zoom);
-			    map.setPitch(pitch);
-			    map.setBearing(bearing);
-			    disable = false;
-			  }
-			})
-d3.select("#mapRight").style("top","130px")
+		syncMaps(map, mapRight);
+			// var disable = false;
+			// map.on("move", function() {
+			//   if (!disable) {
+			//     var center = map.getCenter();
+			//     var zoom = map.getZoom();
+			//     var pitch = map.getPitch();
+			//     var bearing = map.getBearing();
+			//
+			//     disable = true;
+			//     mapRight.setCenter(center);
+			//     mapRight.setZoom(zoom);
+			//     mapRight.setPitch(pitch);
+			//     mapRight.setBearing(bearing);
+			//     disable = false;
+			//   }
+			// })
+			//
+			// mapRight.on("move", function() {
+			//   if (!disable) {
+			//     var center = mapRight.getCenter();
+			//     var zoom = mapRight.getZoom();
+			//     var pitch = mapRight.getPitch();
+			//     var bearing = mapRight.getBearing();
+			//
+			//     disable = true;
+			//     map.setCenter(center);
+			//     map.setZoom(zoom);
+			//     map.setPitch(pitch);
+			//     map.setBearing(bearing);
+			//     disable = false;
+			//   }
+			// })
+			d3.select("#mapRight").style("top","130px")
 	}
 
 
@@ -488,6 +478,13 @@ d3.select("#mapRight").style("top","130px")
 
 		function selectArea(code) {
 			$("#areaselect").val(code).trigger("chosen:updated");
+			d3.select('abbr').on('keypress',function(evt){
+				if(d3.event.keyCode==13 || d3.event.keyCode==32){
+					d3.event.preventDefault();
+					onLeave();
+					resetZoom();
+				}
+			})
 		}
 
 		function zoomToArea(code) {
@@ -564,7 +561,7 @@ d3.select("#mapRight").style("top","130px")
 				.append("svg")
 				.attr("id", "key")
 				.attr("width", "100%")
-				.attr("height",90);
+				.attr("height",100);
 
 
 			var color = d3.scaleThreshold()
@@ -574,7 +571,7 @@ d3.select("#mapRight").style("top","130px")
 			// Set up scales for legend
 			x = d3.scaleLinear()
 				.domain([breaks[0], breaks[dvc.numberBreaks]]) /*range for data*/
-				.range([0,keywidth-160]); /*range for pixels*/
+				.range([0,keywidth-110]); /*range for pixels*/
 
 
 			var xAxis = d3.axisBottom(x)
@@ -583,7 +580,7 @@ d3.select("#mapRight").style("top","130px")
 				.tickFormat(legendformat);
 
 			var g2 = svgkey.append("g").attr("id","horiz")
-				.attr("transform", "translate(65,50)");
+				.attr("transform", "translate(15,50)");
 
 
 			keyhor = d3.select("#horiz");
@@ -675,7 +672,7 @@ d3.select("#mapRight").style("top","130px")
 			if(dvc.dropticks) {
 				d3.select("#xticks").selectAll("text").attr("transform",function(d,i){
 						// if there are more that 4 breaks, so > 5 ticks, then drop every other.
-						if(i % 2){return "translate(0,10)"} }
+						if(i % 2){return "translate(0,13)"} }
 				);
 			}
 
@@ -803,6 +800,10 @@ d3.select("#mapRight").style("top","130px")
 					}
 
 			});
+
+			d3.select('input.chosen-search-input').attr('id','chosensearchinput')
+			d3.select('div.chosen-search').insert('label','input.chosen-search-input').attr('class','visuallyhidden').attr('for','chosensearchinput').html("Type to select an area")
+
 
 	};//end of selectlist
 
