@@ -3,7 +3,7 @@ var graphic = $('#graphic');
 var footer = $("#footer");
 var dAccessMsg = d3.select('#accessibilityInfo').select('p')
 // var height;
-var dvc = {}; // global object variable to contain all variables prefixed with 'dvc.'	
+var dvc = {}; // global object variable to contain all variables prefixed with 'dvc.'
 var pymChild = null;
 var graphHeight;
 var headers = [];
@@ -99,11 +99,11 @@ function drawGraphic() {
         .translate([graph_unitWidth / 2, graph_unitHeight / 2]);
 
 
-    // Set up a scaling variable effectively tells D3 how to interpret your lat - long coordinates into pixel positions.	
+    // Set up a scaling variable effectively tells D3 how to interpret your lat - long coordinates into pixel positions.
     var path = d3.geo.path().projection(projection);
 
 
-    // initial SM graph count variable (k = SM number being created	)		
+    // initial SM graph count variable (k = SM number being created	)
     var k = 0;
     var l = 0;
     var graphLines = {};
@@ -112,12 +112,12 @@ function drawGraphic() {
 
 
 
-    // for each row ... 				
+    // for each row ...
     for (var i = 1; i <= parseInt(numberRows); i++) {
-        // for each column ... 				
+        // for each column ...
         for (var j = 1; j <= parseInt(numberColumns); j++) {
 
-            // if graph panel [to draw] is greater than for which data is provided in data files ... 
+            // if graph panel [to draw] is greater than for which data is provided in data files ...
             if (headers[k] === undefined) { continue; }
 
             // create and append small SVG panel for each individual graph, k
@@ -151,7 +151,7 @@ function drawGraphic() {
             createKey(k, graph_unitWidth, graph_unitHeight, margin, innerPadding);
 
             // Use the normal d3 pattern - select all path elements (even though they haven't yet been created)
-            // Then append a path element for every bit of data you've just binded.				
+            // Then append a path element for every bit of data you've just binded.
             g = svg.append("g").attr("id", "group_" + k);
 
             zoomed();
@@ -244,19 +244,14 @@ function drawGraphic() {
 
     center = [$("#svg0").width() / 2, $("#svg0").height() / 2];
 
-    d3.select("#footer").append("p")
-        .text("Source: ")
-        .append("a")
-        .attr("href", dvc.ons.sourceUrl)
-        .attr("target", "_blank")
-        .attr("aria-label", "Follow this link to read the full report")
-        .html(dvc.ons.visualisationTitle + " - Office of National Statistics ");
+    d3.select("#footer").append("h4")
+        .text("Source: "+dvc.ons.source)
 
 
     d3.selectAll(".graphUnitSVGs").call(zoom)
         .call(zoom.event);
 
-    //use pym to calculate chart dimensions	
+    //use pym to calculate chart dimensions
     setTimeout(function () {
         if (pymChild) {
             pymChild.sendHeight();
@@ -471,11 +466,11 @@ if (Modernizr.svg) {
     /**
      * @TODO move this to to queue/ready callback?
      */
-    // open and load configuration file. 					
+    // open and load configuration file.
     d3.json("./data/config.json", function (error, json) {
-        // store read in json data from config file as as global dvc. variable ...	
+        // store read in json data from config file as as global dvc. variable ...
         dvc = json;
-        //set title of page 
+        //set title of page
         document.title = dvc.ons.visualisationTitle;
         d3.csv(dvc.ons.graphic_data_url, function (error, data) {
 
@@ -483,8 +478,8 @@ if (Modernizr.svg) {
             dvc.data = graphic_data;
 
             headers = d3.keys(graphic_data[0]).filter(function (key) {
-                if (dvc.ons.fieldsToIgnore.indexOf(key) == -1) { return key; }// end else ... 
-                else { } // end else ... 
+                if (dvc.ons.fieldsToIgnore.indexOf(key) == -1) { return key; }// end else ...
+                else { } // end else ...
             });
 
             d3.queue()
@@ -613,7 +608,7 @@ function createKey(k, graph_unitWidth, graph_unitHeight, margin, innerPadding) {
         .tickSize(8)
         .tickFormat(function (d, i) {
 
-            //	if (i==0 || i==4 || i==5){ 
+            //	if (i==0 || i==4 || i==5){
             return numFormat(d)// }
 
         })
@@ -654,7 +649,7 @@ function createKey(k, graph_unitWidth, graph_unitHeight, margin, innerPadding) {
     }, 1500)
 
 
-}// end function createKey() 
+}// end function createKey()
 
 function announceUpdate(area) {
     var linevalues = dvc.data.map(function (d) { return d; }).filter(function (d) { return d.AREACD == area });
@@ -811,4 +806,4 @@ $('.coll').on('click', function () {
     $('#intro').toggle('slide');
     $('#collapse').toggle();
     $('#expand').toggle();
-});		
+});
