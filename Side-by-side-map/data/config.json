@@ -9,6 +9,8 @@
 "numberBreaks": 5,
 "varname1":"Students",
 "varname2":"Workers",
+"legendLabel1":"Students: ",
+"legendLabel2":"Workers: ",
 "mapLeftLabel":"Students",
 "mapRightLabel":"Workers"
 }}

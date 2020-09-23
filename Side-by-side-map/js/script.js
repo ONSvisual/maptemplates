@@ -516,7 +516,7 @@ if(Modernizr.webgl) {
 
 
 			d3.select("#currVal")
-				.text(function(){if(!isNaN(dataById[code][dvc.varname1]))  {return "Students: "+displayformat(dataById[code][dvc.varname1])} else {return "Data unavailable"}})
+				.text(function(){if(!isNaN(dataById[code][dvc.varname1]))  {return dvc.legendLabel1+displayformat(dataById[code][dvc.varname1])} else {return "Data unavailable"}})
 				.style("opacity",1)
 				.transition()
 				.duration(400)
@@ -531,7 +531,7 @@ if(Modernizr.webgl) {
 
 
 			d3.select("#currValRight")
-				.text(function(){if(!isNaN(dataById[code][dvc.varname2]))  {return "Workers: "+displayformat(dataById[code][dvc.varname2])} else {return "Data unavailable"}})
+				.text(function(){if(!isNaN(dataById[code][dvc.varname2]))  {return dvc.legendLabel2+displayformat(dataById[code][dvc.varname2])} else {return "Data unavailable"}})
 				.style("opacity",1)
 				.transition()
 				.duration(400)
