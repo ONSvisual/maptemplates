@@ -30,12 +30,6 @@ if(Modernizr.webgl) {
 		d3.select("#yearlabel2").text(dvc.mapRightLabel)
 
 
-		//get column name
-		for (var column in data[0]) {
-			if (column == 'AREACD') continue;
-			if (column == 'AREANM') continue;
-		}
-
 		//set title of page
 		//Need to test that this shows up in GA
 		document.title = dvc.maptitle;
@@ -537,6 +531,9 @@ if(Modernizr.webgl) {
 				.duration(400)
 				.attr("x", function(){if(!isNaN(dataById[code][dvc.varname2])) {return x(dataById[code][dvc.varname2])} else{return x(midpoint)}});
 
+			areaname=data.filter(function(d){return d.AREACD==code})[0].AREANM
+						d3.select("#accessibilityinfo").select('p').text("For "+areaname+" "+dvc.mapLeftLabel+" is "+displayformat(dataById[code][dvc.varname1])+". "+dvc.mapRightLabel+"is "+displayformat(dataById[code][dvc.varname2])+".")
+
 		}
 
 		function hideaxisVal() {
@@ -702,8 +699,6 @@ if(Modernizr.webgl) {
 
 
 	function exitHandler() {
-
-		console.log("shrink");
 			if (document.webkitIsFullScreen === false)
 			{
 				shrinkbody();

@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="content-type" content="text/html" />
   <title>Side by side map</title>
   <meta name='viewport' content='initial-scale=1' />
   <link href='css/mapbox-gl.css' rel='stylesheet'/>
@@ -197,8 +196,9 @@
 <noscript>
 <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MBCBVQS" height="0" width="0" style="display:none;visibility:hidden"></iframe>
 </noscript>
-<div id='keydiv'></div>
+<div id='keydiv' aria-hidden="true"></div>
     <div id='selectNav'></div>
+    <div id='accessibilityinfo' class='visuallyhidden'><p aria-live="assertive"></p></div>
     <div id="labels">
       <div id="yearlabel"></div>
       <div id="yearlabel2"></div>
