@@ -187,7 +187,7 @@ img {
   margin-top:0!important
 }
 
-@media max-width:767px {
+@media (max-width:767px) {
     #ChartFooterDiv, #footer h4{
       line-height: 24px;
       margin: 16px 0 16px 0;
