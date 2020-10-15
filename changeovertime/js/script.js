@@ -437,11 +437,6 @@ if (Modernizr.webgl) {
       //Add click event
       map.on("click", "area", onClick);
 
-      // start playing map by default. no controls on mobile so don't play.
-      if (mobile == false) {
-        onPlay();
-      }
-
     }
 
 
