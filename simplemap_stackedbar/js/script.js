@@ -971,6 +971,10 @@ if(Modernizr.webgl) {
 				//add source
 				d3.select("#source").text("Source: " + dvc.bar.sourceText);
 
+				// Adding a missing (visuallyhidden) label to the search input
+				d3.select('input.chosen-search-input').attr('id','chosensearchinput')
+				d3.select('div.chosen-search').insert('label','input.chosen-search-input').attr('class','visuallyhidden').attr('for','chosensearchinput').html("Type to select an area")
+
 
 				if (pymChild) {
 					pymChild.sendHeight();
