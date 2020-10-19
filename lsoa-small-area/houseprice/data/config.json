@@ -1,0 +1,10 @@
+{"ons":{
+"maptitle": "Median house price",
+"varcolour": ["#7FCDBB", "#7FCDBB", "#41B6C4", "#1D91C0", "#225EA8", "#0C2C84"],
+"varunit": "Median house price",
+"displaydecimals": 0,
+"legenddecimals": 0,
+"breaks": [25000,150000,232500,350000,925000,5000000],
+"dropticks": true,
+"numberBreaks": 5
+}}

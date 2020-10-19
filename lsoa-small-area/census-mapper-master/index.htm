@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset='utf-8' />
+  <title>Census Mapping from Nomis API</title>
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.0/css/bootstrap.min.css" />
+  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.css' rel='stylesheet' />
+  <style>
+    #map {
+      height: 100vh;
+      width: 100vw;
+    }
+
+    #nav {
+      position: absolute;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    #search {
+      pointer-events: all;
+      background-color: white;
+    }
+
+    #loader {
+      position: absolute;
+      width: 100vw;
+      height: 100vh;
+      background-color: #ffffff77;
+      z-index: 90;
+    }
+    
+    .mapboxgl-popup-content {
+      padding: 3px 6px !important;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="nav" class="container-fluid">
+    <div class="row">
+      <div id="search" class="col-sm-9 col-md-6 col-lg-5 col-xl-4 p-3 mr-auto">
+        <p class="font-weight-bold h4">Types of accommodation, 2011</p>
+        <div class="form-row mt-2">
+          <div class="col-7">
+            <select id="selector" class="form-control"></select>
+          </div>
+          <div class="col-5">
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="nomis" />
+              <label class="form-check-label" for="nomis">Use Nomis API</label>
+            </div>
+          </div>
+        </div>
+        <div id="legend" class="row px-3 pt-3"></div>
+      </div>
+    </div>
+  </div>
+  <div id="loader" class="justify-content-center" style="display: flex;">
+    <div class="spinner-border text-secondary m-auto" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
+  <div id="map"></div>
+  <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.js'></script>
+  <script src='./js/app.js'></script>
+</body>
+
+</html>
