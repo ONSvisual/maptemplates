@@ -12,8 +12,7 @@ if (Modernizr.webgl) {
     .await(ready);
 
   function ready(error, config, data) {
-
-    // function ready (error, data, config, geog){
+    json = csv2json(data)
 
     //Set up global variables
     dvc = config.ons;
@@ -69,42 +68,8 @@ if (Modernizr.webgl) {
 
     // if breaks is jenks or equal
     // get all the numbers, filter out the blanks, and then sort them
-    if (!Array.isArray(dvc.breaks)) {
-      values = data.map(function(d) {
-        return +d.value
-      }).filter(function(d) {
-        if (!isNaN(d)) {
-          return d;
-        };
-      }).sort(d3.ascending);
-    }
 
-
-    if (config.ons.breaks == "jenks") {
-      breaks = [];
-
-      ss.ckmeans(values, (dvc.numberBreaks)).map(function(cluster, i) {
-        if (i < dvc.numberBreaks - 1) {
-          breaks.push(cluster[0]);
-        } else {
-          breaks.push(cluster[0])
-          //if the last cluster take the last max value
-          breaks.push(cluster[cluster.length - 1]);
-        }
-      });
-    } else if (dvc.breaks == "equal") {
-      breaks = ss.equalIntervalBreaks(values, dvc.numberBreaks);
-    } else {
-      breaks = dvc.breaks;
-    };
-
-    //round breaks to specified decimal places
-    breaks = breaks.map(function(each_element) {
-      return Number(each_element.toFixed(dvc.legenddecimals));
-    });
-
-    //work out halfway point (for no data position)
-    midpoint = breaks[0] + ((breaks[dvc.numberBreaks] - breaks[0]) / 2)
+    breaks = generateBreaks(data,dvc);
 
     //Load colours
     if (typeof dvc.varcolour === 'string') {
@@ -119,7 +84,7 @@ if (Modernizr.webgl) {
       .range(colour);
 
     //now ranges are set we can call draw the key
-    createKey(config);
+    // createKey(config);
 
     map.on('load', function() {
 
@@ -235,7 +200,7 @@ if (Modernizr.webgl) {
 			  type: 'vector',
 			  "tiles": ['https://cdn.ons.gov.uk/maptiles/t24/tiles/{z}/{x}/{y}.pbf'],
 			  "promoteId": {
-			    "areacd": "houseprices"
+			    "houseprices": "lsoa11cd"
 			  },
 			  "buffer": 0,
 			  "maxzoom": 13,
@@ -248,10 +213,26 @@ if (Modernizr.webgl) {
 			  source: 'building-tiles',
 			  'source-layer': 'houseprices',
 			  paint: {
-			    'fill-color': "#aaaaaa",
+			    'fill-color': ['case',
+            ['!=', ['feature-state', 'color'], null],
+            ['feature-state', 'color'],
+            'rgba(255, 255, 255, 0)'
+          ],
 			    'fill-opacity': 0.8
 			  }
 			}, 'place_suburb');
+
+      for(var key in json){
+        map.setFeatureState({
+          source: 'building-tiles',
+          sourceLayer: 'houseprices',
+          id: key
+        },{
+          value: json[key],
+          color: "#abcdef"
+        });
+      }
+
 
       // map.addLayer({
       //   "id": "income",
@@ -357,84 +338,72 @@ if (Modernizr.webgl) {
       // map.on('click', 'lsoa-outlines', onClick);
       // map.on('click', 'lsoa-outlines2', onClick);
       //get location on click
-      d3.select(".mapboxgl-ctrl-geolocate").on("click", geolocate);
+      // d3.select(".mapboxgl-ctrl-geolocate").on("click", geolocate);
 
 			map.on('click', function(e){console.log(map.queryRenderedFeatures(e.x,e.y))})
-    })
-
-    $(".search-control").click(function() {
-      $(".search-control").val('')
-    })
-
-    d3.select(".search-control").on("keydown", function() {
-      if (d3.event.keyCode === 13) {
-        event.preventDefault();
-        event.stopPropagation();
-
-        myValue = $(".search-control").val();
-
-
-        getCodes(myValue);
-        pymChild.sendHeight();
-
-      }
-    })
-
-    $("#submitPost").click(function(event) {
-
-      event.preventDefault();
-      event.stopPropagation();
-
-      myValue = $(".search-control").val();
-
-
-      getCodes(myValue);
-      pymChild.sendHeight();
     });
 
-    function onMove(e) {
-      newlsoa11cd = e.features[0].properties.lsoa11cd;
-      if (firsthover) {
-        dataLayer.push({
-          'event': 'mapHoverSelect',
-          'selected': newlsoa11cd
-        })
+    // $(".search-control").click(function() {
+    //   $(".search-control").val('')
+    // })
 
-        firsthover = false;
-      }
+    // d3.select(".search-control").on("keydown", function() {
+    //   if (d3.event.keyCode === 13 || d3.event.keyCode===32) {
+    //     event.preventDefault();
+    //     event.stopPropagation();
+    //
+    //     myValue = $(".search-control").val();
+    //
+    //     getCodes(myValue);
+    //     pymChild.sendHeight();
+    //
+    //   }
+    // });
 
+    // $("#submitPost").click(function(event) {
+    //   event.preventDefault();
+    //   event.stopPropagation();
+    //   myValue = $(".search-control").val();
+    //   getCodes(myValue);
+    //   pymChild.sendHeight();
+    // });
 
-      if (newlsoa11cd != oldlsoa11cd) {
-        oldlsoa11cd = e.features[0].properties.lsoa11cd;
-
-        if (map.getZoom() <= 9) {
-          map.setFilter("lsoa-outlines2-hover", ["==", "lsoa11cd", e.features[0].properties.lsoa11cd]);
-          var features = map.queryRenderedFeatures(e.point, {
-            layers: ['lsoa-outlines2']
-          });
-        } else {
-          map.setFilter("lsoa-outlines-hover", ["==", "lsoa11cd", e.features[0].properties.lsoa11cd]);
-          var features = map.queryRenderedFeatures(e.point, {
-            layers: ['lsoa-outlines']
-          });
-        }
-
-        // selectArea(e.features[0].properties.lsoa11cd);
-
-
-
-        if (features.length != 0) {
-
-          setAxisVal(features[0].properties.lsoa11nm, features[0].properties["houseprice"]);
-        }
-        //setAxisVal(e.features[0].properties.lsoa11nm, e.features[0].properties["houseprice"]);
-      }
-    };
+    // function onMove(e) {
+    //   newlsoa11cd = e.features[0].properties.lsoa11cd;
+    //   if (firsthover) {
+    //     dataLayer.push({
+    //       'event': 'mapHoverSelect',
+    //       'selected': newlsoa11cd
+    //     })
+    //     firsthover = false;
+    //   }
+    //
+    //
+    //   if (newlsoa11cd != oldlsoa11cd) {
+    //     oldlsoa11cd = e.features[0].properties.lsoa11cd;
+    //     if (map.getZoom() <= 9) {
+    //       map.setFilter("lsoa-outlines2-hover", ["==", "lsoa11cd", e.features[0].properties.lsoa11cd]);
+    //       var features = map.queryRenderedFeatures(e.point, {
+    //         layers: ['lsoa-outlines2']
+    //       });
+    //     } else {
+    //       map.setFilter("lsoa-outlines-hover", ["==", "lsoa11cd", e.features[0].properties.lsoa11cd]);
+    //       var features = map.queryRenderedFeatures(e.point, {
+    //         layers: ['lsoa-outlines']
+    //       });
+    //     }
+    //
+    //     if (features.length != 0) {
+    //       setAxisVal(features[0].properties.lsoa11nm, features[0].properties["houseprice"]);
+    //     }
+    //   }
+    // };
 
 
     function tog(v) {
       return v ? 'addClass' : 'removeClass';
     }
+
     $(document).on('input', '.clearable', function() {
       $(this)[tog(this.value)]('x');
     }).on('mousemove', '.x', function(e) {
@@ -446,67 +415,58 @@ if (Modernizr.webgl) {
       onLeave();
     });
 
+    // function onLeave() {
+    //   map.setFilter("lsoa-outlines-hover", ["==", "lsoa11cd", ""]);
+    //   oldlsoa11cd = "";
+    //   // $("#areaselect").val("").trigger("chosen:updated");
+    //   hideaxisVal();
+    // };
+
+    // function onClick(e) {
+    //   disableMouseEvents();
+    //   newlsoa11cd = e.features[0].properties.lsoa11cd;
+    //
+    //   if (newlsoa11cd != oldlsoa11cd) {
+    //     oldlsoa11cd = e.features[0].properties.lsoa11cd;
+    //     map.setFilter("lsoa-outlines-hover", ["==", "lsoa11cd", e.features[0].properties.lsoa11cd]);
+    //
+    //     //selectArea(e.features[0].properties.lsoa11cd);
+    //     setAxisVal(e.features[0].properties.lsoa11nm, e.features[0].properties["houseprice"]);
+    //   }
+
+      // dataLayer.push({
+      //   'event': 'mapClickSelect',
+      //   'selected': newlsoa11cd
+      // })
+    // };
+
+    // function disableMouseEvents() {
+    //   map.off("mousemove", "lsoa-outlines", onMove);
+    //   map.off("mouseleave", "lsoa-outlines", onLeave);
+    // }
+    //
+    // function enableMouseEvents() {
+    //   map.on("mousemove", "lsoa-outlines", onMove);
+    //   map.on("click", "lsoa-outlines", onClick);
+    //   map.on("mouseleave", "lsoa-outlines", onLeave);
+    // }
 
 
-    function onLeave() {
-      map.setFilter("lsoa-outlines-hover", ["==", "lsoa11cd", ""]);
-      oldlsoa11cd = "";
-      // $("#areaselect").val("").trigger("chosen:updated");
-      hideaxisVal();
-    };
-
-
-
-    function onClick(e) {
-      disableMouseEvents();
-      newlsoa11cd = e.features[0].properties.lsoa11cd;
-
-      if (newlsoa11cd != oldlsoa11cd) {
-        oldlsoa11cd = e.features[0].properties.lsoa11cd;
-        map.setFilter("lsoa-outlines-hover", ["==", "lsoa11cd", e.features[0].properties.lsoa11cd]);
-
-        //selectArea(e.features[0].properties.lsoa11cd);
-        setAxisVal(e.features[0].properties.lsoa11nm, e.features[0].properties["houseprice"]);
-      }
-
-      dataLayer.push({
-        'event': 'mapClickSelect',
-        'selected': newlsoa11cd
-      })
-    };
-
-    function disableMouseEvents() {
-      map.off("mousemove", "lsoa-outlines", onMove);
-      map.off("mouseleave", "lsoa-outlines", onLeave);
-    }
-
-    function enableMouseEvents() {
-      map.on("mousemove", "lsoa-outlines", onMove);
-      map.on("click", "lsoa-outlines", onClick);
-      map.on("mouseleave", "lsoa-outlines", onLeave);
-    }
-
-
-    function setAxisVal(areanm, areaval) {
-
-      d3.select("#keyvalue").style("font-weight", "bold").html(function() {
-        if (!isNaN(areaval)) {
-          return areanm + "<br>" + "£" + displayformat(areaval)
-        } else {
-          return areanm + "<br>No data available";
-        }
-      });
-
-
-    }
-
-    function hideaxisVal() {
-      d3.select("#keyvalue").style("font-weight", "bold").text("");
-
-    }
+    // function setAxisVal(areanm, areaval) {
+    //   d3.select("#keyvalue").style("font-weight", "bold").html(function() {
+    //     if (!isNaN(areaval)) {
+    //       return areanm + "<br>" + "£" + displayformat(areaval)
+    //     } else {
+    //       return areanm + "<br>No data available";
+    //     }
+    //   });
+    // }
+    //
+    // function hideaxisVal() {
+    //   d3.select("#keyvalue").style("font-weight", "bold").text("");
+    // }
 
     function createKey(config) {
-
       keywidth = d3.select("#keydiv").node().getBoundingClientRect().width;
 
       var svgkey = d3.select("#keydiv")
@@ -572,18 +532,11 @@ if (Modernizr.webgl) {
             return "No Data"
           }
         });
-
-      // //Temporary	hardcode unit text
-      dvc.unittext = "change in life expectancy";
-
-
     } // Ends create key
 
     function addFullscreen() {
-
       currentBody = d3.select("#map").style("height");
-      d3.select(".mapboxgl-ctrl-fullscreen").on("click", setbodyheight)
-
+      d3.select(".mapboxgl-ctrl-fullscreen").on("click", setbodyheight);
     }
 
     function setbodyheight() {
@@ -628,14 +581,13 @@ if (Modernizr.webgl) {
     }
 
     function getCodes(myPC) {
-
       //first show the remove cross
       d3.select(".search-control").append("abbr").attr("class", "postcode");
 
       dataLayer.push({
         'event': 'geoLocate',
         'selected': 'postcode'
-      })
+      });
 
       var myURIstring = encodeURI("https://api.postcodes.io/postcodes/" + myPC);
       $.support.cors = true;
@@ -647,10 +599,9 @@ if (Modernizr.webgl) {
         error: function(xhr, ajaxOptions, thrownError) {},
         success: function(data1) {
           if (data1.status == 200) {
-            //$("#pcError").hide();
             lat = data1.result.latitude;
             lng = data1.result.longitude;
-            successpc(lat, lng)
+            successpc(lat, lng);
           } else {
             $(".search-control").val("Sorry, invalid postcode.");
           }
@@ -662,18 +613,15 @@ if (Modernizr.webgl) {
 
 
     function successpc(lat, lng) {
-
       map.jumpTo({
         center: [lng, lat],
         zoom: 12
-      })
+      });
       point = map.project([lng, lat]);
 
-
       setTimeout(function() {
-
         var tilechecker = setInterval(function() {
-          features = null
+          features = null;
           var features = map.queryRenderedFeatures(point, {
             layers: ['lsoa-outlines']
           });
@@ -682,88 +630,68 @@ if (Modernizr.webgl) {
             map.setFilter("lsoa-outlines-hover", ["==", "lsoa11cd", features[0].properties.lsoa11cd]);
             //var features = map.queryRenderedFeatures(point);
             disableMouseEvents();
-            setAxisVal(features[0].properties.lsoa11nm, features[0].properties["houseprice"]);
+            setAxisVal(features[0].properties.lsoa11nm, features[0].properties.houseprice);
 
             clearInterval(tilechecker);
           }
-        }, 500)
+        }, 500);
       }, 500);
+    }
 
 
-
-
-    };
-
-    function selectlist(datacsv) {
-
-      var areacodes = datacsv.map(function(d) {
-        return d.lsoa11cd;
-      });
-      var areanames = datacsv.map(function(d) {
-        return d.lsoa11nm;
-      });
-      var menuarea = d3.zip(areanames, areacodes).sort(function(a, b) {
-        return d3.ascending(a[0], b[0]);
-      });
-
-      // Build option menu for occupations
-      var optns = d3.select("#selectNav").append("div").attr("id", "sel").append("select")
-        .attr("id", "areaselect")
-        .attr("style", "width:98%")
-        .attr("class", "chosen-select");
-
-
-      optns.append("option")
-        .attr("value", "first")
-        .text("");
-
-      optns.selectAll("p").data(menuarea).enter().append("option")
-        .attr("value", function(d) {
-          return d[1]
-        })
-        .text(function(d) {
-          return d[0]
-        });
-
-      myId = null;
-
-      $('#areaselect').chosen({
-        width: "98%",
-        allow_single_deselect: true
-      }).on('change', function(evt, params) {
-
-        if (typeof params != 'undefined') {
-
-          disableMouseEvents();
-
-          map.setFilter("lsoa-outlines-hover", ["==", "lsoa11cd", params.selected]);
-
-          selectArea(params.selected);
-          setAxisVal(params.selected);
-
-          zoomToArea(params.selected);
-
-          dataLayer.push({
-            'event': 'mapDropSelect',
-            'selected': params.selected
-          })
-        } else {
-          enableMouseEvents();
-          hideaxisVal();
-          onLeave();
-          resetZoom();
-        }
-
-      });
-
-    };
-
-  }
+  }//end function ready
 
 } else {
 
   //provide fallback for browsers that don't support webGL
   d3.select('#map').remove();
-  d3.select('body').append('p').html("Unfortunately your browser does not support WebGL. <a href='https://www.gov.uk/help/browsers' target='_blank>'>If you're able to please upgrade to a modern browser</a>")
+  d3.select('body').append('p').html("Unfortunately your browser does not support WebGL. <a href='https://www.gov.uk/help/browsers' target='_blank>'>If you're able to please upgrade to a modern browser</a>");
 
+}
+
+function generateBreaks(data,dvc){
+  if (!Array.isArray(dvc.breaks)) {
+    values = data.map(function(d) {
+      return +d.value;
+    }).filter(function(d) {
+      if (!isNaN(d)) {
+        return d;
+      }
+    }).sort(d3.ascending);
+  }
+
+
+  if (dvc.breaks == "jenks") {
+    breaks = [];
+
+    ss.ckmeans(values, (dvc.numberBreaks)).map(function(cluster, i) {
+      if (i < dvc.numberBreaks - 1) {
+        breaks.push(cluster[0]);
+      } else {
+        breaks.push(cluster[0]);
+        //if the last cluster take the last max value
+        breaks.push(cluster[cluster.length - 1]);
+      }
+    });
+  } else if (dvc.breaks == "equal") {
+    breaks = ss.equalIntervalBreaks(values, dvc.numberBreaks);
+  } else {
+    breaks = dvc.breaks;
+  }
+
+  //round breaks to specified decimal places
+  breaks = breaks.map(function(each_element) {
+    return Number(each_element.toFixed(dvc.legenddecimals));
+  });
+
+  return breaks;
+}
+
+function csv2json(csv){
+  var json={}, i = 0, len = csv.length;
+  while(i<len){
+    json[csv[i][csv.columns[0]]] = +csv[i][csv.columns[1]];
+    i++;
+  }
+  return json;
 }

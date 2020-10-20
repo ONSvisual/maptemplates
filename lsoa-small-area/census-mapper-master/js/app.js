@@ -54,6 +54,7 @@ function tsv2json(string) {
       json[keyval[0]] = parseFloat(keyval[1]);
     }
   }
+  console.log(json)
   return json;
 }
 
