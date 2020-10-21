@@ -65,11 +65,13 @@ if (Modernizr.webgl) {
       compact: true
     }));
 
+    //define mouse pointer
+    map.getCanvasContainer().style.cursor = 'pointer';
+
     addFullscreen();
 
     // if breaks is jenks or equal
     // get all the numbers, filter out the blanks, and then sort them
-
     breaks = generateBreaks(data, dvc);
 
     //Load colours
@@ -123,38 +125,7 @@ if (Modernizr.webgl) {
         }
       }, 'place_suburb');
 
-      //outlines around LSOA
-      map.addLayer({
-        "id": "lsoa-outlines",
-        "type": "line",
-        "source": 'lsoa-tiles',
-        "minzoom": 9,
-        "maxzoom": 20,
-        "source-layer": "boundaries",
-        "background-color": "#ccc",
-        'paint': {
-          'line-color': 'orange',
-          "line-width": 3,
-          "line-opacity": [
-            'case',
-            ['boolean', ['feature-state', 'hover'], false],
-            1,
-            0
-          ]
-        },
-      }, 'place_suburb');
 
-      //setFeatureState for boundaries
-      for (var key in json) {
-        map.setFeatureState({
-          source: 'lsoa-tiles',
-          sourceLayer: 'boundaries',
-          id: key
-        }, {
-          value: json[key],
-          colour: getColour(json[key])
-        });
-      }
 
       // Add buildings tileset
       map.addSource('building-tiles', {
@@ -183,8 +154,10 @@ if (Modernizr.webgl) {
         }
       }, 'place_suburb');
 
-      // setFeatureState for buildlings
+
       for (var key in json) {
+
+        // setFeatureState for buildlings
         map.setFeatureState({
           source: 'building-tiles',
           sourceLayer: 'houseprices',
@@ -193,31 +166,38 @@ if (Modernizr.webgl) {
           value: json[key],
           colour: getColour(json[key])
         });
+
+        //setFeatureState for boundaries
+        map.setFeatureState({
+          source: 'lsoa-tiles',
+          sourceLayer: 'boundaries',
+          id: key
+        }, {
+          value: json[key],
+          colour: getColour(json[key])
+        });
       }
 
-
-      //
-      // map.addLayer({
-      //   "id": "lsoa-outlines2-hover",
-      //   "type": "line",
-      //   "source": {
-      //     "type": "vector",
-      //     "tiles": ["https://cdn.ons.gov.uk/maptiles/t24/boundaries3/{z}/{x}/{y}.pbf"]
-      //     //"tiles": ["http://localhost:8000/boundaries/{z}/{x}/{y}.pbf"]
-      //
-      //   },
-      //   "minzoom": 4,
-      //   "maxzoom": 9,
-      //   "source-layer": "boundaries",
-      //   "background-color": "#ccc",
-      //   'paint': {
-      //     'line-color': 'orange',
-      //     "line-width": 3
-      //   },
-      //   "filter": ["==", "lsoa11cd", ""]
-      // }, 'place_suburb');
-
-
+      //outlines around LSOA
+      map.addLayer({
+        "id": "lsoa-outlines",
+        "type": "line",
+        "source": 'lsoa-tiles',
+        "minzoom": 9,
+        "maxzoom": 20,
+        "source-layer": "boundaries",
+        "background-color": "#ccc",
+        'paint': {
+          'line-color': 'orange',
+          "line-width": 3,
+          "line-opacity": [
+            'case',
+            ['boolean', ['feature-state', 'hover'], false],
+            1,
+            0
+          ]
+        },
+      }, 'place_suburb');
 
       //
       // if(detectIE()){
@@ -233,13 +213,13 @@ if (Modernizr.webgl) {
       // map.on("mouseleave", "lsoa-outlines", onLeave);
       // map.on("mouseleave", "lsoa-outlines2", onLeave);
 
-      map.getCanvasContainer().style.cursor = 'pointer';
 
       // //Add click event
-      map.on('click', function(e){console.log(map.queryRenderedFeatures(e.point))});
+      // map.on('click', function(e){console.log(map.queryRenderedFeatures(e.point))});
       // map.on('click', 'lsoa-outlines2', onClick);
+
       //get location on click
-      // d3.select(".mapboxgl-ctrl-geolocate").on("click", geolocate);
+      d3.select(".mapboxgl-ctrl-geolocate").on("click", geolocate);
 
     });
 
@@ -269,7 +249,7 @@ if (Modernizr.webgl) {
     // });
 
 
-    // When the user moves their mouse over the state-fill layer, we'll update the
+    // When the user moves their mouse over the lsoa boundaries layer, we'll update the
     // feature state for the feature under the mouse.
     map.on('mousemove', 'lsoa-boundaries', function(e) {
       if (e.features.length > 0) {
@@ -293,7 +273,7 @@ if (Modernizr.webgl) {
       }
     });
 
-    // When the mouse leaves the state-fill layer, update the feature state of the
+    // When the mouse leaves the lsoa boundaries layer, update the feature state of the
     // previously hovered feature.
     map.on('mouseleave', 'lsoa-outlines', function() {
       if (hoveredId) {
