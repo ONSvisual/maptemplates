@@ -18,6 +18,7 @@ if (Modernizr.webgl) {
     dvc = config.ons;
     oldlsoa11cd = "";
     firsthover = true;
+    hoveredStateId = null;
 
     //set title of page
     //Need to test that this shows up in GA
@@ -69,7 +70,7 @@ if (Modernizr.webgl) {
     // if breaks is jenks or equal
     // get all the numbers, filter out the blanks, and then sort them
 
-    breaks = generateBreaks(data,dvc);
+    breaks = generateBreaks(data, dvc);
 
     //Load colours
     if (typeof dvc.varcolour === 'string') {
@@ -88,187 +89,113 @@ if (Modernizr.webgl) {
 
     map.on('load', function() {
 
+      // Add boundaries tileset
+      map.addSource('lsoa-tiles', {
+        type: 'vector',
+        "tiles": ['https://cdn.ons.gov.uk/maptiles/t24/boundaries/{z}/{x}/{y}.pbf'],
+        "promoteId": {
+          "boundaries": "lsoa11cd"
+        },
+        "buffer": 0,
+        "maxzoom": 13,
+      });
 
-
-      // map.addLayer({
-      //   "id": "lsoa-outlines2",
-      //   "type": "fill",
-      //   "source": {
-      //     "type": "vector",
-      //     "tiles": ["https://cdn.ons.gov.uk/maptiles/t24/boundaries3/{z}/{x}/{y}.pbf"]
-      //     //"tiles": ["http://localhost:8000/boundaries/{z}/{x}/{y}.pbf"]
-      //   },
-      //   "minzoom": 4,
-      //   "maxzoom": 9,
-      //   "source-layer": "boundaries",
-      //   "layout": {},
-      //   'paint': {
-      //     'fill-opacity': 0.5,
-      //     'fill-outline-color': 'rgba(0,0,0,0)',
-      //     'fill-color': {
-      //       // Refers to the data of that specific property of the polygon
-      //       'property': "houseprice",
-      //       'default': '#666666',
-      //       // Prevents interpolation of colors between stops
-      //       'base': 0,
-      //       'stops': [
-      //         [dvc.breaks[0], dvc.varcolour[0]],
-      //         [dvc.breaks[1], dvc.varcolour[1]],
-      //         [dvc.breaks[2], dvc.varcolour[2]],
-      //         [dvc.breaks[3], dvc.varcolour[3]],
-      //         [dvc.breaks[4], dvc.varcolour[4]],
-      //         [dvc.breaks[5], dvc.varcolour[5]]
-      //       ]
-      //     }
-      //   }
-      // }, 'place_suburb');
-      //
-      //
-      // map.addLayer({
-      //   "id": "lsoa-outlines",
-      //   "type": "fill",
-      //   "source": {
-      //     "type": "vector",
-      //     "tiles": ["https://cdn.ons.gov.uk/maptiles/t24/boundaries3/{z}/{x}/{y}.pbf"],
-			//
-      //     //"tiles": ["http://localhost:8000/boundaries/{z}/{x}/{y}.pbf"],
-			//
-      //   },
-      //   "minzoom": 9,
-      //   "maxzoom": 20,
-      //   "source-layer": "boundaries",
-      //   "layout": {},
-      //   'paint': {
-      //     'fill-opacity': 0.2,
-      //     'fill-outline-color': 'rgba(0,0,0,0)',
-      //     'fill-color': {
-      //       // Refers to the data of that specific property of the polygon
-      //       'property': "houseprice",
-      //       'default': '#666666',
-      //       // Prevents interpolation of colors between stops
-      //       'base': 0,
-      //       'stops': [
-      //         [dvc.breaks[0], dvc.varcolour[0]],
-      //         [dvc.breaks[1], dvc.varcolour[1]],
-      //         [dvc.breaks[2], dvc.varcolour[2]],
-      //         [dvc.breaks[3], dvc.varcolour[3]],
-      //         [dvc.breaks[4], dvc.varcolour[4]],
-      //         [dvc.breaks[5], dvc.varcolour[5]]
-      //       ]
-      //     }
-      //   }
-      // }, 'place_suburb');
-      //
-      //
-
-			// // Add buildings tileset
-			// map.addSource('building-tiles', {
-			//   type: 'vector',
-			//   "tiles": ['https://cdn.ons.gov.uk/maptiles/t24/tiles/{z}/{x}/{y}.pbf'],
-			//   "promoteId": {
-			//     "areacd": "lsoa11cd"
-			//   },
-			//   "buffer": 0,
-			//   "maxzoom": 13,
-			// });
-			//
-			// // Add layer from the vector tile source with data-driven style
-			// map.addLayer({
-			//   id: 'lsoa-building',
-			//   type: 'fill',
-			//   source: 'building-tiles',
-			//   'source-layer': 'areacd',
-			//   paint: {
-			//     'fill-color': "#aaaaaa",
-			//     'fill-opacity': 0.8
-			//   }
-			// }, 'place_suburb');
-
-			// for(i=0;i<data.length;i++){
-			// 	map.setFeatureState({
-			// 		source: 'building-tiles',
-			// 		sourceLayer:'areacd',
-			// 		id:data[i].areacd
-			// 	},{
-			// 		value:data.filter(function(d){return d.areacd==data[i].areacd})[0].value,
-			// 		color:"blue"
-			// 	})
-			// }
-
-			// // Add buildings tileset
-			map.addSource('building-tiles', {
-			  type: 'vector',
-			  "tiles": ['https://cdn.ons.gov.uk/maptiles/t24/tiles/{z}/{x}/{y}.pbf'],
-			  "promoteId": {
-			    "houseprices": "lsoa11cd"
-			  },
-			  "buffer": 0,
-			  "maxzoom": 13,
-			});
-
-			// // Add layer from the vector tile source with data-driven style
-			map.addLayer({
-			  id: 'lsoa-building',
-			  type: 'fill',
-			  source: 'building-tiles',
-			  'source-layer': 'houseprices',
-			  paint: {
-			    'fill-color': ['case',
-            ['!=', ['feature-state', 'color'], null],
-            ['feature-state', 'color'],
+      map.addLayer({
+        id: 'lsoa-boundaries',
+        type: 'fill',
+        source: 'lsoa-tiles',
+        'source-layer': 'boundaries',
+        paint: {
+          'fill-color': ['case',
+            ['!=', ['feature-state', 'colour'], null],
+            ['feature-state', 'colour'],
             'rgba(255, 255, 255, 0)'
           ],
-			    'fill-opacity': 0.8
-			  }
-			}, 'place_suburb');
+          'fill-opacity': [
+            'interpolate',
+            ['linear'],
+            ['zoom'],
+            9,
+            0.9,
+            15,
+            0.1
+          ]
+        }
+      }, 'place_suburb');
 
-      for(var key in json){
+      //outlines around LSOA
+      map.addLayer({
+        "id": "lsoa-outlines",
+        "type": "line",
+        "source": 'lsoa-tiles',
+        "minzoom": 9,
+        "maxzoom": 20,
+        "source-layer": "boundaries",
+        "background-color": "#ccc",
+        'paint': {
+          'line-color': 'orange',
+          "line-width": 3,
+          "line-opacity": [
+            'case',
+            ['boolean', ['feature-state', 'hover'], false],
+            1,
+            0
+          ]
+        },
+      }, 'place_suburb');
+
+      //setFeatureState for boundaries
+      for (var key in json) {
+        map.setFeatureState({
+          source: 'lsoa-tiles',
+          sourceLayer: 'boundaries',
+          id: key
+        }, {
+          value: json[key],
+          colour: "#abcdef"
+        });
+      }
+
+      // Add buildings tileset
+      map.addSource('building-tiles', {
+        type: 'vector',
+        "tiles": ['https://cdn.ons.gov.uk/maptiles/t24/tiles/{z}/{x}/{y}.pbf'],
+        "promoteId": {
+          "houseprices": "lsoa11cd"
+        },
+        "buffer": 0,
+        "maxzoom": 13,
+      });
+
+      // Add layer from the vector tile source with data-driven style
+      map.addLayer({
+        id: 'lsoa-building',
+        type: 'fill',
+        source: 'building-tiles',
+        'source-layer': 'houseprices',
+        paint: {
+          'fill-color': ['case',
+            ['!=', ['feature-state', 'colour'], null],
+            ['feature-state', 'colour'],
+            'rgba(255, 255, 255, 0)'
+          ],
+          'fill-opacity': 0.8
+        }
+      }, 'place_suburb');
+
+      // setFeatureState for buildlings
+      for (var key in json) {
         map.setFeatureState({
           source: 'building-tiles',
           sourceLayer: 'houseprices',
           id: key
-        },{
+        }, {
           value: json[key],
-          color: "#abcdef"
+          colour: "#abcdef"
         });
       }
 
 
-      // map.addLayer({
-      //   "id": "income",
-      //   'type': 'fill',
-      //   "source": {
-      //     "type": "vector",
-      //     "tiles": ["https://cdn.ons.gov.uk/maptiles/t24/tiles/{z}/{x}/{y}.pbf"]
-      //   },
-      //   "source-layer": "houseprices",
-      //   'paint': {
-      //     'fill-opacity': 1,
-      //     'fill-color': '#666666',
-      //   }
-      // }, 'place_suburb');
-      //
-      //
-      //
-      // map.addLayer({
-      //   "id": "lsoa-outlines-hover",
-      //   "type": "line",
-      //   "source": {
-      //     "type": "vector",
-      //     "tiles": ["https://cdn.ons.gov.uk/maptiles/t24/boundaries3/{z}/{x}/{y}.pbf"]
-      //     //"tiles": ["http://localhost:8000/boundaries/{z}/{x}/{y}.pbf"]
-      //
-      //   },
-      //   "minzoom": 9,
-      //   "maxzoom": 20,
-      //   "source-layer": "boundaries",
-      //   "background-color": "#ccc",
-      //   'paint': {
-      //     'line-color': 'orange',
-      //     "line-width": 3
-      //   },
-      //   "filter": ["==", "lsoa11cd", ""]
-      // }, 'place_suburb');
       //
       // map.addLayer({
       //   "id": "lsoa-outlines2-hover",
@@ -340,7 +267,6 @@ if (Modernizr.webgl) {
       //get location on click
       // d3.select(".mapboxgl-ctrl-geolocate").on("click", geolocate);
 
-			map.on('click', function(e){console.log(map.queryRenderedFeatures(e.x,e.y))})
     });
 
     // $(".search-control").click(function() {
@@ -367,6 +293,49 @@ if (Modernizr.webgl) {
     //   getCodes(myValue);
     //   pymChild.sendHeight();
     // });
+
+
+    // When the user moves their mouse over the state-fill layer, we'll update the
+    // feature state for the feature under the mouse.
+    map.on('mousemove', 'lsoa-boundaries', function(e) {
+        console.log(e.features[0]);
+
+      if (e.features.length > 0) {
+        if (hoveredStateId) {
+          map.setFeatureState({
+            source: 'lsoa-tiles',
+            sourceLayer: 'boundaries',
+            id: hoveredStateId
+          }, {
+            hover: false
+          });
+        }
+        hoveredStateId = e.features[0].id;
+        map.setFeatureState({
+          source: 'lsoa-tiles',
+          sourceLayer: 'boundaries',
+          id: hoveredStateId
+        }, {
+          hover: true
+        });
+      }
+    });
+
+    // When the mouse leaves the state-fill layer, update the feature state of the
+    // previously hovered feature.
+    map.on('mouseleave', 'lsoa-outlines', function() {
+      if (hoveredStateId) {
+        map.setFeatureState({
+          source: 'lsoa-tiles',
+          sourceLayer: 'boundaries',
+          id: hoveredStateId
+        }, {
+          hover: false
+        });
+      }
+      hoveredStateId = null;
+    });
+
 
     // function onMove(e) {
     //   newlsoa11cd = e.features[0].properties.lsoa11cd;
@@ -434,10 +403,10 @@ if (Modernizr.webgl) {
     //     setAxisVal(e.features[0].properties.lsoa11nm, e.features[0].properties["houseprice"]);
     //   }
 
-      // dataLayer.push({
-      //   'event': 'mapClickSelect',
-      //   'selected': newlsoa11cd
-      // })
+    // dataLayer.push({
+    //   'event': 'mapClickSelect',
+    //   'selected': newlsoa11cd
+    // })
     // };
 
     // function disableMouseEvents() {
@@ -639,7 +608,7 @@ if (Modernizr.webgl) {
     }
 
 
-  }//end function ready
+  } //end function ready
 
 } else {
 
@@ -649,7 +618,7 @@ if (Modernizr.webgl) {
 
 }
 
-function generateBreaks(data,dvc){
+function generateBreaks(data, dvc) {
   if (!Array.isArray(dvc.breaks)) {
     values = data.map(function(d) {
       return +d.value;
@@ -687,9 +656,11 @@ function generateBreaks(data,dvc){
   return breaks;
 }
 
-function csv2json(csv){
-  var json={}, i = 0, len = csv.length;
-  while(i<len){
+function csv2json(csv) {
+  var json = {},
+    i = 0,
+    len = csv.length;
+  while (i < len) {
     json[csv[i][csv.columns[0]]] = +csv[i][csv.columns[1]];
     i++;
   }
