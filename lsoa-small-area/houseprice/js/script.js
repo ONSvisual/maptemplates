@@ -18,7 +18,7 @@ if (Modernizr.webgl) {
     dvc = config.ons;
     oldlsoa11cd = "";
     firsthover = true;
-    hoveredStateId = null;
+    hoveredId = null;
 
     //set title of page
     //Need to test that this shows up in GA
@@ -301,20 +301,20 @@ if (Modernizr.webgl) {
         console.log(e.features[0]);
 
       if (e.features.length > 0) {
-        if (hoveredStateId) {
+        if (hoveredId) {
           map.setFeatureState({
             source: 'lsoa-tiles',
             sourceLayer: 'boundaries',
-            id: hoveredStateId
+            id: hoveredId
           }, {
             hover: false
           });
         }
-        hoveredStateId = e.features[0].id;
+        hoveredId = e.features[0].id;
         map.setFeatureState({
           source: 'lsoa-tiles',
           sourceLayer: 'boundaries',
-          id: hoveredStateId
+          id: hoveredId
         }, {
           hover: true
         });
@@ -324,16 +324,16 @@ if (Modernizr.webgl) {
     // When the mouse leaves the state-fill layer, update the feature state of the
     // previously hovered feature.
     map.on('mouseleave', 'lsoa-outlines', function() {
-      if (hoveredStateId) {
+      if (hoveredId) {
         map.setFeatureState({
           source: 'lsoa-tiles',
           sourceLayer: 'boundaries',
-          id: hoveredStateId
+          id: hoveredId
         }, {
           hover: false
         });
       }
-      hoveredStateId = null;
+      hoveredId = null;
     });
 
 
