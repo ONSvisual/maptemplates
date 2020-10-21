@@ -6,5 +6,6 @@
 "legenddecimals": 0,
 "breaks": [25000,150000,232500,350000,925000,5000000],
 "dropticks": true,
-"numberBreaks": 5
+"numberBreaks": 5,
+"nullColour": "#666"
 }}

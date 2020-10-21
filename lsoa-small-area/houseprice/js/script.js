@@ -152,7 +152,7 @@ if (Modernizr.webgl) {
           id: key
         }, {
           value: json[key],
-          colour: "#abcdef"
+          colour: getColour(json[key])
         });
       }
 
@@ -191,7 +191,7 @@ if (Modernizr.webgl) {
           id: key
         }, {
           value: json[key],
-          colour: "#abcdef"
+          colour: getColour(json[key])
         });
       }
 
@@ -217,33 +217,7 @@ if (Modernizr.webgl) {
       //   "filter": ["==", "lsoa11cd", ""]
       // }, 'place_suburb');
 
-      //test whether ie or not
-      function detectIE() {
-        var ua = window.navigator.userAgent;
 
-
-        var msie = ua.indexOf('MSIE ');
-        if (msie > 0) {
-          // IE 10 or older => return version number
-          return parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
-        }
-
-        var trident = ua.indexOf('Trident/');
-        if (trident > 0) {
-          // IE 11 => return version number
-          var rv = ua.indexOf('rv:');
-          return parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
-        }
-
-        var edge = ua.indexOf('Edge/');
-        if (edge > 0) {
-          // Edge (IE 12+) => return version number
-          return parseInt(ua.substring(edge + 5, ua.indexOf('.', edge)), 10);
-        }
-
-        // other browser
-        return false;
-      }
 
       //
       // if(detectIE()){
@@ -262,7 +236,7 @@ if (Modernizr.webgl) {
       map.getCanvasContainer().style.cursor = 'pointer';
 
       // //Add click event
-      // map.on('click', 'lsoa-outlines', onClick);
+      map.on('click', function(e){console.log(map.queryRenderedFeatures(e.point))});
       // map.on('click', 'lsoa-outlines2', onClick);
       //get location on click
       // d3.select(".mapboxgl-ctrl-geolocate").on("click", geolocate);
@@ -298,8 +272,6 @@ if (Modernizr.webgl) {
     // When the user moves their mouse over the state-fill layer, we'll update the
     // feature state for the feature under the mouse.
     map.on('mousemove', 'lsoa-boundaries', function(e) {
-        console.log(e.features[0]);
-
       if (e.features.length > 0) {
         if (hoveredId) {
           map.setFeatureState({
@@ -656,6 +628,10 @@ function generateBreaks(data, dvc) {
   return breaks;
 }
 
+function getColour(value){
+  return isNaN(value)? dvc.nullColour: color(value);
+}
+
 function csv2json(csv) {
   var json = {},
     i = 0,
@@ -665,4 +641,31 @@ function csv2json(csv) {
     i++;
   }
   return json;
+}
+
+//test whether ie or not
+function detectIE() {
+  var ua = window.navigator.userAgent;
+
+  var msie = ua.indexOf('MSIE ');
+  if (msie > 0) {
+    // IE 10 or older => return version number
+    return parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
+  }
+
+  var trident = ua.indexOf('Trident/');
+  if (trident > 0) {
+    // IE 11 => return version number
+    var rv = ua.indexOf('rv:');
+    return parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
+  }
+
+  var edge = ua.indexOf('Edge/');
+  if (edge > 0) {
+    // Edge (IE 12+) => return version number
+    return parseInt(ua.substring(edge + 5, ua.indexOf('.', edge)), 10);
+  }
+
+  // other browser
+  return false;
 }
