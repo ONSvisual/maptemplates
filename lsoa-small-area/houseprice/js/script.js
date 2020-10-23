@@ -62,7 +62,9 @@ if (Modernizr.webgl) {
 
     //add compact attribution
     map.addControl(new mapboxgl.AttributionControl({
-      compact: true
+      compact: true,
+      // add zoomstack attribution
+      customAttribution: "Contains OS data © Crown copyright and database right (" + new Date().getFullYear() + ")"
     }));
 
     //define mouse pointer
@@ -87,7 +89,7 @@ if (Modernizr.webgl) {
       .range(colour);
 
     //now ranges are set we can call draw the key
-    // createKey(config);
+    createKey(config);
 
     map.on('load', function() {
 
@@ -124,8 +126,6 @@ if (Modernizr.webgl) {
           ]
         }
       }, 'place_suburb');
-
-
 
       // Add buildings tileset
       map.addSource('building-tiles', {
@@ -224,58 +224,275 @@ if (Modernizr.webgl) {
     });
 
     // $(".search-control").click(function() {
-    //   $(".search-control").val('')
-    // })
-
-    // d3.select(".search-control").on("keydown", function() {
-    //   if (d3.event.keyCode === 13 || d3.event.keyCode===32) {
-    //     event.preventDefault();
-    //     event.stopPropagation();
-    //
-    //     myValue = $(".search-control").val();
-    //
-    //     getCodes(myValue);
-    //     pymChild.sendHeight();
-    //
-    //   }
+    //   $(".search-control").val('');
     // });
 
-    // $("#submitPost").click(function(event) {
-    //   event.preventDefault();
-    //   event.stopPropagation();
-    //   myValue = $(".search-control").val();
-    //   getCodes(myValue);
-    //   pymChild.sendHeight();
-    // });
+    d3.select(".search-control").on("keydown", function() {
+      if (d3.event.keyCode === 13) {
+        event.preventDefault();
+        event.stopPropagation();
+        getCodes($(".search-control").val());
+      }
+    });
+
+    $("#submitPost").click(function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      getCodes($(".search-control").val());
+    });
+
+    d3.select("#submitPost").on("keydown",function(){
+      if (d3.event.keyCode === 13 || d3.event.keyCode === 32) {
+        event.preventDefault();
+        event.stopPropagation();
+        getCodes($(".search-control").val());
+      }
+    });
+
 
 
     // When the user moves their mouse over the lsoa boundaries layer, we'll update the
     // feature state for the feature under the mouse.
-    map.on('mousemove', 'lsoa-boundaries', function(e) {
-      if (e.features.length > 0) {
-        if (hoveredId) {
-          map.setFeatureState({
-            source: 'lsoa-tiles',
-            sourceLayer: 'boundaries',
-            id: hoveredId
-          }, {
-            hover: false
-          });
-        }
-        hoveredId = e.features[0].id;
-        map.setFeatureState({
-          source: 'lsoa-tiles',
-          sourceLayer: 'boundaries',
-          id: hoveredId
-        }, {
-          hover: true
-        });
-      }
-    });
+    map.on('mousemove', 'lsoa-boundaries', onMove);
 
     // When the mouse leaves the lsoa boundaries layer, update the feature state of the
     // previously hovered feature.
-    map.on('mouseleave', 'lsoa-outlines', function() {
+    map.on('mouseleave', 'lsoa-boundaries', onLeave);
+
+
+    map.on('click', 'lsoa-boundaries', onClick)
+
+
+
+
+  function tog(v) {
+    return v ? 'addClass' : 'removeClass';
+  }
+
+  $(document).on('input', '.clearable', function() {
+    $(this)[tog(this.value)]('x');
+  }).on('mousemove', '.x', function(e) {
+    $(this)[tog(this.offsetWidth - 28 < e.clientX - this.getBoundingClientRect().left)]('onX');
+  }).on('touchstart click', '.onX', function(ev) {
+    ev.preventDefault();
+    $(this).removeClass('x onX').val('').change();
+    enableMouseEvents();
+    onLeave();
+  });
+
+  // function onLeave() {
+  //   map.setFilter("lsoa-outlines-hover", ["==", "lsoa11cd", ""]);
+  //   oldlsoa11cd = "";
+  //   // $("#areaselect").val("").trigger("chosen:updated");
+  //   hideaxisVal();
+  // };
+
+  // function onClick(e) {
+  //   disableMouseEvents();
+  //   newlsoa11cd = e.features[0].properties.lsoa11cd;
+  //
+  //   if (newlsoa11cd != oldlsoa11cd) {
+  //     oldlsoa11cd = e.features[0].properties.lsoa11cd;
+  //     map.setFilter("lsoa-outlines-hover", ["==", "lsoa11cd", e.features[0].properties.lsoa11cd]);
+  //
+  //     //selectArea(e.features[0].properties.lsoa11cd);
+  //     setAxisVal(e.features[0].properties.lsoa11nm, e.features[0].properties["houseprice"]);
+  //   }
+
+  // dataLayer.push({
+  //   'event': 'mapClickSelect',
+  //   'selected': newlsoa11cd
+  // })
+  // };
+
+  // function disableMouseEvents() {
+  //   map.off("mousemove", "lsoa-outlines", onMove);
+  //   map.off("mouseleave", "lsoa-outlines", onLeave);
+  // }
+  //
+  // function enableMouseEvents() {
+  //   map.on("mousemove", "lsoa-outlines", onMove);
+  //   map.on("click", "lsoa-outlines", onClick);
+  //   map.on("mouseleave", "lsoa-outlines", onLeave);
+  // }
+
+
+
+
+  function createKey(config) {
+    keywidth = d3.select("#keydiv").node().getBoundingClientRect().width;
+
+    var svgkey = d3.select("#keydiv")
+      .attr("width", keywidth);
+
+    d3.select("#keydiv")
+      .style("font-family", "Open Sans")
+      .style("font-size", "14px")
+      .append("p")
+      .attr("id", "keyvalue")
+      .style("font-size", "18px")
+      .style("margin-top", "10px")
+      .style("margin-bottom", "5px")
+      .style("margin-left", "10px")
+      .text("");
+
+    d3.select("#keydiv")
+      .append("p")
+      .attr("id", "keyunit")
+      .style("margin-top", "5px")
+      .style("margin-bottom", "5px")
+      .style("margin-left", "10px")
+      .text(dvc.varunit);
+
+    stops = [
+      [dvc.breaks[0], dvc.varcolour[0]],
+      [dvc.breaks[1], dvc.varcolour[1]],
+      [dvc.breaks[2], dvc.varcolour[2]],
+      [dvc.breaks[3], dvc.varcolour[3]],
+      [dvc.breaks[4], dvc.varcolour[4]],
+      [dvc.breaks[5], dvc.varcolour[5]]
+    ];
+
+    divs = svgkey.selectAll("div")
+      .data(breaks)
+      .enter()
+      .append("div");
+
+    divs.append("div")
+      .style("height", "20px")
+      .style("width", "10px")
+      .attr("float", "left")
+      .style("display", "inline-block")
+      .style("background-color", function(d, i) {
+        if (i != breaks.length - 1) {
+          return stops[i + 1][1];
+        } else {
+          return dvc.nullColour;
+        }
+      });
+
+    divs.append("p")
+      .attr("float", "left")
+      .style("padding-left", "5px")
+      .style("margin", "0px")
+      .style("display", "inline-block")
+      .style("position", "relative")
+      .style("top", "-5px")
+      .text(function(d, i) {
+        if (i != breaks.length - 1) {
+          return "£" + displayformat(stops[i][0]) + " - £" + displayformat(stops[i + 1][0] - 1);
+        } else {
+          return "No Data";
+        }
+      });
+  } // Ends create key
+
+  function addFullscreen() {
+    currentBody = d3.select("#map").style("height");
+    d3.select(".mapboxgl-ctrl-fullscreen").on("click", setbodyheight);
+  }
+
+  function setbodyheight() {
+    d3.select("#map").style("height", "100%");
+
+    document.addEventListener('webkitfullscreenchange', exitHandler, false);
+    document.addEventListener('mozfullscreenchange', exitHandler, false);
+    document.addEventListener('fullscreenchange', exitHandler, false);
+    document.addEventListener('MSFullscreenChange', exitHandler, false);
+
+  }
+
+
+  function exitHandler() {
+    if (document.webkitIsFullScreen === false) {
+      shrinkbody();
+    } else if (document.mozFullScreen === false) {
+      shrinkbody();
+    } else if (document.msFullscreenElement === false) {
+      shrinkbody();
+    }
+  }
+
+  function shrinkbody() {
+    d3.select("#map").style("height", currentBody);
+    pymChild.sendHeight();
+  }
+
+  function geolocate() {
+    dataLayer.push({
+      'event': 'geoLocate',
+      'selected': 'geolocate'
+    })
+
+    var options = {
+      enableHighAccuracy: true,
+      timeout: 5000,
+      maximumAge: 0
+    };
+
+    navigator.geolocation.getCurrentPosition(success, error, options);
+  }
+
+  function getCodes(myPC) {
+    //first show the remove cross
+    d3.select(".search-control").append("abbr").attr("class", "postcode");
+
+    dataLayer.push({
+      'event': 'geoLocate',
+      'selected': 'postcode'
+    });
+
+    var myURIstring = encodeURI("https://api.postcodes.io/postcodes/" + myPC);
+    $.support.cors = true;
+    $.ajax({
+      type: "GET",
+      crossDomain: true,
+      dataType: "jsonp",
+      url: myURIstring,
+      error: function(xhr, ajaxOptions, thrownError) {},
+      success: function(data1) {
+        if (data1.status == 200) {
+          lat = data1.result.latitude;
+          lng = data1.result.longitude;
+          successpc(lat, lng);
+        } else {
+          $(".search-control").val("Sorry, invalid postcode.");
+        }
+      }
+
+    });
+    pymChild.sendHeight();
+  }
+
+
+  function successpc(lat, lng) {
+    map.jumpTo({
+      center: [lng, lat],
+      zoom: 12
+    });
+    point = map.project([lng, lat]);
+
+    setTimeout(function() {
+      var tilechecker = setInterval(function() {
+        features = null;
+        var features = map.queryRenderedFeatures(point, {
+          layers: ['lsoa-outlines']
+        });
+        if (features.length != 0) {
+          //onrender(),
+          map.setFilter("lsoa-outlines-hover", ["==", "lsoa11cd", features[0].properties.lsoa11cd]);
+          //var features = map.queryRenderedFeatures(point);
+          disableMouseEvents();
+          setAxisVal(features[0].properties.lsoa11nm, features[0].properties.houseprice);
+
+          clearInterval(tilechecker);
+        }
+      }, 500);
+    }, 500);
+  }
+
+  function onMove(e) {
+    if (e.features.length > 0) {
       if (hoveredId) {
         map.setFeatureState({
           source: 'lsoa-tiles',
@@ -285,282 +502,22 @@ if (Modernizr.webgl) {
           hover: false
         });
       }
-      hoveredId = null;
-    });
 
+      hoveredId = e.features[0].id;
 
-    // function onMove(e) {
-    //   newlsoa11cd = e.features[0].properties.lsoa11cd;
-    //   if (firsthover) {
-    //     dataLayer.push({
-    //       'event': 'mapHoverSelect',
-    //       'selected': newlsoa11cd
-    //     })
-    //     firsthover = false;
-    //   }
-    //
-    //
-    //   if (newlsoa11cd != oldlsoa11cd) {
-    //     oldlsoa11cd = e.features[0].properties.lsoa11cd;
-    //     if (map.getZoom() <= 9) {
-    //       map.setFilter("lsoa-outlines2-hover", ["==", "lsoa11cd", e.features[0].properties.lsoa11cd]);
-    //       var features = map.queryRenderedFeatures(e.point, {
-    //         layers: ['lsoa-outlines2']
-    //       });
-    //     } else {
-    //       map.setFilter("lsoa-outlines-hover", ["==", "lsoa11cd", e.features[0].properties.lsoa11cd]);
-    //       var features = map.queryRenderedFeatures(e.point, {
-    //         layers: ['lsoa-outlines']
-    //       });
-    //     }
-    //
-    //     if (features.length != 0) {
-    //       setAxisVal(features[0].properties.lsoa11nm, features[0].properties["houseprice"]);
-    //     }
-    //   }
-    // };
-
-
-    function tog(v) {
-      return v ? 'addClass' : 'removeClass';
-    }
-
-    $(document).on('input', '.clearable', function() {
-      $(this)[tog(this.value)]('x');
-    }).on('mousemove', '.x', function(e) {
-      $(this)[tog(this.offsetWidth - 28 < e.clientX - this.getBoundingClientRect().left)]('onX');
-    }).on('touchstart click', '.onX', function(ev) {
-      ev.preventDefault();
-      $(this).removeClass('x onX').val('').change();
-      enableMouseEvents();
-      onLeave();
-    });
-
-    // function onLeave() {
-    //   map.setFilter("lsoa-outlines-hover", ["==", "lsoa11cd", ""]);
-    //   oldlsoa11cd = "";
-    //   // $("#areaselect").val("").trigger("chosen:updated");
-    //   hideaxisVal();
-    // };
-
-    // function onClick(e) {
-    //   disableMouseEvents();
-    //   newlsoa11cd = e.features[0].properties.lsoa11cd;
-    //
-    //   if (newlsoa11cd != oldlsoa11cd) {
-    //     oldlsoa11cd = e.features[0].properties.lsoa11cd;
-    //     map.setFilter("lsoa-outlines-hover", ["==", "lsoa11cd", e.features[0].properties.lsoa11cd]);
-    //
-    //     //selectArea(e.features[0].properties.lsoa11cd);
-    //     setAxisVal(e.features[0].properties.lsoa11nm, e.features[0].properties["houseprice"]);
-    //   }
-
-    // dataLayer.push({
-    //   'event': 'mapClickSelect',
-    //   'selected': newlsoa11cd
-    // })
-    // };
-
-    // function disableMouseEvents() {
-    //   map.off("mousemove", "lsoa-outlines", onMove);
-    //   map.off("mouseleave", "lsoa-outlines", onLeave);
-    // }
-    //
-    // function enableMouseEvents() {
-    //   map.on("mousemove", "lsoa-outlines", onMove);
-    //   map.on("click", "lsoa-outlines", onClick);
-    //   map.on("mouseleave", "lsoa-outlines", onLeave);
-    // }
-
-
-    // function setAxisVal(areanm, areaval) {
-    //   d3.select("#keyvalue").style("font-weight", "bold").html(function() {
-    //     if (!isNaN(areaval)) {
-    //       return areanm + "<br>" + "£" + displayformat(areaval)
-    //     } else {
-    //       return areanm + "<br>No data available";
-    //     }
-    //   });
-    // }
-    //
-    // function hideaxisVal() {
-    //   d3.select("#keyvalue").style("font-weight", "bold").text("");
-    // }
-
-    function createKey(config) {
-      keywidth = d3.select("#keydiv").node().getBoundingClientRect().width;
-
-      var svgkey = d3.select("#keydiv")
-        .attr("width", keywidth);
-
-      d3.select("#keydiv")
-        .style("font-family", "Open Sans")
-        .style("font-size", "14px")
-        .append("p")
-        .attr("id", "keyvalue")
-        .style("font-size", "18px")
-        .style("margin-top", "10px")
-        .style("margin-bottom", "5px")
-        .style("margin-left", "10px")
-        .text("");
-
-      d3.select("#keydiv")
-        .append("p")
-        .attr("id", "keyunit")
-        .style("margin-top", "5px")
-        .style("margin-bottom", "5px")
-        .style("margin-left", "10px")
-        .text(dvc.varunit);
-
-      stops = [
-        [dvc.breaks[0], dvc.varcolour[0]],
-        [dvc.breaks[1], dvc.varcolour[1]],
-        [dvc.breaks[2], dvc.varcolour[2]],
-        [dvc.breaks[3], dvc.varcolour[3]],
-        [dvc.breaks[4], dvc.varcolour[4]],
-        [dvc.breaks[5], dvc.varcolour[5]]
-      ]
-
-      divs = svgkey.selectAll("div")
-        .data(breaks)
-        .enter()
-        .append("div");
-
-      divs.append("div")
-        .style("height", "20px")
-        .style("width", "10px")
-        .attr("float", "left")
-        .style("display", "inline-block")
-        .style("background-color", function(d, i) {
-          if (i != breaks.length - 1) {
-            return stops[i + 1][1]
-          } else {
-            return "#666666"
-          }
-        });
-
-      divs.append("p")
-        .attr("float", "left")
-        .style("padding-left", "5px")
-        .style("margin", "0px")
-        .style("display", "inline-block")
-        .style("position", "relative")
-        .style("top", "-5px")
-        .text(function(d, i) {
-          if (i != breaks.length - 1) {
-            return "£" + displayformat(stops[i][0]) + " - £" + displayformat(stops[i + 1][0] - 1)
-          } else {
-            return "No Data"
-          }
-        });
-    } // Ends create key
-
-    function addFullscreen() {
-      currentBody = d3.select("#map").style("height");
-      d3.select(".mapboxgl-ctrl-fullscreen").on("click", setbodyheight);
-    }
-
-    function setbodyheight() {
-      d3.select("#map").style("height", "100%");
-
-      document.addEventListener('webkitfullscreenchange', exitHandler, false);
-      document.addEventListener('mozfullscreenchange', exitHandler, false);
-      document.addEventListener('fullscreenchange', exitHandler, false);
-      document.addEventListener('MSFullscreenChange', exitHandler, false);
-
-    }
-
-
-    function exitHandler() {
-      if (document.webkitIsFullScreen === false) {
-        shrinkbody();
-      } else if (document.mozFullScreen === false) {
-        shrinkbody();
-      } else if (document.msFullscreenElement === false) {
-        shrinkbody();
-      }
-    }
-
-    function shrinkbody() {
-      d3.select("#map").style("height", currentBody);
-      pymChild.sendHeight();
-    }
-
-    function geolocate() {
-      dataLayer.push({
-        'event': 'geoLocate',
-        'selected': 'geolocate'
-      })
-
-      var options = {
-        enableHighAccuracy: true,
-        timeout: 5000,
-        maximumAge: 0
-      };
-
-      navigator.geolocation.getCurrentPosition(success, error, options);
-    }
-
-    function getCodes(myPC) {
-      //first show the remove cross
-      d3.select(".search-control").append("abbr").attr("class", "postcode");
-
-      dataLayer.push({
-        'event': 'geoLocate',
-        'selected': 'postcode'
+      map.setFeatureState({
+        source: 'lsoa-tiles',
+        sourceLayer: 'boundaries',
+        id: hoveredId
+      }, {
+        hover: true
       });
-
-      var myURIstring = encodeURI("https://api.postcodes.io/postcodes/" + myPC);
-      $.support.cors = true;
-      $.ajax({
-        type: "GET",
-        crossDomain: true,
-        dataType: "jsonp",
-        url: myURIstring,
-        error: function(xhr, ajaxOptions, thrownError) {},
-        success: function(data1) {
-          if (data1.status == 200) {
-            lat = data1.result.latitude;
-            lng = data1.result.longitude;
-            successpc(lat, lng);
-          } else {
-            $(".search-control").val("Sorry, invalid postcode.");
-          }
-        }
-
-      });
-
+      console.log(e.features[0].properties.lsoa11cd,json,json[e.features[0].lsoa11cd])
+      setAxisVal(e.features[0].properties.lsoa11nm,json[e.features[0].lsoa11cd]);
     }
+  }
 
-
-    function successpc(lat, lng) {
-      map.jumpTo({
-        center: [lng, lat],
-        zoom: 12
-      });
-      point = map.project([lng, lat]);
-
-      setTimeout(function() {
-        var tilechecker = setInterval(function() {
-          features = null;
-          var features = map.queryRenderedFeatures(point, {
-            layers: ['lsoa-outlines']
-          });
-          if (features.length != 0) {
-            //onrender(),
-            map.setFilter("lsoa-outlines-hover", ["==", "lsoa11cd", features[0].properties.lsoa11cd]);
-            //var features = map.queryRenderedFeatures(point);
-            disableMouseEvents();
-            setAxisVal(features[0].properties.lsoa11nm, features[0].properties.houseprice);
-
-            clearInterval(tilechecker);
-          }
-        }, 500);
-      }, 500);
-    }
-
-
-  } //end function ready
+} //end function ready
 
 } else {
 
@@ -608,8 +565,59 @@ function generateBreaks(data, dvc) {
   return breaks;
 }
 
-function getColour(value){
-  return isNaN(value)? dvc.nullColour: color(value);
+
+
+// function onClick(e) {
+//     if (e.features.length > 0) {
+//       if (selectedId) {
+//         map.setFeatureState({
+//           source: 'lsoa-tiles',
+//           sourceLayer: 'boundaries',
+//           id: selectedId
+//         }, {
+//           select: false
+//         });
+//       }
+//       selectedId = e.features[0].id;
+//       map.setFeatureState({
+//         source: 'lsoa-tiles',
+//         sourceLayer: 'boundaries',
+//         id: selectedId
+//       }, {
+//         select: true
+//       });
+//     }
+// }
+
+function onLeave() {
+  if (hoveredId) {
+    map.setFeatureState({
+      source: 'lsoa-tiles',
+      sourceLayer: 'boundaries',
+      id: hoveredId
+    }, {
+      hover: false
+    });
+  }
+  hoveredId = null;
+}
+
+function setAxisVal(areanm, areaval) {
+  d3.select("#keyvalue").style("font-weight", "bold").html(function() {
+    if (!isNaN(areaval)) {
+      return areanm + "<br>" + "£" + displayformat(areaval)
+    } else {
+      return areanm + "<br>No data available";
+    }
+  });
+}
+
+function hideaxisVal() {
+  d3.select("#keyvalue").style("font-weight", "bold").text("");
+}
+
+function getColour(value) {
+  return isNaN(value) ? dvc.nullColour : color(value);
 }
 
 function csv2json(csv) {
