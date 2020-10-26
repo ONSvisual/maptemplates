@@ -512,8 +512,8 @@ if (Modernizr.webgl) {
       }, {
         hover: true
       });
-      console.log(e.features[0].properties.lsoa11cd,json,json[e.features[0].lsoa11cd])
-      setAxisVal(e.features[0].properties.lsoa11nm,json[e.features[0].lsoa11cd]);
+
+      setAxisVal(e.features[0].properties.lsoa11nm,json[e.features[0].properties.lsoa11cd]);
     }
   }
 
