@@ -12,20 +12,19 @@ if (Modernizr.webgl) {
     .await(ready);
 
   function ready(error, config, data) {
-    json = csv2json(data)
+    //turn csv data into json format
+    json = csv2json(data);
 
     //Set up global variables
     dvc = config.ons;
-    oldlsoa11cd = "";
-    firsthover = true;
+    // oldlsoa11cd = "";
+    // firsthover = true;
     hoveredId = null;
 
     //set title of page
-    //Need to test that this shows up in GA
     document.title = dvc.maptitle;
 
     //Set up number formats
-    // displayformat = GB.format("$,." + dvc.displaydecimals + "%");
     displayformat = d3.format(",." + dvc.displaydecimals + "f");
     legendformat = d3.format(",");
 
@@ -33,8 +32,7 @@ if (Modernizr.webgl) {
     map = new mapboxgl.Map({
       container: 'map', // container id
       style: 'data/style.json', //stylesheet location
-      //style: 'https://s3-eu-west-1.amazonaws.com/tiles.os.uk/v2/styles/open-zoomstack-night/style.json',
-      center: [-0.12, 51.5], // starting position51.5074° N, 0.1278
+      center: [-0.12, 51.5], // starting position 51.5074° N, 0.1278
       zoom: 12, // starting zoom
       minZoom: 4,
       maxZoom: 17, //
@@ -51,7 +49,6 @@ if (Modernizr.webgl) {
 
     // Disable map rotation using touch rotation gesture
     map.touchZoomRotate.disableRotation();
-
 
     // Add geolocation controls to the map.
     map.addControl(new mapboxgl.GeolocateControl({
@@ -154,9 +151,8 @@ if (Modernizr.webgl) {
         }
       }, 'place_suburb');
 
-
+      //loop the json data and set feature state for building layer and boundary layer
       for (var key in json) {
-
         // setFeatureState for buildlings
         map.setFeatureState({
           source: 'building-tiles',
@@ -199,25 +195,6 @@ if (Modernizr.webgl) {
         },
       }, 'place_suburb');
 
-      //
-      // if(detectIE()){
-      // 	onMove = onMove.debounce(100);
-      // 	onLeave = onLeave.debounce(100);
-      // };
-
-      //Highlight stroke on mouseover (and show area information)
-      // map.on("mousemove", "lsoa-outlines", onMove);
-      // map.on("mousemove", "lsoa-outlines2", onMove);
-
-      // Reset the lsoa-fills-hover layer's filter when the mouse leaves the layer.
-      // map.on("mouseleave", "lsoa-outlines", onLeave);
-      // map.on("mouseleave", "lsoa-outlines2", onLeave);
-
-
-      // //Add click event
-      // map.on('click', function(e){console.log(map.queryRenderedFeatures(e.point))});
-      // map.on('click', 'lsoa-outlines2', onClick);
-
       //get location on click
       d3.select(".mapboxgl-ctrl-geolocate").on("click", geolocate);
 
@@ -227,10 +204,11 @@ if (Modernizr.webgl) {
     //   $(".search-control").val('');
     // });
 
+    // if you push enter while in the box
     d3.select(".search-control").on("keydown", function() {
       if (d3.event.keyCode === 13) {
-        event.preventDefault();
-        event.stopPropagation();
+        d3.event.preventDefault();
+        d3.event.stopPropagation();
         getCodes($(".search-control").val());
       }
     });
