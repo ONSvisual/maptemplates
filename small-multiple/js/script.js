@@ -1,8 +1,11 @@
 var pymChild = null;
+var chart_width = 233;
+var height = 288;
+var margin = config.margin
 
 // onload check to see if the web browser can handle 'inline svg'
 if (Modernizr.svg == true) {
-	d3.select("#")
+  d3.select("#fallback").selectAll("*").remove()
 
   d3.queue()
     .defer(d3.json, "data/geog.json")
@@ -19,7 +22,9 @@ else {
 } // end else ...
 
 function ready(error, geog, data) {
-
+  pymChild = new pym.Child();
+  setupdropdown(data);
+  setupGeo(geog);
   pymChild.sendHeight();
 }
 
@@ -35,117 +40,168 @@ function ready(error, geog, data) {
 //
 // listnames = [];
 //
-// function setupdropdown() {
-//
-//   d3.select("#chosensel").selectAll("*").remove();
-//   variables = [];
-//
-//   for (var column in dvc.data[0]) {
-//     if (column == 'AREACD') continue;
-//     if (column == 'AREANM') continue;
-//     variables.push(column);
-//   }
-//
-//   // var optns = d3.select("#chosensel");
-//   //
-//   // optns.append("option")
-//   //     .attr("value","first")
-//   //     .text("");
-//   //
-//   // optns.selectAll("p").data(variables).enter().append("option")
-//   //     .attr("value", function(d,i){ return i})
-//   //     .text(function(d){ return d});
-//
-//   console.log(variables)
-//
-//   var optns = d3.select("#chosensel").append("div").attr("id", "sel").append("select")
-//     .attr("id", "selectmenu")
-//     .attr("style", "width:98%")
-//     .attr("multiple", true)
-//     .attr("class", "chosen-select");
-//
-//   optns.append("option")
-//     .attr("value", "first")
-//     .text("");
-//
-//   optns.selectAll("p").data(variables).enter().append("option")
-//     .attr("value", function(d, i) {
-//       return i
-//     })
-//     .text(function(d) {
-//       return d
-//     });
-//
-//
-//   $('#selectmenu').chosen({
-//     width: "98%",
-//     max_selected_options: 6,
-//     placeholder_text_multiple: "Type some names, or choose an option.",
-//     /*, allow_single_deselect:true*/
-//   }).on('change', function(evt, params) {
-//
-//     if (typeof params.selected != 'undefined') {
-//       var allselections = $(this).val();
-//       console.log(params)
-//       var lastselection = params.selected;
-//
-//
-//       var svgSel = d3.select("#svg" + lastselection)
-//       var parentDiv = d3.select("#svg" + lastselection).select(function() {
-//         return this.parentNode;
-//       })
-//
-//       if ($(".container-fluid").width() < 600) {
-//         parentDiv.classed("col-xs-10", true)
-//       } else if ($(".container-fluid").width() < 750) {
-//         parentDiv.classed("col-sm-4", true)
-//       } else if ($(".container-fluid").width() < 945) {
-//         parentDiv.classed("col-md-3", true)
-//       }
-//
-//       drawGraphic2(lastselection);
-//       svgSel.classed("hide", false);
-//       d3.select(".zoom-container").classed("hide", false)
-//       listnames.push(lastselection);
-//
-//       console.log(listnames)
-//
-//       d3.selectAll(".search-choice-close").attr("aria-label", function(d, i) {
-//         return "close selection - " + variables[listnames[i]]
-//       })
-//
-//       if (pymChild) {
-//         setTimeout(function() {
-//           pymChild.sendHeight();
-//         }, 300);
-//       }
-//
-//     } else {
-//
-//       var deselection = params.deselected;
-//
-//       var parentDiv = d3.select("#svg" + deselection).select(function() {
-//         return this.parentNode;
-//       })
-//       d3.select("#svg" + deselection).classed("hide", true);
-//
-//       if ($(".container-fluid").width() < 600) {
-//         parentDiv.classed("col-xs-10", false)
-//       } else if ($(".container-fluid").width() < 750) {
-//         parentDiv.classed("col-sm-4", false)
-//       } else if ($(".container-fluid").width() < 945) {
-//         parentDiv.classed("col-md-3", false)
-//       }
-//
-//
-//       var index = listnames.indexOf(deselection);
-//       listnames.splice(index, 1);
-//
-//       if (listnames.length < 1) {
-//         d3.select(".zoom-container").classed("hide", true)
-//       }
-//
-//     }
+function setupScales() {
+  color = d3.scale.threshold()
+    .domain(config.breaksAll)
+    .range(config.colour);
+}
+
+function setupdropdown(data) {
+
+  d3.select("#chosensel").selectAll("*").remove();
+  variables = [];
+  console.log(data)
+  for (i = 2; i < data.columns.length; i++) { //skip the first two columns
+    variables.push(data.columns[i]);
+  }
+
+  var optns = d3.select("#chosensel").append("div").attr("id", "sel").append("select")
+    .attr("id", "selectmenu")
+    .attr("style", "width:98%")
+    .attr("multiple", true)
+    .attr("class", "chosen-select");
+
+  optns.append("option")
+    .attr("value", "first")
+    .text("");
+
+  optns.selectAll("p").data(variables).enter().append("option")
+    .attr("value", function(d, i) {
+      return i;
+    })
+    .text(function(d) {
+      return d;
+    });
+
+
+  $('#selectmenu').chosen({
+    width: "98%",
+    max_selected_options: 6,
+    placeholder_text_multiple: "Type some names, or choose an option.",
+  }).on('change', function(evt, params) {
+
+    if (typeof params.selected != 'undefined') {
+      var allselections = $(this).val();
+      console.log(params, allselections);
+      var lastselection = params.selected;
+
+      addMap(lastselection)
+      //
+      // drawGraphic2(lastselection);
+      // svgSel.classed("hide", false);
+      // d3.select(".zoom-container").classed("hide", false)
+      // listnames.push(lastselection);
+      //
+      // console.log(listnames)
+      //
+      // d3.selectAll(".search-choice-close").attr("aria-label", function(d, i) {
+      //   return "close selection - " + variables[listnames[i]]
+      // })
+      //
+      // if (pymChild) {
+      //   setTimeout(function() {
+      //     pymChild.sendHeight();
+      //   }, 300);
+      // }
+
+    } else {
+
+      var deselection = params.deselected;
+      removeMap(deselection);
+
+      // var parentDiv = d3.select("#svg" + deselection).select(function() {
+      //   return this.parentNode;
+      // })
+      // d3.select("#svg" + deselection).classed("hide", true);
+      //
+      // if ($(".container-fluid").width() < 600) {
+      //   parentDiv.classed("col-xs-10", false)
+      // } else if ($(".container-fluid").width() < 750) {
+      //   parentDiv.classed("col-sm-4", false)
+      // } else if ($(".container-fluid").width() < 945) {
+      //   parentDiv.classed("col-md-3", false)
+      // }
+      //
+      //
+      // var index = listnames.indexOf(deselection);
+      // listnames.splice(index, 1);
+      //
+      // if (listnames.length < 1) {
+      //   d3.select(".zoom-container").classed("hide", true)
+      // }
+
+    }
+  });
+
+}
+
+function removeMap(index) {
+  d3.select('#map' + index).remove();
+}
+
+function setupGeo(geog) {
+  geogdata = geog
+
+  var mapScale = 1300;
+
+  zoom = d3.zoom()
+    .on("zoom", zoomed);
+
+  function zoomed() {
+    //x = d3.event.transform.rescaleX(x2) // update the working scale.
+    // do something...
+  }
+
+  projection = d3.geoAlbers()
+    .center([1.5, 56])
+    .rotate([3.2, 1])
+    .parallels([50, 60])
+    .scale(mapScale)
+    .translate([chart_width / 2, height / 2]);
+
+  path = d3.geoPath().projection(projection);
+}
+
+function addMap(variableIndex) {
+  var div = d3.select(".container").append('div').attr('id', 'map' + variableIndex).attr('class', 'item');
+  svg = div.append('svg')
+    .attr('width', chart_width + margin.left + margin.right)
+    .attr('height', height + margin.top + margin.bottom);
+
+
+  g = svg.append('g')
+    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+  g.append('text').text(variables[variableIndex]).attr('x', 0).attr('y', 0);
+
+  g.select('path.map')
+    .data(topojson.feature(geogdata, geogdata.pcon.objects.EWregions).features)
+    .enter()
+    .append("path")
+    .attr("id", function(d, i) {
+      return "reg" + d.properties.AREACD;
+    })
+    .attr("data-nm", function(d) {
+      return d.properties.AREANM;
+    })
+    .attr("d", path)
+    .style("stroke", function(d) {
+      if (rateById[d.properties.AREACD] == ".." || rateById[d.properties.AREACD] == undefined) {
+        return "#c6c6c6";
+      } else {
+        return blue;//"none";
+      }
+    })
+    .style("fill", function(d) {
+      if (rateById[d.properties.AREACD] == ".." || rateById[d.properties.AREACD] == undefined) {
+        return red;//"white"
+      } else {
+        return color(rateById[d.properties.AREACD]);
+      }
+    });
+
+}
+//end setupdropdown
 //     //
 //
 //     //
@@ -201,7 +257,7 @@ function ready(error, geog, data) {
 //
 //   d3.select('.container-fluid').selectAll("*").attr('aria-hidden', 'true')
 //
-// }
+
 //
 //
 // function createStructure() {
@@ -283,261 +339,261 @@ function ready(error, geog, data) {
 // } //end createStructure()
 //
 //
-// function drawGraphic2(params) {
-//
-//   rateById = {};
-//   dvc.data.forEach(function(d, i) {
-//     rateById[d.AREACD] = [d[headers[params]]];
-//   });
-//
-//   var values = dvc.data.map(function(d) {
-//     return +d[headers[params]];
-//   }).filter(function(d) {
-//     return !isNaN(d)
-//   }).sort(d3.ascending);
-//   //console.log(values)
-//
-//   if (dvc.essential.breaksAll == "jenks") {
-//     breaks = ss.jenks(values, dvc.essential.breakDivisions);
-//     var fmt = d3.format(".1f")
-//     breaks[breaks.length - 1] = fmt((breaks[breaks.length - 1]) + 0.1)
-//   } else {
-//     breaks = dvc.essential.breaksAll;
-//   }
-//
-//
-//   color = d3.scale.threshold()
-//     .domain(breaks)
-//     .range(dvc.essential.colour);
-//
-//   d3.select("#svg" + params).selectAll("*").remove();
-//
-//
-//   g = d3.select("#svg" + params)
-//     .attr("width", chart_width + margin.left + margin.right)
-//     .attr("height", height + margin.top + margin.bottom)
-//     .append("g").attr("id", "group_" + params);
-//
-//
-//   d3.select("#svg" + params)
-//     .append("g")
-//     .append("rect")
-//     .attr("class", "white_rect")
-//     .attr("width", "52px")
-//     .attr("height", height)
-//     .attr("x", -1)
-//     .attr("y", -1)
-//     .attr("fill", "white")
-//
-//   d3.select("#svg" + params)
-//     .append("g")
-//     .append("rect")
-//     .attr("class", "white_rect")
-//     .attr("width", chart_width + 10)
-//     .attr("height", "35px")
-//     .attr("x", 0)
-//     .attr("y", -1)
-//     .attr("fill", "white")
-//
-//   zoomed();
-//
-//
-//
-//   g.attr("class", "pcon")
-//     .selectAll("path")
-//     .data(topojson.feature(dvc.pcon, dvc.pcon.objects.la2019EW).features)
-//     .enter()
-//     .append("path")
-//     .attr("id", function(d, i) {
-//       return "reg" + d.properties.AREACD
-//     })
-//     .attr("class", function(d, i) {
-//       return "reg" + d.properties.AREACD
-//     })
-//     .attr("data-nm", function(d) {
-//       return d.properties.AREANM
-//     })
-//     .attr("data_val", function(d) {
-//       return rateById[d.properties.AREACD]
-//     })
-//     .attr("d", path)
-//     .style("stroke", function(d) {
-//       if (rateById[d.properties.AREACD] == ".." || rateById[d.properties.AREACD] == undefined) {
-//         return "#ccc"
-//       } else {
-//         return "#ccc";
-//       }
-//     })
-//     .style("fill", function(d) {
-//       if (rateById[d.properties.AREACD] == ".." || rateById[d.properties.AREACD] == undefined) {
-//         return "white"
-//       } else {
-//         return color(rateById[d.properties.AREACD]);
-//       }
-//     })
-//     .on("mouseout", unhighlight)
-//     .on("mouseover", function(d) {
-//       //console.log($(this).parent().attr("id"));
-//       highlight(d.properties.AREACD);
-//       plot($(this).parent().attr("id"), d.properties.AREACD);
-//     });
-//
-//   //					// draw text in upper right corner of each graph with the associated title from data.csv
-//   //						cards.append("rect")/*
-//   //							.data(headers)*/
-//   //							.attr("x", 0)
-//   //							.attr("y", 0 )
-//   //							.attr("height",18)
-//   //							.attr("width", 40)
-//   //							.style("fill", "#fff")
-//   //							.style("stroke","none")
-//   //							.style("opacity",0.8);
-//
-//
-//
-//
-//   // draw text in upper right corner of each graph with the associated value from data.csv
-//   //						d3.select("#svg"+params).append("text")
-//   ////							.data(headers)
-//   //							.attr("x" , chart_width-5)
-//   //							.attr("y" , 15 )
-//   //							.style("display" , "inline")
-//   //							.attr("class", "svgValue")
-//   //						.attr("id", "areanm")
-//   //							.style("pointer-events" , "none")
-//   //							.style("text-anchor","end")
-//   //							.text(function(){
-//   //								var fmt = d3.format(".2f")
-//   //								if(linevalues[0][vals[i]]=="null"||[vals[i]]=="undefined"){
-//   //									return headers[i].substr(2, 5);
-//   //								} else if(linevalues[0][vals[i]]=="0"){
-//   //									return "less than 0.01% "+ headers[i];;
-//   //								} else {
-//   //									return /*numFormat*/fmt(linevalues[0][vals[i]])+"% "+headers[i];;
-//   //								}
-//   //							});
-//   //							.text("") ;
-//
-//   //function(d,i){return currclass});
-//
-//   //.text(function(d,i){ return headers[k];
-//   ////return headers[k].substring(0,  headers[k].indexOf(', '));
-//   //});
-//
-//   d3.select("#svg" + params).append("text")
-//     /*
-//     							.data(headers)*/
-//     .attr("x", 0)
-//     .attr("y", 12)
-//     .style("display", "inline")
-//     .attr("class", "svgTitle")
-//     .style("pointer-events", "none")
-//     .text(function(d, i) {
-//       return headers[params];
-//       //return headers[k].substring(0,  headers[k].indexOf(', '));
-//     })
-//   //							.each(function(d,i){
-//   //
-//   //								d3.select(this)
-//   //									.text('')                        //clear existing text
-//   //									.tspans(d3.wordwrap(headers[params], 30)) //wrap after xx char
-//   //								});
-//
-//   d3.selectAll(".svgTitle")
-//     .selectAll("tspan")
-//     .attr("x", 0)
-//
-//   d3.select("#svg" + params).append("text")
-//     /*
-//     							.data(headers)*/
-//     .attr("x", 0)
-//     .attr("y", 27)
-//     .style("display", "inline")
-//     .attr("class", "LA_value")
-//     .attr("id", "LA_value_" + params)
-//     .style("pointer-events", "none")
-//
-//   //				var texty  = d3.selectAll(".tick").select("text");
-//   //
-//   //				texty[0].forEach(function(d,i){
-//   //
-//   //					if(d3.select(d).text() == "15") {
-//   //						d3.select(d).text("15+");
-//   //					};
-//   //
-//   //
-//   //				}
-//   //
-//   //				)
-//
-//   center = [chart_width / 2, chart_width / 2];
-//
-//   d3.selectAll(".graphUnitSVGs").call(zoom)
-//     .call(zoom.event);
-//
-//   d3.selectAll(".name").classed("hide", true);
-//
-//
-//
-//   d3.select("#svg" + params)
-//     .append("g")
-//     .attr("id", "key_" + params)
-//     .attr("class", "key")
-//     .attr("transform", "translate(40,45)scale(0.8)");
-//
-//
-//   y = d3.scale.linear()
-//     .domain([breaks[0], breaks[dvc.essential.breakDivisions]]) /*range for data*/
-//     .range([height + margin.top + margin.bottom, 0]); /*range for pixels*/
-//
-//
-//   var yAxis = d3.svg.axis()
-//     .scale(y)
-//     .orient("left")
-//     .tickSize(0)
-//     .tickFormat(function(d, i) {
-//
-//       if (i == 0 || i == 5 || i == 7 || i == 8 || i == 9) {
-//         return numFormat(d)
-//       }
-//
-//     })
-//     .tickValues(color.domain());
-//
-//   d3.select("#key_" + params).selectAll("rect")
-//     .data(color.range().map(function(d, i) {
-//       return {
-//         y0: i ? y(color.domain()[i - 1]) : y.range()[0],
-//         y1: i < color.domain().length ? y(color.domain()[i]) : y.range()[1],
-//         z: d
-//       };
-//     }))
-//     .enter().append("rect")
-//     .attr("width", 5)
-//     .attr("y", function(d, i) {
-//       return d.y1;
-//     })
-//     .attr("height", function(d) {
-//       return d.y0 - d.y1;
-//     })
-//     .style("fill", function(d) {
-//       return d.z;
-//     });
-//
-//   d3.select("#key_" + params).call(yAxis).append("text").text("%").attr("dy", "-0.5em");
-//
-//
-//   //checkUrl()
-//   //showMaps();
-//
-//   //use pym to calculate chart dimensions
-//   if (pymChild) {
-//     setTimeout(function() {
-//       pymChild.sendHeight();
-//     }, 300);
-//   }
-//
-// }
+function drawGraphic2(params) {
+
+  rateById = {};
+  dvc.data.forEach(function(d, i) {
+    rateById[d.AREACD] = [d[headers[params]]];
+  });
+
+  var values = dvc.data.map(function(d) {
+    return +d[headers[params]];
+  }).filter(function(d) {
+    return !isNaN(d)
+  }).sort(d3.ascending);
+  //console.log(values)
+  //
+  //   if (dvc.essential.breaksAll == "jenks") {
+  //     breaks = ss.jenks(values, dvc.essential.breakDivisions);
+  //     var fmt = d3.format(".1f")
+  //     breaks[breaks.length - 1] = fmt((breaks[breaks.length - 1]) + 0.1)
+  //   } else {
+  //     breaks = dvc.essential.breaksAll;
+  //   }
+  //
+  //
+  //   color = d3.scale.threshold()
+  //     .domain(breaks)
+  //     .range(dvc.essential.colour);
+  //
+  //   d3.select("#svg" + params).selectAll("*").remove();
+  //
+  //
+  //   g = d3.select("#svg" + params)
+  //     .attr("width", chart_width + margin.left + margin.right)
+  //     .attr("height", height + margin.top + margin.bottom)
+  //     .append("g").attr("id", "group_" + params);
+  //
+  //
+  //   d3.select("#svg" + params)
+  //     .append("g")
+  //     .append("rect")
+  //     .attr("class", "white_rect")
+  //     .attr("width", "52px")
+  //     .attr("height", height)
+  //     .attr("x", -1)
+  //     .attr("y", -1)
+  //     .attr("fill", "white")
+  //
+  //   d3.select("#svg" + params)
+  //     .append("g")
+  //     .append("rect")
+  //     .attr("class", "white_rect")
+  //     .attr("width", chart_width + 10)
+  //     .attr("height", "35px")
+  //     .attr("x", 0)
+  //     .attr("y", -1)
+  //     .attr("fill", "white")
+  //
+  //   zoomed();
+  //
+  //
+  //
+  //   g.attr("class", "pcon")
+  //     .selectAll("path")
+  //     .data(topojson.feature(dvc.pcon, dvc.pcon.objects.la2019EW).features)
+  //     .enter()
+  //     .append("path")
+  //     .attr("id", function(d, i) {
+  //       return "reg" + d.properties.AREACD
+  //     })
+  //     .attr("class", function(d, i) {
+  //       return "reg" + d.properties.AREACD
+  //     })
+  //     .attr("data-nm", function(d) {
+  //       return d.properties.AREANM
+  //     })
+  //     .attr("data_val", function(d) {
+  //       return rateById[d.properties.AREACD]
+  //     })
+  //     .attr("d", path)
+  //     .style("stroke", function(d) {
+  //       if (rateById[d.properties.AREACD] == ".." || rateById[d.properties.AREACD] == undefined) {
+  //         return "#ccc"
+  //       } else {
+  //         return "#ccc";
+  //       }
+  //     })
+  //     .style("fill", function(d) {
+  //       if (rateById[d.properties.AREACD] == ".." || rateById[d.properties.AREACD] == undefined) {
+  //         return "white"
+  //       } else {
+  //         return color(rateById[d.properties.AREACD]);
+  //       }
+  //     })
+  //     .on("mouseout", unhighlight)
+  //     .on("mouseover", function(d) {
+  //       //console.log($(this).parent().attr("id"));
+  //       highlight(d.properties.AREACD);
+  //       plot($(this).parent().attr("id"), d.properties.AREACD);
+  //     });
+  //
+  //   //					// draw text in upper right corner of each graph with the associated title from data.csv
+  //   //						cards.append("rect")/*
+  //   //							.data(headers)*/
+  //   //							.attr("x", 0)
+  //   //							.attr("y", 0 )
+  //   //							.attr("height",18)
+  //   //							.attr("width", 40)
+  //   //							.style("fill", "#fff")
+  //   //							.style("stroke","none")
+  //   //							.style("opacity",0.8);
+  //
+  //
+  //
+  //
+  //   // draw text in upper right corner of each graph with the associated value from data.csv
+  //   //						d3.select("#svg"+params).append("text")
+  //   ////							.data(headers)
+  //   //							.attr("x" , chart_width-5)
+  //   //							.attr("y" , 15 )
+  //   //							.style("display" , "inline")
+  //   //							.attr("class", "svgValue")
+  //   //						.attr("id", "areanm")
+  //   //							.style("pointer-events" , "none")
+  //   //							.style("text-anchor","end")
+  //   //							.text(function(){
+  //   //								var fmt = d3.format(".2f")
+  //   //								if(linevalues[0][vals[i]]=="null"||[vals[i]]=="undefined"){
+  //   //									return headers[i].substr(2, 5);
+  //   //								} else if(linevalues[0][vals[i]]=="0"){
+  //   //									return "less than 0.01% "+ headers[i];;
+  //   //								} else {
+  //   //									return /*numFormat*/fmt(linevalues[0][vals[i]])+"% "+headers[i];;
+  //   //								}
+  //   //							});
+  //   //							.text("") ;
+  //
+  //   //function(d,i){return currclass});
+  //
+  //   //.text(function(d,i){ return headers[k];
+  //   ////return headers[k].substring(0,  headers[k].indexOf(', '));
+  //   //});
+  //
+  //   d3.select("#svg" + params).append("text")
+  //     /*
+  //     							.data(headers)*/
+  //     .attr("x", 0)
+  //     .attr("y", 12)
+  //     .style("display", "inline")
+  //     .attr("class", "svgTitle")
+  //     .style("pointer-events", "none")
+  //     .text(function(d, i) {
+  //       return headers[params];
+  //       //return headers[k].substring(0,  headers[k].indexOf(', '));
+  //     })
+  //   //							.each(function(d,i){
+  //   //
+  //   //								d3.select(this)
+  //   //									.text('')                        //clear existing text
+  //   //									.tspans(d3.wordwrap(headers[params], 30)) //wrap after xx char
+  //   //								});
+  //
+  //   d3.selectAll(".svgTitle")
+  //     .selectAll("tspan")
+  //     .attr("x", 0)
+  //
+  //   d3.select("#svg" + params).append("text")
+  //     /*
+  //     							.data(headers)*/
+  //     .attr("x", 0)
+  //     .attr("y", 27)
+  //     .style("display", "inline")
+  //     .attr("class", "LA_value")
+  //     .attr("id", "LA_value_" + params)
+  //     .style("pointer-events", "none")
+  //
+  //   //				var texty  = d3.selectAll(".tick").select("text");
+  //   //
+  //   //				texty[0].forEach(function(d,i){
+  //   //
+  //   //					if(d3.select(d).text() == "15") {
+  //   //						d3.select(d).text("15+");
+  //   //					};
+  //   //
+  //   //
+  //   //				}
+  //   //
+  //   //				)
+  //
+  //   center = [chart_width / 2, chart_width / 2];
+  //
+  //   d3.selectAll(".graphUnitSVGs").call(zoom)
+  //     .call(zoom.event);
+  //
+  //   d3.selectAll(".name").classed("hide", true);
+  //
+  //
+  //
+  //   d3.select("#svg" + params)
+  //     .append("g")
+  //     .attr("id", "key_" + params)
+  //     .attr("class", "key")
+  //     .attr("transform", "translate(40,45)scale(0.8)");
+  //
+  //
+  //   y = d3.scale.linear()
+  //     .domain([breaks[0], breaks[dvc.essential.breakDivisions]]) /*range for data*/
+  //     .range([height + margin.top + margin.bottom, 0]); /*range for pixels*/
+  //
+  //
+  //   var yAxis = d3.svg.axis()
+  //     .scale(y)
+  //     .orient("left")
+  //     .tickSize(0)
+  //     .tickFormat(function(d, i) {
+  //
+  //       if (i == 0 || i == 5 || i == 7 || i == 8 || i == 9) {
+  //         return numFormat(d)
+  //       }
+  //
+  //     })
+  //     .tickValues(color.domain());
+  //
+  //   d3.select("#key_" + params).selectAll("rect")
+  //     .data(color.range().map(function(d, i) {
+  //       return {
+  //         y0: i ? y(color.domain()[i - 1]) : y.range()[0],
+  //         y1: i < color.domain().length ? y(color.domain()[i]) : y.range()[1],
+  //         z: d
+  //       };
+  //     }))
+  //     .enter().append("rect")
+  //     .attr("width", 5)
+  //     .attr("y", function(d, i) {
+  //       return d.y1;
+  //     })
+  //     .attr("height", function(d) {
+  //       return d.y0 - d.y1;
+  //     })
+  //     .style("fill", function(d) {
+  //       return d.z;
+  //     });
+  //
+  //   d3.select("#key_" + params).call(yAxis).append("text").text("%").attr("dy", "-0.5em");
+  //
+  //
+  //   //checkUrl()
+  //   //showMaps();
+  //
+  //   //use pym to calculate chart dimensions
+  //   if (pymChild) {
+  //     setTimeout(function() {
+  //       pymChild.sendHeight();
+  //     }, 300);
+  //   }
+  //
+} //end drawGraphic2
 //
 //
 // function checkUrl() {
