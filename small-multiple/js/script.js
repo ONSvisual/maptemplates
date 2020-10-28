@@ -140,8 +140,8 @@ function removeMap(index) {
 }
 
 function setupGeo(geog) {
-  geogdata = geog
-
+  geogdata = geog;
+	console.log('geog',geogdata)
   var mapScale = 1300;
 
   zoom = d3.zoom()
@@ -174,8 +174,8 @@ function addMap(variableIndex) {
 
   g.append('text').text(variables[variableIndex]).attr('x', 0).attr('y', 0);
 
-  g.select('path.map')
-    .data(topojson.feature(geogdata, geogdata.pcon.objects.EWregions).features)
+  map=g.append('g').selectAll('path.regions')
+    .data(topojson.feature(geogdata,geogdata.objects.EWregion).features)
     .enter()
     .append("path")
     .attr("id", function(d, i) {
@@ -186,18 +186,18 @@ function addMap(variableIndex) {
     })
     .attr("d", path)
     .style("stroke", function(d) {
-      if (rateById[d.properties.AREACD] == ".." || rateById[d.properties.AREACD] == undefined) {
+      // if (rateById[d.properties.AREACD] == ".." || rateById[d.properties.AREACD] == undefined) {
         return "#c6c6c6";
-      } else {
-        return blue;//"none";
-      }
+      // } else {
+      //   return blue;//"none";
+      // }
     })
     .style("fill", function(d) {
-      if (rateById[d.properties.AREACD] == ".." || rateById[d.properties.AREACD] == undefined) {
-        return red;//"white"
-      } else {
-        return color(rateById[d.properties.AREACD]);
-      }
+      // if (rateById[d.properties.AREACD] == ".." || rateById[d.properties.AREACD] == undefined) {
+        return 'red';//"white"
+      // } else {
+      //   return color(rateById[d.properties.AREACD]);
+      // }
     });
 
 }
