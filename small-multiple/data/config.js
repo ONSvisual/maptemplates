@@ -12,7 +12,7 @@ var config = {
     "#01665e"
   ],
   margin:{
-    top:25,
+    top:55,
     right:10,
     bottom:10,
     left:10

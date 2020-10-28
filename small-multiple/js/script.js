@@ -25,32 +25,35 @@ function ready(error, geog, data) {
   pymChild = new pym.Child();
   setupdropdown(data);
   setupGeo(geog);
+	setupScales();
+	dataObject=prepData(data);
   pymChild.sendHeight();
 }
 
-// var height;
-// var dvc = {}; // global object variable to contain all variables prefixed with 'dvc.'
-// var headers = [];
-// var mapScale;
-//
-// dvc.data;
-//
-// var numFormat = d3.format(".1f");
-//
-//
-// listnames = [];
-//
 function setupScales() {
-  color = d3.scale.threshold()
+  colour = d3.scaleThreshold()
     .domain(config.breaksAll)
     .range(config.colour);
+}
+
+function prepData(data){
+	var dataObject={};
+	for(i=2;i<data.columns.length;i++){
+		dataObject[data.columns[i]]={}
+		var foo=dataObject[data.columns[i]]
+		for(j=0;j<data.length;j++){
+			foo[data[j].AREACD]=+data[j][data.columns[i]]
+		}
+	}
+	return dataObject;
 }
 
 function setupdropdown(data) {
 
   d3.select("#chosensel").selectAll("*").remove();
   variables = [];
-  console.log(data)
+  console.log(data);
+
   for (i = 2; i < data.columns.length; i++) { //skip the first two columns
     variables.push(data.columns[i]);
   }
@@ -75,61 +78,31 @@ function setupdropdown(data) {
 
 
   $('#selectmenu').chosen({
-    width: "98%",
+    width: "99%",
     max_selected_options: 6,
     placeholder_text_multiple: "Type some names, or choose an option.",
   }).on('change', function(evt, params) {
 
     if (typeof params.selected != 'undefined') {
-      var allselections = $(this).val();
-      console.log(params, allselections);
+      allselections = $(this).val();
+
       var lastselection = params.selected;
 
-      addMap(lastselection)
-      //
-      // drawGraphic2(lastselection);
-      // svgSel.classed("hide", false);
-      // d3.select(".zoom-container").classed("hide", false)
-      // listnames.push(lastselection);
-      //
-      // console.log(listnames)
-      //
-      // d3.selectAll(".search-choice-close").attr("aria-label", function(d, i) {
-      //   return "close selection - " + variables[listnames[i]]
-      // })
-      //
-      // if (pymChild) {
-      //   setTimeout(function() {
-      //     pymChild.sendHeight();
-      //   }, 300);
-      // }
+      addMap(lastselection);
+
+      d3.selectAll(".search-choice-close").each(function(d,i){
+				d3.select(this).attr("aria-label","Remove "+variables[allselections[i]]);
+			})
+
+      if (pymChild) {
+        setTimeout(function() {
+          pymChild.sendHeight();
+        }, 300);
+      }
 
     } else {
-
       var deselection = params.deselected;
       removeMap(deselection);
-
-      // var parentDiv = d3.select("#svg" + deselection).select(function() {
-      //   return this.parentNode;
-      // })
-      // d3.select("#svg" + deselection).classed("hide", true);
-      //
-      // if ($(".container-fluid").width() < 600) {
-      //   parentDiv.classed("col-xs-10", false)
-      // } else if ($(".container-fluid").width() < 750) {
-      //   parentDiv.classed("col-sm-4", false)
-      // } else if ($(".container-fluid").width() < 945) {
-      //   parentDiv.classed("col-md-3", false)
-      // }
-      //
-      //
-      // var index = listnames.indexOf(deselection);
-      // listnames.splice(index, 1);
-      //
-      // if (listnames.length < 1) {
-      //   d3.select(".zoom-container").classed("hide", true)
-      // }
-
     }
   });
 
@@ -140,66 +113,71 @@ function removeMap(index) {
 }
 
 function setupGeo(geog) {
-  geogdata = geog;
-	console.log('geog',geogdata)
-  var mapScale = 1300;
-
-  zoom = d3.zoom()
-    .on("zoom", zoomed);
-
-  function zoomed() {
-    //x = d3.event.transform.rescaleX(x2) // update the working scale.
-    // do something...
-  }
+	geojson=topojson.feature(geog,geog.objects.EWregion)
 
   projection = d3.geoAlbers()
-    .center([1.5, 56])
-    .rotate([3.2, 1])
-    .parallels([50, 60])
-    .scale(mapScale)
-    .translate([chart_width / 2, height / 2]);
+	.rotate([0,0])
+	.fitSize([chart_width,height],geojson)
 
   path = d3.geoPath().projection(projection);
 }
 
 function addMap(variableIndex) {
   var div = d3.select(".container").append('div').attr('id', 'map' + variableIndex).attr('class', 'item');
+
   svg = div.append('svg')
     .attr('width', chart_width + margin.left + margin.right)
     .attr('height', height + margin.top + margin.bottom);
 
-
   g = svg.append('g')
     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-  g.append('text').text(variables[variableIndex]).attr('x', 0).attr('y', 0);
+  svg.append('text').text(variables[variableIndex])
+	.attr('x', margin.left)
+	.attr('y', 20)
+	.attr('font-weight',700);
+
+	svg.append('text').attr('id','valueText'+variables[variableIndex])
+	.attr('class','valueText')
+	.attr('x',margin.left)
+	.attr('y',40)
+	.attr('text-anchor','start')
 
   map=g.append('g').selectAll('path.regions')
-    .data(topojson.feature(geogdata,geogdata.objects.EWregion).features)
+    .data(geojson.features)
     .enter()
     .append("path")
-    .attr("id", function(d, i) {
-      return "reg" + d.properties.AREACD;
+    .attr("class", function(d, i) {
+      return "reg reg" + d.properties.AREACD;
     })
     .attr("data-nm", function(d) {
       return d.properties.AREANM;
     })
     .attr("d", path)
-    .style("stroke", function(d) {
-      // if (rateById[d.properties.AREACD] == ".." || rateById[d.properties.AREACD] == undefined) {
-        return "#c6c6c6";
-      // } else {
-      //   return blue;//"none";
-      // }
+    .attr("stroke", "#7f7f7f")
+    .attr("fill", function(d) {
+      if (dataObject[variables[variableIndex]][d.properties.AREACD] == ".." || dataObject[variables[variableIndex]][d.properties.AREACD] == undefined) {
+        return 'white';
+      } else {
+      	return colour(dataObject[variables[variableIndex]][d.properties.AREACD])
+      }
     })
-    .style("fill", function(d) {
-      // if (rateById[d.properties.AREACD] == ".." || rateById[d.properties.AREACD] == undefined) {
-        return 'red';//"white"
-      // } else {
-      //   return color(rateById[d.properties.AREACD]);
-      // }
-    });
+		.on("mouseover",function(d){highlight(d.properties.AREACD,d.properties.AREANM,variableIndex)})
+		.on("mouseout",unhighlight);
 
+}
+
+function highlight(area,name){
+	d3.selectAll(".valueText").each(function(d,i){
+		d3.select(this).text(name+" "+dataObject[variables[allselections[i]]][area])
+	})
+
+	d3.selectAll(".reg"+area).attr('stroke','black')
+}
+
+function unhighlight(){
+	d3.selectAll('.reg').attr('stroke','#7f7f7f')
+	d3.selectAll('.valueText').text("")
 }
 //end setupdropdown
 //     //

@@ -14,13 +14,42 @@
   <link rel="stylesheet" href="css/chosen.css">
 
   <style type="text/css">
-    body{
-      font-family: "Open Sans",Arial, sans-serif;
+    body {
+      font-family: "Open Sans", Arial, sans-serif;
     }
 
-    .container{
+    .container {
       display: flex;
       flex-wrap: wrap;
+    }
+
+    .item {
+      border: 3px solid #206095;
+      margin: 3px;
+    }
+
+    .key{
+      line-height: 10px;
+    }
+
+    ul{
+      list-style-type: none;
+    }
+
+    li{
+      display:grid;
+    }
+
+    .key label{
+      margin-left:20px;
+    }
+    .key b {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        margin-right: 6px;
+        float: left;
+        background-color: none;
     }
 
     .visuallyhidden {
@@ -69,13 +98,26 @@
     <div id="fallback">
       <p>For a safer, faster, better experience online you should upgrade your browser. You will then be able to play with lovely interactive graphics such as this one. </p><br>
       <p> <a href="https://www.gov.uk/support/browsers" target="_blank">Find out more about browsers</a></p>
-      <img src="images/fallback.png" alt=""></div>
+      <img src="images/fallback.png" alt="">
     </div>
-    <div id="dropdown">
-      <label id="instructions" for="selectmenu">Type some names, or select from the dropdown</label>
-      <div id="chosensel"></div>
-    </div>
-    <div id="graphic" class="container"></div>
+  </div>
+  <div id="dropdown">
+    <label id="instructions" for="selectmenu">Type some names, or select from the dropdown</label>
+    <div id="chosensel"></div>
+  </div>
+  <div id="legend">
+    <ul class="key">
+      <li><b style="background:#01665e;"></b><label> 10% and above</label></li>
+<li><b style="background:#35978f;"></b><label> 5% to 9.9%</label></li>
+<li><b style="background:#80cdc1;"></b><label> 2% to 4.9%</label></li>
+      <li><b style="background:#c7eae5;"></b><label> 0% to 1.9%</label></li>
+      <li><b style="background:#f6e8c3;"></b><label> -2% to 0%</label></li>
+      <li><b style="background:#dfc27d;"></b><label> -4.9% to -2%</label></li>
+      <li><b style="background:#bf812d;"></b><label> -9.9% to -5%</label></li>
+      <li><b style="background:#8c510a;"></b><label> -10% and below</label></li>
+    </ul>
+  </div>
+  <div id="graphic" class="container"></div>
 
 
   <script src="https://cdn.ons.gov.uk/vendor/jquery/2.1.4/jquery.min.js"></script>
@@ -88,4 +130,5 @@
   <script src="data/config.js"></script>
   <script src="js/script.js"></script>
 </body>
+
 </html>
