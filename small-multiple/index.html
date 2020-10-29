@@ -31,7 +31,6 @@
     .key{
       padding-left: 5px;
       line-height: 8px;
-      display:table;
     }
 
     ul{
@@ -44,15 +43,12 @@
 
     .key label{
       margin-left:20px;
-      display:inline-block;
       top: -10px;
       position: relative;
     }
     .key b {
-        display: inline-block;
         width: 12px;
         height: 12px;
-        margin-right: 6px;
         background-color: none;
     }
 
@@ -97,7 +93,7 @@
 
   <div>
 
-    <h5 class="visuallyhidden">This graphic allows users to see the geographical spread of a selected name across England and Wales. See the accompanying data for the underlying figures.</h5>
+    <h5 class="visuallyhidden" id="screenreadertext">This graphic allows users to see the geographical spread of a selected name across England and Wales. See the accompanying data for the underlying figures.</h5>
 
     <div id="fallback">
       <p>For a safer, faster, better experience online you should upgrade your browser. You will then be able to play with lovely interactive graphics such as this one. </p><br>
@@ -110,16 +106,6 @@
     <div id="chosensel"></div>
   </div>
   <div id="legend">
-    <ul class="key">
-      <li><b style="background:#01665e;"></b><label> 10% and above</label></li>
-<li><b style="background:#35978f;"></b><label> 5% to 9.9%</label></li>
-<li><b style="background:#80cdc1;"></b><label> 2% to 4.9%</label></li>
-      <li><b style="background:#c7eae5;"></b><label> 0% to 1.9%</label></li>
-      <li><b style="background:#f6e8c3;"></b><label> -2% to 0%</label></li>
-      <li><b style="background:#dfc27d;"></b><label> -4.9% to -2%</label></li>
-      <li><b style="background:#bf812d;"></b><label> -9.9% to -5%</label></li>
-      <li><b style="background:#8c510a;"></b><label> -10% and below</label></li>
-    </ul>
   </div>
   <div id="graphic" class="container"></div>
 
