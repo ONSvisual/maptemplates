@@ -265,8 +265,8 @@ if (Modernizr.webgl) {
   //   hideaxisVal();
   // };
 
-  // function onClick(e) {
-  //   disableMouseEvents();
+  function onClick(e) {
+    disableMouseEvents();
   //   newlsoa11cd = e.features[0].properties.lsoa11cd;
   //
   //   if (newlsoa11cd != oldlsoa11cd) {
@@ -275,7 +275,7 @@ if (Modernizr.webgl) {
   //
   //     //selectArea(e.features[0].properties.lsoa11cd);
   //     setAxisVal(e.features[0].properties.lsoa11nm, e.features[0].properties["houseprice"]);
-  //   }
+    }
 
   // dataLayer.push({
   //   'event': 'mapClickSelect',
@@ -283,16 +283,16 @@ if (Modernizr.webgl) {
   // })
   // };
 
-  // function disableMouseEvents() {
-  //   map.off("mousemove", "lsoa-outlines", onMove);
-  //   map.off("mouseleave", "lsoa-outlines", onLeave);
-  // }
+  function disableMouseEvents() {
+    map.off('mousemove', 'lsoa-boundaries', onMove);
+    map.off('mouseleave', 'lsoa-boundaries', onLeave);
+  }
   //
-  // function enableMouseEvents() {
-  //   map.on("mousemove", "lsoa-outlines", onMove);
+  function enableMouseEvents() {
   //   map.on("click", "lsoa-outlines", onClick);
-  //   map.on("mouseleave", "lsoa-outlines", onLeave);
-  // }
+      map.on('mousemove', 'lsoa-boundaries', onMove);
+      map.on('mouseleave', 'lsoa-boundaries', onLeave);
+  }
 
 
 
@@ -492,6 +492,7 @@ if (Modernizr.webgl) {
       });
 
       setAxisVal(e.features[0].properties.lsoa11nm,json[e.features[0].properties.lsoa11cd]);
+      setScreenreader(e.features[0].properties.lsoa11nm,json[e.features[0].properties.lsoa11cd]);
     }
   }
 
@@ -504,6 +505,8 @@ if (Modernizr.webgl) {
   d3.select('body').append('p').html("Unfortunately your browser does not support WebGL. <a href='https://www.gov.uk/help/browsers' target='_blank>'>If you're able to please upgrade to a modern browser</a>");
 
 }
+
+
 
 function generateBreaks(data, dvc) {
   if (!Array.isArray(dvc.breaks)) {
@@ -583,15 +586,24 @@ function onLeave() {
 function setAxisVal(areanm, areaval) {
   d3.select("#keyvalue").style("font-weight", "bold").html(function() {
     if (!isNaN(areaval)) {
-      return areanm + "<br>" + "£" + displayformat(areaval)
+      return areanm + "<br>" + "£" + displayformat(areaval);
     } else {
       return areanm + "<br>No data available";
     }
   });
 }
 
+function setScreenreader(name,value){
+  if(!isNaN(value)){
+    d3.select("#screenreadertext").text("The average house price paid in "+name+" is "+value);
+  }else{
+    d3.select("#screenreadertext").text("There is no data available for "+name);
+  }
+}
+
 function hideaxisVal() {
   d3.select("#keyvalue").style("font-weight", "bold").text("");
+  d3.select("#screenreadertext").text("");
 }
 
 function getColour(value) {
