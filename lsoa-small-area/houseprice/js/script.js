@@ -17,8 +17,6 @@ if (Modernizr.webgl) {
 
     //Set up global variables
     dvc = config.ons;
-    // oldlsoa11cd = "";
-    // firsthover = true;
     hoveredId = null;
 
     //set title of page
@@ -127,9 +125,9 @@ if (Modernizr.webgl) {
       // Add buildings tileset
       map.addSource('building-tiles', {
         type: 'vector',
-        "tiles": ['https://cdn.ons.gov.uk/maptiles/t24/tiles/{z}/{x}/{y}.pbf'],
+        "tiles": ['https://cdn.ons.gov.uk/maptiles/administrative/lsoa/v1/buildings/{z}/{x}/{y}.pbf'],
         "promoteId": {
-          "houseprices": "lsoa11cd"
+          "buildings": "AREACD"
         },
         "buffer": 0,
         "maxzoom": 13,
@@ -140,7 +138,7 @@ if (Modernizr.webgl) {
         id: 'lsoa-building',
         type: 'fill',
         source: 'building-tiles',
-        'source-layer': 'houseprices',
+        'source-layer': 'buildings',
         paint: {
           'fill-color': ['case',
             ['!=', ['feature-state', 'colour'], null],
@@ -156,7 +154,7 @@ if (Modernizr.webgl) {
         // setFeatureState for buildlings
         map.setFeatureState({
           source: 'building-tiles',
-          sourceLayer: 'houseprices',
+          sourceLayer: 'buildings',
           id: key
         }, {
           value: json[key],
