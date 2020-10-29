@@ -290,7 +290,6 @@ if (Modernizr.webgl) {
     }
     //
     function enableMouseEvents() {
-      //   map.on("click", "lsoa-outlines", onClick);
       map.on('mousemove', 'lsoa-boundaries', onMove);
       map.on('mouseleave', 'lsoa-boundaries', onLeave);
     }
@@ -426,7 +425,7 @@ if (Modernizr.webgl) {
         dataType: "jsonp",
         url: myURIstring,
         error: function(xhr, ajaxOptions, thrownError) {
-          $(".search-control").val("Sorry, invalid postcode.");
+          d3.select("#keyvalue").text("Enter a valid postcode");
         },
         success: function(data1) {
           if (data1.status == 200) {
@@ -434,7 +433,7 @@ if (Modernizr.webgl) {
             lng = data1.result.longitude;
             successpc(lat, lng);
           } else {
-            $(".search-control").val("Sorry, invalid postcode.");
+            d3.select("#keyvalue").text("Enter a valid postcode");
           }
         }
 
@@ -549,30 +548,6 @@ function generateBreaks(data, dvc) {
   return breaks;
 }
 
-
-
-// function onClick(e) {
-//     if (e.features.length > 0) {
-//       if (selectedId) {
-//         map.setFeatureState({
-//           source: 'lsoa-tiles',
-//           sourceLayer: 'boundaries',
-//           id: selectedId
-//         }, {
-//           select: false
-//         });
-//       }
-//       selectedId = e.features[0].id;
-//       map.setFeatureState({
-//         source: 'lsoa-tiles',
-//         sourceLayer: 'boundaries',
-//         id: selectedId
-//       }, {
-//         select: true
-//       });
-//     }
-// }
-
 function onLeave() {
   if (hoveredId) {
     map.setFeatureState({
@@ -587,7 +562,7 @@ function onLeave() {
 }
 
 function setAxisVal(areanm, areaval) {
-  d3.select("#keyvalue").style("font-weight", "bold").html(function() {
+  d3.select("#keyvalue").html(function() {
     if (!isNaN(areaval)) {
       return areanm + "<br>" + "£" + displayformat(areaval);
     } else {
@@ -622,31 +597,4 @@ function csv2json(csv) {
     i++;
   }
   return json;
-}
-
-//test whether ie or not
-function detectIE() {
-  var ua = window.navigator.userAgent;
-
-  var msie = ua.indexOf('MSIE ');
-  if (msie > 0) {
-    // IE 10 or older => return version number
-    return parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
-  }
-
-  var trident = ua.indexOf('Trident/');
-  if (trident > 0) {
-    // IE 11 => return version number
-    var rv = ua.indexOf('rv:');
-    return parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
-  }
-
-  var edge = ua.indexOf('Edge/');
-  if (edge > 0) {
-    // Edge (IE 12+) => return version number
-    return parseInt(ua.substring(edge + 5, ua.indexOf('.', edge)), 10);
-  }
-
-  // other browser
-  return false;
 }
