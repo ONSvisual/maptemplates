@@ -262,26 +262,29 @@ if (Modernizr.webgl) {
 
     function onClick(e) {
       disableMouseEvents();
-      highlightArea(e);
+      highlightArea(e.features);
       addClearBox();
     }
 
     function addClearBox() {
-      d3.select('#keydiv').append('a').attr('id', 'clearbutton').attr('role', 'button').attr('class', 'clear').attr('title', 'close').text("close").attr('tabindex', 0);
-      d3.select('#clearbutton').on('click', removeClearBox);
-      d3.select("#clearbutton").on("keydown", function() {
-        if (d3.event.keyCode === 13 || d3.event.keyCode === 32) {
-          event.preventDefault();
-          event.stopPropagation();
-          removeClearBox();
-        }
-      });
+      if(d3.select('#clearbutton').empty()){
+        d3.select('#keydiv').append('a').attr('id', 'clearbutton').attr('role', 'button').attr('class', 'clear').attr('title', 'close').text("close").attr('tabindex', 0);
+        d3.select('#clearbutton').on('click', removeClearBox);
+        d3.select("#clearbutton").on("keydown", function() {
+          if (d3.event.keyCode === 13 || d3.event.keyCode === 32) {
+            event.preventDefault();
+            event.stopPropagation();
+            removeClearBox();
+          }
+        });
+      }
     }
 
     function removeClearBox() {
       d3.select("#clearbutton").remove();
       enableMouseEvents();
       hideaxisVal();
+      unhighlightArea();
     }
 
     function disableMouseEvents() {
@@ -453,15 +456,13 @@ if (Modernizr.webgl) {
         var tilechecker = setInterval(function() {
           features = null;
           var features = map.queryRenderedFeatures(point, {
-            layers: ['lsoa-outlines']
+            layers: ['lsoa-boundaries']
           });
           if (features.length != 0) {
             //onrender(),
-            map.setFilter("lsoa-outlines-hover", ["==", "lsoa11cd", features[0].properties.lsoa11cd]);
-            //var features = map.queryRenderedFeatures(point);
+            highlightArea(features)
             disableMouseEvents();
-            setAxisVal(features[0].properties.lsoa11nm, features[0].properties.houseprice);
-
+            addClearBox();
             clearInterval(tilechecker);
           }
         }, 500);
@@ -469,7 +470,7 @@ if (Modernizr.webgl) {
     }
 
     function onMove(e) {
-      highlightArea(e)
+      highlightArea(e.features)
     }
 
   } //end function ready
@@ -483,7 +484,7 @@ if (Modernizr.webgl) {
 }
 
 function highlightArea(e) {
-  if (e.features.length > 0) {
+  if (e.length > 0) {
     if (hoveredId) {
       map.setFeatureState({
         source: 'lsoa-tiles',
@@ -494,7 +495,7 @@ function highlightArea(e) {
       });
     }
 
-    hoveredId = e.features[0].id;
+    hoveredId = e[0].id;
 
     map.setFeatureState({
       source: 'lsoa-tiles',
@@ -504,9 +505,22 @@ function highlightArea(e) {
       hover: true
     });
 
-    setAxisVal(e.features[0].properties.lsoa11nm, json[e.features[0].properties.lsoa11cd]);
-    setScreenreader(e.features[0].properties.lsoa11nm, json[e.features[0].properties.lsoa11cd]);
+    setAxisVal(e[0].properties.lsoa11nm, json[e[0].properties.lsoa11cd]);
+    setScreenreader(e[0].properties.lsoa11nm, json[e[0].properties.lsoa11cd]);
   }
+}
+
+function unhighlightArea(){
+  if (hoveredId) {
+    map.setFeatureState({
+      source: 'lsoa-tiles',
+      sourceLayer: 'boundaries',
+      id: hoveredId
+    }, {
+      hover: false
+    });
+  }
+  hoveredId = null;
 }
 
 
