@@ -50,7 +50,6 @@
     .key b {
         width: 12px;
         height: 12px;
-        background-color: none;
     }
 
     .visuallyhidden {
@@ -103,12 +102,11 @@
     </div>
   </div>
   <div id="dropdown" style="margin-top:3px;">
-    <label id="instructions" class="visuallyhidden" for="selectmenu">Start typing or select from the dropdown</label>
+    <label id="instructions" class="visuallyhidden" for="selectmenu-chosen-search-results">Start typing or select from the dropdown</label>
     <div id="chosensel"></div>
   </div>
-  <div id="legend">
-  </div>
-  <div id="graphic" class="container"></div>
+  <div aria-hidden="true" id="legend"></div>
+  <div id="graphic" aria-hidden="true" class="container"></div>
 
 
   <script src="https://cdn.ons.gov.uk/vendor/jquery/2.1.4/jquery.min.js"></script>

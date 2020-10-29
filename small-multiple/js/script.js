@@ -119,9 +119,11 @@ function setupdropdown(data) {
       var deselection = params.deselected;
       removeMap(deselection);
     }
-  });
+  });//end on change
 
-}
+	d3.select("#selectmenu-chosen-search-results").attr('aria-labelledby','instructions')
+
+}//end setupdropdown
 
 function removeMap(index) {
   d3.select('#map' + index).remove();
