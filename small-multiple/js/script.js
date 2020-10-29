@@ -6,7 +6,7 @@ var margin = config.margin
 // onload check to see if the web browser can handle 'inline svg'
 if (Modernizr.svg == true) {
   d3.select("#fallback").selectAll("*").remove()
-
+	d3.select("#screenreadertext").text(config.screenreadertext)
   d3.queue()
     .defer(d3.json, "data/geog.json")
     .defer(d3.csv, "data/data.csv")
@@ -26,7 +26,7 @@ function ready(error, geog, data) {
   setupdropdown(data);
   setupGeo(geog);
 	setupScales();
-	createKey(config.legendBreaks,config.colour.reverse().slice(0,config.colour.length-1))//ignore the white colour
+	createKey(config.legendBreaks,config.colour.reverse().slice(0,config.colour.length-1));//ignore the white colour
 	dataObject=prepData(data);
   pymChild.sendHeight();
 }
@@ -68,7 +68,6 @@ function setupdropdown(data) {
 
   d3.select("#chosensel").selectAll("*").remove();
   variables = [];
-  console.log(data);
 
   for (i = 2; i < data.columns.length; i++) { //skip the first two columns
     variables.push(data.columns[i]);
@@ -96,7 +95,7 @@ function setupdropdown(data) {
   $('#selectmenu').chosen({
     width: "99%",
     max_selected_options: 6,
-    placeholder_text_multiple: "Type some names, or choose an option.",
+    placeholder_text_multiple: "Type some sectors, or choose an option.",
   }).on('change', function(evt, params) {
 
     if (typeof params.selected != 'undefined') {
@@ -126,6 +125,7 @@ function setupdropdown(data) {
 
 function removeMap(index) {
   d3.select('#map' + index).remove();
+	pymChild.sendHeight();
 }
 
 function setupGeo(geog) {

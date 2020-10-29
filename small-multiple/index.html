@@ -16,6 +16,7 @@
   <style type="text/css">
     body {
       font-family: "Open Sans", Arial, sans-serif;
+      min-height: 300px;
     }
 
     .container {
@@ -93,7 +94,7 @@
 
   <div>
 
-    <h5 class="visuallyhidden" id="screenreadertext">This graphic allows users to see the geographical spread of a selected name across England and Wales. See the accompanying data for the underlying figures.</h5>
+    <h5 class="visuallyhidden" id="screenreadertext"></h5>
 
     <div id="fallback">
       <p>For a safer, faster, better experience online you should upgrade your browser. You will then be able to play with lovely interactive graphics such as this one. </p><br>
@@ -101,8 +102,8 @@
       <img src="images/fallback.png" alt="">
     </div>
   </div>
-  <div id="dropdown">
-    <label id="instructions" for="selectmenu">Type some names, or select from the dropdown</label>
+  <div id="dropdown" style="margin-top:3px;">
+    <label id="instructions" class="visuallyhidden" for="selectmenu">Start typing or select from the dropdown</label>
     <div id="chosensel"></div>
   </div>
   <div id="legend">
