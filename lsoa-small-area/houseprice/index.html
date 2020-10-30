@@ -7,7 +7,6 @@
   </script>
 
   <meta charset="UTF-8">
-  <meta http-equiv="content-type" content="text/html" />
   <title>House price statistics map - March 2020</title>
   <meta name='viewport' content='initial-scale=1' />
 
@@ -228,7 +227,8 @@
     <div id='keydiv'></div>
     <div id='selectNav'>
       <div class="input-group">
-        <input type="text" class="search-control clearable" placeholder="Enter a postcode">
+        <label class='visuallyhidden' for="postcodeInput">Type to enter a postcode</label>
+        <input id="postcodeInput" type="text" class="search-control clearable" placeholder="Enter a postcode">
         <div class="input-group-addon search-group">
           <button id="submitPost" type="submit" style="background: none;border:0;">
             <span class="visuallyhidden">Postcode search</span>
