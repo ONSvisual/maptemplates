@@ -84,7 +84,7 @@ if (Modernizr.webgl) {
       .range(colour);
 
     //now ranges are set we can call draw the key
-    createKey(config);
+    createKey(dvc);
 
     map.on('load', function() {
 
@@ -277,7 +277,7 @@ if (Modernizr.webgl) {
       map.on('mouseleave', 'lsoa-boundaries', onLeave);
     }
 
-    function createKey(config) {
+    function createKey(dvc) {
       keywidth = d3.select("#keydiv").node().getBoundingClientRect().width;
 
       var svgkey = d3.select("#keydiv")
@@ -302,14 +302,7 @@ if (Modernizr.webgl) {
         .style("margin-left", "10px")
         .text(dvc.varunit);
 
-      stops = [
-        [dvc.breaks[0], dvc.varcolour[0]],
-        [dvc.breaks[1], dvc.varcolour[1]],
-        [dvc.breaks[2], dvc.varcolour[2]],
-        [dvc.breaks[3], dvc.varcolour[3]],
-        [dvc.breaks[4], dvc.varcolour[4]],
-        [dvc.breaks[5], dvc.varcolour[5]]
-      ];
+      stops = d3.zip(breaks,colour);
 
       divs = svgkey.selectAll("div")
         .data(breaks)
@@ -338,7 +331,7 @@ if (Modernizr.webgl) {
         .style("top", "-5px")
         .text(function(d, i) {
           if (i != breaks.length - 1) {
-            return "£" + displayformat(stops[i][0]) + " - £" + displayformat(stops[i + 1][0] - 1);
+            return "£" + displayformat(stops[i][0]) + " to £" + displayformat(stops[i + 1][0] - 1);
           } else {
             return "No Data";
           }
