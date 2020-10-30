@@ -80,8 +80,12 @@ if (Modernizr.webgl) {
 
     //set up d3 color scales
     color = d3.scaleThreshold()
-      .domain(breaks.slice(1))
-      .range(colour);
+      .domain([0,4,8,13])
+      .range([0.2,0.4,0.6,0.8,1]);
+
+    color2 = d3.scaleThreshold()
+      .domain([1,2,3])
+      .range([200,220,240,260])
 
     //now ranges are set we can call draw the key
     createKey(config);
@@ -167,8 +171,8 @@ if (Modernizr.webgl) {
           sourceLayer: 'boundaries',
           id: key
         }, {
-          value: json[key],
-          colour: getColour(json[key])
+          value: json[key].value,
+          colour: getColour(json[key].value, json[key].value2)
         });
       }
 
@@ -488,8 +492,8 @@ function highlightArea(e) {
       hover: true
     });
 
-    setAxisVal(e[0].properties.areanmhc, json[e[0].properties.areacd]);
-    setScreenreader(e[0].properties.areanmhc, json[e[0].properties.areacd]);
+    setAxisVal(e[0].properties.areanmhc, json[e[0].properties.areacd].value1);
+    setScreenreader(e[0].properties.areanmhc, json[e[0].properties.areacd].value1);
   }
 }
 
@@ -581,11 +585,12 @@ function hideaxisVal() {
   d3.select("#screenreadertext").text("");
 }
 
-function getColour(value) {
-  return isNaN(value) ? dvc.nullColour : color(value);
+function getColour(value, value2) {
+  return chroma({h:color2(value2), s:color(value), l:color(value)}).rgba();
+  //return isNaN(value) ? dvc.nullColour : color(value);
 }
 
-function csv2json(csv) {
+function csv2jsonOld(csv) {
   var json = {},
     i = 0,
     len = csv.length;
@@ -597,7 +602,7 @@ function csv2json(csv) {
 }
 
 
-function csv2jsonNew(csv) {
+function csv2json(csv) {
   var json = {},
     i = 0,
     len = csv.length;
