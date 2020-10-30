@@ -39,10 +39,7 @@
 		display: none;
 	}
 
-	#keyvalue {
-		height:70px;
-    line-height: 1.3em;
-	}
+
 
 	@media (min-width: 599px) {
 		#map {
@@ -84,15 +81,15 @@
      height: 720px;
    }
 
-   #source{
-     padding-top: 620px;
-   }
+     #source{
+       padding-top: 620px;
+     }
 
 
-	    #map {
+    #map {
 			position:absolute;
 			top:0px;
-			margin-top:280px;
+			margin-top:300px;
 			height: 350px;
 			width: 100%;
 			overflow:visible;
@@ -100,7 +97,7 @@
 
 		#selectNav {
 			position:absolute;
-			top:-280px;
+			top:-300px;
 			left:0px;
 			width:100%;
 			height:40px;
@@ -110,7 +107,7 @@
 
 		#keydiv {
 			position:absolute;
-			top:-240px;
+			top:-260px;
 			left:0px;
 			width:100%;
 			/* height:80px; */
@@ -129,21 +126,8 @@
 		}
 	}
 
-  .btnEnable {
-      -moz-box-sizing: border-box;
-      box-sizing: border-box;
-      width: 40px;
-      height: 40px;
-      border: none;
-      padding: 0px 0!important;
-      background-color: #0075A3;
-      font: 700 16px Arial;
-      color: #FFF;
-      filter: inherit;
-      -webkit-appearance: button;
-      cursor: pointer;
-  }
-  #pcText {
+
+      #pcText {
   			width: 100%;
   			height:40px;
   			/* padding: 3px; */
@@ -152,47 +136,64 @@
         font-size: 16px;
         box-sizing: border-box;
         border:1px solid #f93;
-  }
+      }
 
-  #pcText:focus{
-    border:1px solid #36add9
-  }
+      #pcText:focus{
+        border:1px solid #36add9
+      }
 
 
-    h6 {
-        font-size: 14px;
-        font-weight: 700;
-        margin: 16px 0 0 0;
-        color:#323132!important;
-    }
-   .btn--primary {
-     background-color: #0F8243;
-     color: #fff!important;
-   }
-   .btn {
-       font-family: "Open Sans",Helvetica,Arial,sans-serif;
-       font-weight: 400;
-       font-size: 14px;
-       display: inline-block;
-       width: auto;
-       cursor: pointer;
-       padding: 6px 16px 10px 16px;
-       border: 0 none;
-       text-align: center;
-       -webkit-appearance: none;
-       transition: background-color 0.25s ease-out;
-       line-height: 24px;
-   }
+      h6 {
+          font-size: 14px;
+          font-weight: 700;
+          margin: 16px 0 0 0;
+          color:#323132!important;
+      }
 
-   a {
-       text-decoration: underline;
-       color: #206095;
-       word-wrap: break-word;
-   }
+      .btnEnable {
+          -moz-box-sizing: border-box;
+          box-sizing: border-box;
+          width: 40px;
+          height: 40px;
+          border: none;
+          padding: 0px 0!important;
+          background-color: #0075A3;
+          font: 700 16px Arial;
+          color: #FFF;
+          filter: inherit;
+          -webkit-appearance: button;
+          cursor: pointer;
+      }
+     .btn--primary {
+       background-color: #0F8243;
+       color: #fff!important;
+     }
+     .btn {
+         font-family: "Open Sans",Helvetica,Arial,sans-serif;
+         font-weight: 400;
+         font-size: 14px;
+         display: inline-block;
+         width: auto;
+         cursor: pointer;
+         padding: 6px 16px 10px 16px;
+         border: 0 none;
+         text-align: center;
+         -webkit-appearance: none;
+         transition: background-color 0.25s ease-out;
+         line-height: 24px;
+     }
 
-   #keyvalue{
-     font-weight:700;
-   }
+     a {
+         text-decoration: underline;
+         color: #206095;
+         word-wrap: break-word;
+     }
+
+     #keyvalue{
+       font-weight:700;
+       height:70px;
+       line-height: 1.3em;
+     }
 
     .clear {
       position: absolute;
@@ -213,26 +214,6 @@
     .clear:focus{
       box-shadow: 0 0 0 3px orange;
     }
-
-    /* .clearable{
-      background: #fff url(./images/closeblue.svg) no-repeat right -15px center;
-      background-size: 15px 24px;
-      transition: background 0.4s;
-    }
-    .clearable.x  { background-position: right 10px center; }  */ /* (jQ) Show icon */
-    /* (jQ) hover cursor style */
-    /* .clearable.onX{ cursor: pointer; }    */
-
-
-    /* Remove IE default X */            
-    /* .clearable::-ms-clear {display: none; width:0; height:0;}  */
-
-
-    .details__summary {
-        color:#fff;
-    }
-
-
 
 </style>
 
