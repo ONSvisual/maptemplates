@@ -8,7 +8,7 @@ if (Modernizr.webgl) {
   //Load data and config file
   d3.queue()
     .defer(d3.json, "data/config.json")
-    .defer(d3.csv, "data/data-some.csv")
+    .defer(d3.csv, "data/data.csv")
     .await(ready);
 
   function ready(error, config, data) {
@@ -91,9 +91,9 @@ if (Modernizr.webgl) {
       // Add boundaries tileset
       map.addSource('lsoa-tiles', {
         type: 'vector',
-        "tiles": ['https://cdn.ons.gov.uk/maptiles/t24/boundaries/{z}/{x}/{y}.pbf'],
+        "tiles": ['https://cdn.ons.gov.uk/maptiles/administrative/lsoa/v1/boundaries/{z}/{x}/{y}.pbf'],
         "promoteId": {
-          "boundaries": "lsoa11cd"
+          "boundaries": "AREACD"
         },
         "buffer": 0,
         "maxzoom": 13,
@@ -503,8 +503,8 @@ function highlightArea(e) {
       hover: true
     });
 
-    setAxisVal(e[0].properties.lsoa11nm, json[e[0].properties.lsoa11cd]);
-    setScreenreader(e[0].properties.lsoa11nm, json[e[0].properties.lsoa11cd]);
+    setAxisVal(e[0].properties.AREANM, json[e[0].properties.AREACD]);
+    setScreenreader(e[0].properties.AREANM, json[e[0].properties.AREACD]);
   }
 }
 
