@@ -432,8 +432,7 @@ if (Modernizr.webgl) {
             layers: ['lsoa-boundaries']
           });
           if (features.length != 0) {
-            console.log("successpc")
-            highlightArea(features)
+            highlightArea(features);
             disableMouseEvents();
             addClearBox();
             clearInterval(tilechecker);
