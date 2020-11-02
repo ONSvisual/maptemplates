@@ -79,13 +79,23 @@ if (Modernizr.webgl) {
     }
 
     //set up d3 color scales
-    color = d3.scaleThreshold()
+    color1 = d3.scaleThreshold()
       .domain([0,4,8,13])
       .range([0.2,0.4,0.6,0.8,1]);
 
     color2 = d3.scaleThreshold()
       .domain([1,2,3])
       .range([200,220,240,260])
+
+
+    category1 = d3.scaleThreshold() //categorise the prevelance
+      .domain([6])
+      .range(["Low","High"])
+
+    category2 = d3.scaleThreshold() //categorise the risk
+      .domain([2])
+      .range(["Low","High"])
+
 
     //now ranges are set we can call draw the key
     createKey(config);
@@ -171,8 +181,8 @@ if (Modernizr.webgl) {
           sourceLayer: 'boundaries',
           id: key
         }, {
-          value: json[key].value,
-          colour: getColour(json[key].value, json[key].value2)
+          value: json[key].value1,
+          colour: getColour(json[key].value1, json[key].value2)
         });
       }
 
@@ -315,7 +325,9 @@ if (Modernizr.webgl) {
         [dvc.breaks[5], dvc.varcolour[5]]
       ];
 
-      labels = ["Low", "Medium", "High"]
+      labels = ["High persistance and risk", "Low persistance, high risk", "High persistance, low risk", "Low persistance and risk"]
+
+      hardKeyColours = ["Orange", "Red", "Yellow", "Gray"]
 
       divs = svgkey.selectAll("div")
         .data(breaks)
@@ -492,7 +504,11 @@ function highlightArea(e) {
       hover: true
     });
 
-    setAxisVal(e[0].properties.areanmhc, json[e[0].properties.areacd].value1);
+    console.log(json[e[0].properties.areacd].value1);
+
+    setAxisVal(e[0].properties.areanmhc, json[e[0].properties.areacd] !==undefined? json[e[0].properties.areacd].value1 : NaN);
+    
+    
     setScreenreader(e[0].properties.areanmhc, json[e[0].properties.areacd].value1);
   }
 }
@@ -565,6 +581,8 @@ function onLeave() {
 function setAxisVal(areanm, areaval) {
   d3.select("#keyvalue").html(function() {
     if (!isNaN(areaval)) {
+    //if (typeof areaval === 'string') {
+    //if (areaval !== undefined) {
       return areanm + "<br> Value:"  + displayformat(areaval);
     } else {
       return areanm + "<br>No data available";
@@ -572,9 +590,9 @@ function setAxisVal(areanm, areaval) {
   });
 }
 
-function setScreenreader(name, value) {
-  if (!isNaN(value)) {
-    d3.select("#screenreadertext").text("The average house price paid in " + name + " is " + value);
+function setScreenreader(name, value1) {
+  if (!isNaN(value1)) {
+    d3.select("#screenreadertext").text("The average house price paid in " + name + " is " + value1);
   } else {
     d3.select("#screenreadertext").text("There is no data available for " + name);
   }
@@ -585,9 +603,20 @@ function hideaxisVal() {
   d3.select("#screenreadertext").text("");
 }
 
-function getColour(value, value2) {
-  return chroma({h:color2(value2), s:color(value), l:color(value)}).rgba();
-  //return isNaN(value) ? dvc.nullColour : color(value);
+function getColour(value1, value2) {
+
+  //Slight bodge hard code the categories
+
+  colour = (category1(value1) === "High" && category2(value2) === "High" ) ? "Orange" : // High persistance and risk
+          (category1(value1) === "Low" && category2(value2) === "High" ) ? "Red" :  // Low persistance and high risk
+          (category1(value1) === "High" && category2(value2) === "Low" ) ? "Yellow" :  // High persistance and low risk
+          "Grey"; // everything else (low persistance and risk)
+
+  return colour
+
+  //return chroma({h:color2(value2), s:color1(value1), l:color1(value1)}).rgba(); //Mix HSL values to colour map - incorrect
+
+  //return isNaN(value) ? dvc.nullColour : color(value); //old, non bivariate way of doing it
 }
 
 function csv2jsonOld(csv) {
@@ -610,11 +639,12 @@ function csv2json(csv) {
     json[csv[i][csv.columns[0]]] = {};
     var obj=json[csv[i][csv.columns[0]]]
     for(j=1;j<csv.columns.length;j++){
-        obj[csv.columns[j]]=csv[i][csv.columns[j]];
+        //obj[csv.columns[j]]=csv[i][csv.columns[j]]; //object name set by csv column heading
+        obj["value" + j]=+csv[i][csv.columns[j]]; //object name set sequentially
     }
     i++;
   }
-  console.log(json);
+  //console.log(json);
   return json;
 
 }
