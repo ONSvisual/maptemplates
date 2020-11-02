@@ -1,13 +1,13 @@
 {"ons":{
 "maptitle": "Peristant COVID-19 Clusters - Temporary",
-"varcolour": ["#7FCDBB", "#41B6C4", "#225EA8"],
+"varcolour": ["#5500B8", "#7474F4", "#C974AD", "Gray"],
 "varcolourbi": [],
 "varunit": "Persistance/Risk",
 "displaydecimals": 0,
 "legenddecimals": 0,
-"breaks": [0,4,8,12],
+"breaks": [0,1,4,8,12],
 "breaksbi": [],
 "dropticks": true,
-"numberBreaks": 3,
-"nullColour": "#666"
+"numberBreaks": 4,
+"nullColour": "#f2f3f1"
 }}

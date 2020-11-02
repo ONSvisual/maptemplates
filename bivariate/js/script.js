@@ -327,8 +327,6 @@ if (Modernizr.webgl) {
 
       labels = ["High persistance and risk", "Low persistance, high risk", "High persistance, low risk", "Low persistance and risk"]
 
-      hardKeyColours = ["Orange", "Red", "Yellow", "Gray"]
-
       divs = svgkey.selectAll("div")
         .data(breaks)
         .enter()
@@ -504,12 +502,11 @@ function highlightArea(e) {
       hover: true
     });
 
-    console.log(json[e[0].properties.areacd].value1);
+    //console.log(json[e[0].properties.areacd].value1);
 
-    setAxisVal(e[0].properties.areanmhc, json[e[0].properties.areacd] !==undefined? json[e[0].properties.areacd].value1 : NaN);
+    setAxisVal(e[0].properties.areanm, json[e[0].properties.areacd] !==undefined? json[e[0].properties.areacd].value1 : "no data");
     
-    
-    setScreenreader(e[0].properties.areanmhc, json[e[0].properties.areacd].value1);
+    setScreenreader(e[0].properties.areanm, json[e[0].properties.areacd] !==undefined? json[e[0].properties.areacd].value1 : "no data");
   }
 }
 
@@ -607,10 +604,10 @@ function getColour(value1, value2) {
 
   //Slight bodge hard code the categories
 
-  colour = (category1(value1) === "High" && category2(value2) === "High" ) ? "Orange" : // High persistance and risk
-          (category1(value1) === "Low" && category2(value2) === "High" ) ? "Red" :  // Low persistance and high risk
-          (category1(value1) === "High" && category2(value2) === "Low" ) ? "Yellow" :  // High persistance and low risk
-          "Grey"; // everything else (low persistance and risk)
+  colour = (category1(value1) === "High" && category2(value2) === "High" ) ? dvc.varcolour[0] : // High persistance and risk
+          (category1(value1) === "Low" && category2(value2) === "High" ) ? dvc.varcolour[1] :  // Low persistance and high risk
+          (category1(value1) === "High" && category2(value2) === "Low" ) ? dvc.varcolour[2] :  // High persistance and low risk
+          dvc.varcolour[3]; // everything else (low persistance and risk)
 
   return colour
 
