@@ -303,6 +303,7 @@ if (Modernizr.webgl) {
         .text(dvc.varunit);
 
       stops = d3.zip(breaks,colour);
+      console.log(stops)
 
       divs = svgkey.selectAll("div")
         .data(breaks)
@@ -316,7 +317,7 @@ if (Modernizr.webgl) {
         .style("display", "inline-block")
         .style("background-color", function(d, i) {
           if (i != breaks.length - 1) {
-            return stops[i + 1][1];
+            return stops[i][1];
           } else {
             return dvc.nullColour;
           }
@@ -331,7 +332,7 @@ if (Modernizr.webgl) {
         .style("top", "-5px")
         .text(function(d, i) {
           if (i != breaks.length - 1) {
-            return "£" + displayformat(stops[i][0]) + " to £" + displayformat(stops[i + 1][0] - 1);
+            return "£" + displayformat(breaks[i]) + " to £" + displayformat(breaks[i + 1] - 1);
           } else {
             return "No Data";
           }
