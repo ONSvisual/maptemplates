@@ -10,3 +10,4 @@
 - [Mutiple characteristics map ](https://onsvisual.github.io/maptemplates/multiple_characteristics_map/index.html)
 - [Side by side map](https://onsvisual.github.io/maptemplates/Side-by-side-map/index.html)
 - [Hexmap](https://onsvisual.github.io/maptemplates/hexmap/)
+- [LSOA house price map](https://ons.visual.github.io/maptemplates/lsoa-small-area/)
