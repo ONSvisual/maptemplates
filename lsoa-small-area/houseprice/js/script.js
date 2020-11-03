@@ -31,6 +31,7 @@ if (Modernizr.webgl) {
       container: 'map', // container id
       style: 'data/style.json', //stylesheet location
       center: [-0.12, 51.5], // starting position 51.5074° N, 0.1278
+      maxBounds: [[-12.836, 49.441], [7.604, 55.945]],//limit it to just E&W
       zoom: 12, // starting zoom
       minZoom: 4,
       maxZoom: 17, //
@@ -96,6 +97,7 @@ if (Modernizr.webgl) {
           "boundaries": "AREACD"
         },
         "buffer": 0,
+        "minZoom":4,
         "maxzoom": 13,
       });
 
@@ -129,7 +131,8 @@ if (Modernizr.webgl) {
         "promoteId": {
           "buildings": "AREACD"
         },
-        "buffer": 0,
+        // "buffer": 0,
+        "minZoom":8,
         "maxzoom": 13,
       });
 
@@ -177,8 +180,8 @@ if (Modernizr.webgl) {
         "id": "lsoa-outlines",
         "type": "line",
         "source": 'lsoa-tiles',
-        "minzoom": 9,
-        "maxzoom": 20,
+        "minzoom": 4,
+        "maxzoom": 17,
         "source-layer": "boundaries",
         "background-color": "#ccc",
         'paint': {
