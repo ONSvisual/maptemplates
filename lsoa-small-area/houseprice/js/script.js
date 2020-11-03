@@ -306,7 +306,6 @@ if (Modernizr.webgl) {
         .text(dvc.varunit);
 
       stops = d3.zip(breaks,colour);
-      console.log(stops)
 
       divs = svgkey.selectAll("div")
         .data(breaks)
