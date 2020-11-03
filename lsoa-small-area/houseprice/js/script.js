@@ -33,8 +33,8 @@ if (Modernizr.webgl) {
       center: [-0.12, 51.5], // starting position 51.5074° N, 0.1278
       maxBounds: [[-12.836, 49.441], [7.604, 55.945]],//limit it to just E&W
       zoom: 12, // starting zoom
-      minZoom: 4,
-      maxZoom: 17, //
+      minzoom: 4,
+      maxzoom: 17, //
       attributionControl: false
     });
     //add fullscreen option
@@ -97,7 +97,7 @@ if (Modernizr.webgl) {
           "boundaries": "AREACD"
         },
         "buffer": 0,
-        "minZoom":4,
+        "minzoom":4,
         "maxzoom": 13,
       });
 
@@ -132,7 +132,7 @@ if (Modernizr.webgl) {
           "buildings": "AREACD"
         },
         // "buffer": 0,
-        "minZoom":8,
+        "minzoom":8,
         "maxzoom": 13,
       });
 
