@@ -248,7 +248,7 @@ if (Modernizr.webgl) {
 
     function addClearBox() {
       if(d3.select('#clearbutton').empty()){
-        d3.select('#keydiv').append('a').attr('id', 'clearbutton').attr('role', 'button').attr('class', 'clear').attr('title', 'close').text("close").attr('tabindex', 0);
+        d3.select('#keydiv').append('button').attr('id', 'clearbutton').attr('class', 'clear').text("Clear area").attr('tabindex', 0);
         d3.select('#clearbutton').on('click', removeClearBox);
         d3.select("#clearbutton").on("keydown", function() {
           if (d3.event.keyCode === 13 || d3.event.keyCode === 32) {
@@ -403,6 +403,7 @@ if (Modernizr.webgl) {
         url: myURIstring,
         error: function(xhr, ajaxOptions, thrownError) {
           d3.select("#keyvalue").text("Enter a valid postcode");
+          d3.select("screenreadertext").text("Enter a valid postcode")
         },
         success: function(data1) {
           if (data1.status == 200) {
@@ -411,6 +412,7 @@ if (Modernizr.webgl) {
             successpc(lat, lng);
           } else {
             d3.select("#keyvalue").text("Enter a valid postcode");
+            d3.select("screenreadertext").text("Enter a valid postcode")
           }
         }
 
@@ -560,7 +562,7 @@ function setAxisVal(areanm, areaval) {
 
 function setScreenreader(name, value) {
   if (!isNaN(value)) {
-    d3.select("#screenreadertext").text("The average house price paid in " + name + " is " + value);
+    d3.select("#screenreadertext").text("The average house price paid in " + name + " is £" + d3.format(",")(value));
   } else {
     d3.select("#screenreadertext").text("There is no data available for " + name);
   }
