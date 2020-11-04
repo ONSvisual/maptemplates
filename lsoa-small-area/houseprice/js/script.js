@@ -33,8 +33,8 @@ if (Modernizr.webgl) {
       center: [-0.12, 51.5], // starting position 51.5074° N, 0.1278
       maxBounds: [[-12.836, 49.441], [7.604, 55.945]],//limit it to just E&W
       zoom: 12, // starting zoom
-      minzoom: 4,
-      maxzoom: 17, //
+      minZoom: 4,
+      maxZoom: 17, //
       attributionControl: false
     });
     //add fullscreen option
@@ -116,9 +116,9 @@ if (Modernizr.webgl) {
             'interpolate',
             ['linear'],
             ['zoom'],
-            9,
+            8,
             0.9,
-            15,
+            9,
             0.1
           ]
         }

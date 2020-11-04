@@ -150,7 +150,7 @@
       "source": "openmaptiles",
       "source-layer": "landuse",
       "minzoom":4,
-      "maxzoom": 16,
+      "maxzoom": 15,
       "filter": [
         "all",
         [
@@ -619,7 +619,7 @@
       "source": "openmaptiles",
       "source-layer": "transportation",
       "minzoom": 8,
-      "maxZoom":17,
+      "maxZoom":15,
       "filter": [
         "all",
         [
@@ -803,7 +803,7 @@
       "source": "openmaptiles",
       "source-layer": "transportation",
       "minzoom": 6,
-      "maxzoom":17,
+      "maxzoom":15,
       "filter": [
         "all",
         [
@@ -866,7 +866,7 @@
       "source": "openmaptiles",
       "source-layer": "transportation",
       "minzoom": 6,
-      "maxzoom":17,
+      "maxzoom":15,
       "filter": [
         "all",
         [
@@ -981,7 +981,7 @@
       "source": "openmaptiles",
       "source-layer": "transportation",
       "minzoom": 16,
-      "maxzoom":17,
+      "maxzoom":15,
       "filter": [
         "all",
         [
@@ -1021,7 +1021,7 @@
       "source": "openmaptiles",
       "source-layer": "transportation",
       "minzoom": 16,
-      "maxzoom":17,
+      "maxzoom":15,
       "filter": [
         "all",
         [
@@ -1065,7 +1065,7 @@
       "source": "openmaptiles",
       "source-layer": "transportation",
       "minzoom": 16,
-      "maxzoom":17,
+      "maxzoom":15,
       "filter": [
         "all",
         [
@@ -1103,8 +1103,8 @@
       },
       "source": "openmaptiles",
       "source-layer": "transportation",
-      "minzoom": 16,
-      "maxzoom":17,
+      "minzoom": 12,
+      "maxzoom":15,
       "filter": [
         "all",
         [
@@ -1144,7 +1144,7 @@
       "source": "openmaptiles",
       "source-layer": "transportation",
       "minzoom": 13,
-      "maxzoom":17,
+      "maxzoom":15,
       "filter": [
         "all",
         [
@@ -1195,7 +1195,7 @@
       "source": "openmaptiles",
       "source-layer": "transportation",
       "minzoom": 13,
-      "maxzoom":17,
+      "maxzoom":15,
       "filter": [
         "all",
         [
@@ -1250,7 +1250,7 @@
       "source": "openmaptiles",
       "source-layer": "transportation",
       "minzoom": 6,
-      "maxzoom":17,
+      "maxzoom":15,
       "filter": [
         "all",
         [
@@ -1312,7 +1312,7 @@
       "source": "openmaptiles",
       "source-layer": "transportation",
       "minzoom": 6,
-      "maxzoom":17,
+      "maxzoom":15,
       "filter": [
         "all",
         [
