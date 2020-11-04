@@ -619,7 +619,7 @@
       "source": "openmaptiles",
       "source-layer": "transportation",
       "minzoom": 8,
-      "maxZoom":15,
+      "maxzoom":15,
       "filter": [
         "all",
         [
