@@ -980,7 +980,7 @@
       },
       "source": "openmaptiles",
       "source-layer": "transportation",
-      "minzoom": 16,
+      "minzoom": 12,
       "maxzoom":15,
       "filter": [
         "all",
@@ -1020,7 +1020,7 @@
       },
       "source": "openmaptiles",
       "source-layer": "transportation",
-      "minzoom": 16,
+      "minzoom": 12,
       "maxzoom":15,
       "filter": [
         "all",
@@ -1064,7 +1064,7 @@
       },
       "source": "openmaptiles",
       "source-layer": "transportation",
-      "minzoom": 16,
+      "minzoom": 12,
       "maxzoom":15,
       "filter": [
         "all",
