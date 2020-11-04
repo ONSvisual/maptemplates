@@ -82,7 +82,7 @@
       "source": "openmaptiles",
       "source-layer": "landcover",
       "minzoom":4,
-      "maxzoom": 8,
+      "maxzoom":8,
       "filter": [
         "all",
         [
@@ -110,7 +110,7 @@
       "source": "openmaptiles",
       "source-layer": "landcover",
       "minzoom":4,
-      "maxzoom": 8,
+      "maxzoom":8,
       "filter": [
         "all",
         [
@@ -150,7 +150,7 @@
       "source": "openmaptiles",
       "source-layer": "landuse",
       "minzoom":4,
-      "maxzoom": 15,
+      "maxzoom":14,
       "filter": [
         "all",
         [
@@ -619,7 +619,7 @@
       "source": "openmaptiles",
       "source-layer": "transportation",
       "minzoom": 8,
-      "maxzoom":15,
+      "maxzoom":14,
       "filter": [
         "all",
         [
@@ -766,7 +766,7 @@
       },
       "source": "openmaptiles",
       "source-layer": "transportation",
-      "maxzoom": 11,
+      "maxzoom":11,
       "minzoom":6,
       "filter": [
         "all",
@@ -803,7 +803,7 @@
       "source": "openmaptiles",
       "source-layer": "transportation",
       "minzoom": 6,
-      "maxzoom":15,
+      "maxzoom":14,
       "filter": [
         "all",
         [
@@ -866,7 +866,7 @@
       "source": "openmaptiles",
       "source-layer": "transportation",
       "minzoom": 6,
-      "maxzoom":15,
+      "maxzoom":14,
       "filter": [
         "all",
         [
@@ -981,7 +981,7 @@
       "source": "openmaptiles",
       "source-layer": "transportation",
       "minzoom": 12,
-      "maxzoom":15,
+      "maxzoom":14,
       "filter": [
         "all",
         [
@@ -1021,7 +1021,7 @@
       "source": "openmaptiles",
       "source-layer": "transportation",
       "minzoom": 12,
-      "maxzoom":15,
+      "maxzoom":14,
       "filter": [
         "all",
         [
@@ -1065,7 +1065,7 @@
       "source": "openmaptiles",
       "source-layer": "transportation",
       "minzoom": 12,
-      "maxzoom":15,
+      "maxzoom":14,
       "filter": [
         "all",
         [
@@ -1104,7 +1104,7 @@
       "source": "openmaptiles",
       "source-layer": "transportation",
       "minzoom": 12,
-      "maxzoom":15,
+      "maxzoom":14,
       "filter": [
         "all",
         [
@@ -1144,7 +1144,7 @@
       "source": "openmaptiles",
       "source-layer": "transportation",
       "minzoom": 13,
-      "maxzoom":15,
+      "maxzoom":14,
       "filter": [
         "all",
         [
@@ -1195,7 +1195,7 @@
       "source": "openmaptiles",
       "source-layer": "transportation",
       "minzoom": 13,
-      "maxzoom":15,
+      "maxzoom":14,
       "filter": [
         "all",
         [
@@ -1250,7 +1250,7 @@
       "source": "openmaptiles",
       "source-layer": "transportation",
       "minzoom": 6,
-      "maxzoom":15,
+      "maxzoom":14,
       "filter": [
         "all",
         [
@@ -1312,7 +1312,7 @@
       "source": "openmaptiles",
       "source-layer": "transportation",
       "minzoom": 6,
-      "maxzoom":15,
+      "maxzoom":14,
       "filter": [
         "all",
         [
@@ -1609,7 +1609,7 @@
       },
       "source": "openmaptiles",
       "source-layer": "place",
-      "maxzoom": 15,
+      "maxzoom":14,
       "minzoom":11,
       "filter": [
         "all",
@@ -1654,7 +1654,7 @@
       },
       "source": "openmaptiles",
       "source-layer": "place",
-      "maxzoom": 14,
+      "maxzoom":14,
       "minzoom":11,
       "filter": [
         "all",
@@ -1701,7 +1701,7 @@
       },
       "source": "openmaptiles",
       "source-layer": "place",
-      "maxzoom": 15,
+      "maxzoom":14,
       "minzoom":11,
       "filter": [
         "all",
@@ -1773,7 +1773,7 @@
       },
       "source": "openmaptiles",
       "source-layer": "place",
-      "maxzoom": 14,
+      "maxzoom":14,
       "minzoom":11,
       "filter": [
         "all",
@@ -1858,7 +1858,7 @@
       },
       "source": "openmaptiles",
       "source-layer": "place",
-      "maxzoom": 12,
+      "maxzoom":12,
       "minzoom":5,
       "filter": [
         "all",
@@ -1938,7 +1938,7 @@
       },
       "source": "openmaptiles",
       "source-layer": "place",
-      "maxzoom": 12,
+      "maxzoom":12,
       "minzoom":6,
       "filter": [
         "all",
@@ -2023,7 +2023,7 @@
       },
       "source": "openmaptiles",
       "source-layer": "place",
-      "maxzoom": 12,
+      "maxzoom":12,
       "minzoom":7,
       "filter": [
         "all",
@@ -2062,7 +2062,7 @@
       },
       "source": "openmaptiles",
       "source-layer": "place",
-      "maxzoom": 8,
+      "maxzoom":8,
       "minzoom":4,
       "filter": [
         "all",
@@ -2128,7 +2128,7 @@
       },
       "source": "openmaptiles",
       "source-layer": "place",
-      "maxzoom": 8,
+      "maxzoom":8,
       "minzoom":4,
       "filter": [
         "all",
@@ -2199,7 +2199,7 @@
       },
       "source": "openmaptiles",
       "source-layer": "place",
-      "maxzoom": 6,
+      "maxzoom":6,
       "minzoom":3,
       "filter": [
         "all",
