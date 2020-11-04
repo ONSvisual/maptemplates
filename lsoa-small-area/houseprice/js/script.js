@@ -92,13 +92,12 @@ if (Modernizr.webgl) {
       // Add boundaries tileset
       map.addSource('lsoa-tiles', {
         type: 'vector',
-        "tiles": ['https://cdn.ons.gov.uk/maptiles/administrative/lsoa/v1/boundaries/{z}/{x}/{y}.pbf'],
+        tiles: ['https://cdn.ons.gov.uk/maptiles/administrative/lsoa/v3/boundaries/{z}/{x}/{y}.pbf'],
         "promoteId": {
           "boundaries": "AREACD"
         },
-        "buffer": 0,
-        "minzoom":4,
-        "maxzoom": 13,
+        minzoom:4,
+        maxzoom: 12,
       });
 
       map.addLayer({
@@ -106,6 +105,8 @@ if (Modernizr.webgl) {
         type: 'fill',
         source: 'lsoa-tiles',
         'source-layer': 'boundaries',
+        minzoom:4,
+        maxzoom:17,
         paint: {
           'fill-color': ['case',
             ['!=', ['feature-state', 'colour'], null],
@@ -127,13 +128,12 @@ if (Modernizr.webgl) {
       // Add buildings tileset
       map.addSource('building-tiles', {
         type: 'vector',
-        "tiles": ['https://cdn.ons.gov.uk/maptiles/administrative/lsoa/v1/buildings/{z}/{x}/{y}.pbf'],
-        "promoteId": {
-          "buildings": "AREACD"
+        tiles: ['https://cdn.ons.gov.uk/maptiles/administrative/lsoa/v3/buildings/{z}/{x}/{y}.pbf'],
+        promoteId: {
+          buildings: "AREACD"
         },
-        // "buffer": 0,
-        "minzoom":8,
-        "maxzoom": 13,
+        minzoom:8,
+        maxzoom: 12,
       });
 
       // Add layer from the vector tile source with data-driven style
@@ -142,6 +142,8 @@ if (Modernizr.webgl) {
         type: 'fill',
         source: 'building-tiles',
         'source-layer': 'buildings',
+        minzoom:8,
+        maxzoom:17,
         paint: {
           'fill-color': ['case',
             ['!=', ['feature-state', 'colour'], null],
@@ -177,14 +179,14 @@ if (Modernizr.webgl) {
 
       //outlines around LSOA
       map.addLayer({
-        "id": "lsoa-outlines",
-        "type": "line",
-        "source": 'lsoa-tiles',
-        "minzoom": 4,
-        "maxzoom": 17,
+        id: "lsoa-outlines",
+        type: "line",
+        source: 'lsoa-tiles',
+        minzoom: 4,
+        maxzoom: 17,
         "source-layer": "boundaries",
         "background-color": "#ccc",
-        'paint': {
+        paint: {
           'line-color': 'orange',
           "line-width": 3,
           "line-opacity": [
@@ -405,7 +407,7 @@ if (Modernizr.webgl) {
         url: myURIstring,
         error: function(xhr, ajaxOptions, thrownError) {
           d3.select("#keyvalue").text("Enter a valid postcode");
-          d3.select("screenreadertext").text("Enter a valid postcode")
+          d3.select("screenreadertext").text("Enter a valid postcode");
         },
         success: function(data1) {
           if (data1.status == 200) {
@@ -414,7 +416,7 @@ if (Modernizr.webgl) {
             successpc(lat, lng);
           } else {
             d3.select("#keyvalue").text("Enter a valid postcode");
-            d3.select("screenreadertext").text("Enter a valid postcode")
+            d3.select("screenreadertext").text("Enter a valid postcode");
           }
         }
 
@@ -447,7 +449,7 @@ if (Modernizr.webgl) {
     }
 
     function onMove(e) {
-      highlightArea(e.features)
+      highlightArea(e.features);
     }
 
   } //end function ready
