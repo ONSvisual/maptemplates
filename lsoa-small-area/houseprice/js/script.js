@@ -34,7 +34,7 @@ if (Modernizr.webgl) {
       maxBounds: [[-12.836, 49.441], [7.604, 55.945]],//limit it to just E&W
       zoom: 12, // starting zoom
       minZoom: 4,
-      maxZoom: 17, //
+      maxZoom: 16.99, //
       attributionControl: false
     });
     //add fullscreen option
@@ -92,7 +92,7 @@ if (Modernizr.webgl) {
       // Add boundaries tileset
       map.addSource('lsoa-tiles', {
         type: 'vector',
-        tiles: ['https://cdn.ons.gov.uk/maptiles/administrative/lsoa/v3/boundaries/{z}/{x}/{y}.pbf'],
+        tiles: ['https://cdn.ons.gov.uk/maptiles/administrative/lsoa/v1/boundaries/{z}/{x}/{y}.pbf'],
         "promoteId": {
           "boundaries": "AREACD"
         },
@@ -128,11 +128,11 @@ if (Modernizr.webgl) {
       // Add buildings tileset
       map.addSource('building-tiles', {
         type: 'vector',
-        tiles: ['https://cdn.ons.gov.uk/maptiles/administrative/lsoa/v3/buildings/{z}/{x}/{y}.pbf'],
+        tiles: ['https://cdn.ons.gov.uk/maptiles/administrative/lsoa/v1/buildings/{z}/{x}/{y}.pbf'],
         promoteId: {
           buildings: "AREACD"
         },
-        minzoom:8,
+        minzoom: 8,
         maxzoom: 12,
       });
 
