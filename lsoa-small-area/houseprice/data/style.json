@@ -45,6 +45,7 @@
       "type": "fill",
       "source": "openmaptiles",
       "source-layer": "park",
+      "maxzoom": 14,
       "filter": [
         "==",
         "$type",
@@ -62,6 +63,7 @@
       "type": "fill",
       "source": "openmaptiles",
       "source-layer": "water",
+      "maxzoom": 14,
       "filter": [
         "==",
         "$type",
@@ -189,7 +191,7 @@
       "source": "openmaptiles",
       "source-layer": "landcover",
       "minzoom": 4,
-      "minzoom": 10,
+      "maxzoom": 10,
       "filter": [
         "all",
         [
@@ -228,6 +230,7 @@
       "type": "line",
       "source": "openmaptiles",
       "source-layer": "waterway",
+      "maxzoom": 14,
       "filter": [
         "==",
         "$type",
@@ -245,6 +248,7 @@
       "type": "symbol",
       "source": "openmaptiles",
       "source-layer": "water_name",
+      "maxzoom": 14,
       "filter": [
         "==",
         "$type",
@@ -273,6 +277,7 @@
       "source": "openmaptiles",
       "source-layer": "building",
       "minzoom": 12,
+      "maxzoom": 14,
       "paint": {
         "fill-color": "rgb(234, 234, 229)",
         "fill-outline-color": "rgb(219, 219, 218)",
@@ -288,6 +293,7 @@
       "source": "openmaptiles",
       "source-layer": "transportation",
       "minzoom": 6,
+      "maxzoom": 14,
       "filter": [
         "all",
         [
@@ -345,7 +351,7 @@
       "source": "openmaptiles",
       "source-layer": "transportation",
       "minzoom": 4,
-      "minzoom": 6,
+      "maxzoom": 6,
       "filter": [
         "all",
         [
@@ -402,7 +408,7 @@
       "source": "openmaptiles",
       "source-layer": "aeroway",
       "minzoom": 4,
-      "minzoom": 12,
+      "maxzoom": 12,
       "filter": [
         "all",
         [
@@ -443,7 +449,7 @@
       "source": "openmaptiles",
       "source-layer": "aeroway",
       "minzoom": 4,
-      "minzoom": 11,
+      "maxzoom": 11,
       "filter": [
         "all",
         [
@@ -484,7 +490,7 @@
       "source": "openmaptiles",
       "source-layer": "aeroway",
       "minzoom": 4,
-      "": 17,
+      "maxzoom": 14,
       "filter": [
         "all",
         [
@@ -528,7 +534,7 @@
       "source": "openmaptiles",
       "source-layer": "aeroway",
       "minzoom": 11,
-      "": 24,
+      "maxzoom": 14,
       "filter": [
         "all",
         [
@@ -573,6 +579,7 @@
       },
       "source": "openmaptiles",
       "source-layer": "transportation",
+      "maxzoom": 14,
       "filter": [
         "all",
         [
@@ -665,7 +672,7 @@
       },
       "source": "openmaptiles",
       "source-layer": "transportation",
-      "": 17,
+      "maxzoom": 14,
       "minzoom": 11,
       "filter": [
         "all",
@@ -717,7 +724,7 @@
       },
       "source": "openmaptiles",
       "source-layer": "transportation",
-      "": 17,
+      "maxzoom": 14,
       "minzoom": 11,
       "filter": [
         "all",
@@ -1379,6 +1386,7 @@
       },
       "source": "openmaptiles",
       "source-layer": "transportation_name",
+      "maxzoom": 14,
       "filter": [
         "all",
         [
@@ -1425,6 +1433,7 @@
       },
       "source": "openmaptiles",
       "source-layer": "transportation_name",
+      "maxzoom": 14,
       "filter": [
         "all",
         [
@@ -1469,6 +1478,7 @@
       },
       "source": "openmaptiles",
       "source-layer": "boundary",
+      "maxzoom": 14,
       "filter": [
         "==",
         "admin_level",
@@ -1510,6 +1520,7 @@
       },
       "source": "openmaptiles",
       "source-layer": "boundary",
+      "maxzoom": 14,
       "filter": [
         "==",
         "admin_level",
