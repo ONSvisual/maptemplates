@@ -191,7 +191,7 @@
       "source": "openmaptiles",
       "source-layer": "landcover",
       "minzoom": 4,
-      "minzoom": 10,
+      "maxzoom": 10,
       "filter": [
         "all",
         [
@@ -351,7 +351,7 @@
       "source": "openmaptiles",
       "source-layer": "transportation",
       "minzoom": 4,
-      "minzoom": 6,
+      "maxzoom": 6,
       "filter": [
         "all",
         [
@@ -408,7 +408,7 @@
       "source": "openmaptiles",
       "source-layer": "aeroway",
       "minzoom": 4,
-      "minzoom": 12,
+      "maxzoom": 12,
       "filter": [
         "all",
         [
@@ -449,7 +449,7 @@
       "source": "openmaptiles",
       "source-layer": "aeroway",
       "minzoom": 4,
-      "minzoom": 11,
+      "maxzoom": 11,
       "filter": [
         "all",
         [
