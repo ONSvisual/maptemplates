@@ -81,8 +81,8 @@ if (Modernizr.webgl) {
 
     //set up d3 color scales - not used
     color1 = d3.scaleThreshold()
-      .domain([0,4,8,13])
-      .range([0.2,0.4,0.6,0.8,1]);
+      .domain(breaks.slice(1))//([0,0.01,1,4,7])
+      .range(colour);
 
     color2 = d3.scaleThreshold()
       .domain([1,2,3])
@@ -176,14 +176,28 @@ if (Modernizr.webgl) {
         //   colour: getColour(json[key])
         // });
 
+
+
+        var count = 1;
+        var totalcolumns = 5;
+
+
+        // for i in time points:
+        // colour+i : getColours(value+i)
+
         //setFeatureState for boundaries
         map.setFeatureState({
           source: 'area-tiles',
           sourceLayer: 'boundaries',
           id: key
         }, {
-          value: json[key].value1,
-          colour: getColour(json[key].value1, json[key].value2)
+
+          
+
+          ["value" + count]: json[key]["value" + count],
+
+          colour: getColour(["value" + count])
+          
         });
       }
 
@@ -212,6 +226,33 @@ if (Modernizr.webgl) {
       d3.select(".mapboxgl-ctrl-geolocate").on("click", geolocate);
 
     });
+
+
+    //advance through the displayed data
+
+    displayedData = 1
+
+    $("#forward").click(function(event) {
+      console.log("value " + displayedData)
+
+      for (var key in json) {
+
+        map.setFeatureState({
+          source: 'area-tiles',
+          sourceLayer: 'boundaries',
+          id: key
+        }, {
+          value: json[key]["value" + displayedData],
+          colour: getColour(json[key]["value" + displayedData])
+        });
+
+      }
+
+      displayedData = displayedData + 1
+
+    });
+
+
 
     // clears search box on click
     // $(".search-control").click(function() {
@@ -317,50 +358,50 @@ if (Modernizr.webgl) {
         .style("margin-left", "10px")
         .text(dvc.varunit);
 
-      stops = [
-        [dvc.breaks[0], dvc.varcolour[0]],
-        [dvc.breaks[1], dvc.varcolour[1]],
-        [dvc.breaks[2], dvc.varcolour[2]],
-        [dvc.breaks[3], dvc.varcolour[3]],
-        [dvc.breaks[4], dvc.varcolour[4]],
-        [dvc.breaks[5], dvc.varcolour[5]]
-      ];
+      // stops = [
+      //   [dvc.breaks[0], dvc.varcolour[0]],
+      //   [dvc.breaks[1], dvc.varcolour[1]],
+      //   [dvc.breaks[2], dvc.varcolour[2]],
+      //   [dvc.breaks[3], dvc.varcolour[3]],
+      //   [dvc.breaks[4], dvc.varcolour[4]],
+      //   [dvc.breaks[5], dvc.varcolour[5]]
+      // ];
 
-      labels = ["High persistance and risk", "Low persistance, high risk", "High persistance, low risk", "Low persistance and risk"]
+      // labels = ["High persistance and risk", "Low persistance, high risk", "High persistance, low risk", "Low persistance and risk"]
 
-      divs = svgkey.selectAll("div")
-        .data(breaks)
-        .enter()
-        .append("div");
+      // divs = svgkey.selectAll("div")
+      //   .data(breaks)
+      //   .enter()
+      //   .append("div");
 
-      divs.append("div")
-        .style("height", "20px")
-        .style("width", "10px")
-        .attr("float", "left")
-        .style("display", "inline-block")
-        .style("background-color", function(d, i) {
-          if (i != breaks.length - 1) {
-            return stops[i][1];
-          } else {
-            return dvc.nullColour;
-          }
-        });
+      // divs.append("div")
+      //   .style("height", "20px")
+      //   .style("width", "10px")
+      //   .attr("float", "left")
+      //   .style("display", "inline-block")
+      //   .style("background-color", function(d, i) {
+      //     if (i != breaks.length - 1) {
+      //       return stops[i][1];
+      //     } else {
+      //       return dvc.nullColour;
+      //     }
+      //   });
 
-      divs.append("p")
-        .attr("float", "left")
-        .style("padding-left", "5px")
-        .style("margin", "0px")
-        .style("display", "inline-block")
-        .style("position", "relative")
-        .style("top", "-5px")
-        .text(function(d, i) {
-          if (i != breaks.length - 1) {
-            return labels[i];
-            //return displayformat(stops[i][0]) + " - " + displayformat(stops[i + 1][0] - 1);
-          } else {
-            return "No Data";
-          }
-        });
+      // divs.append("p")
+      //   .attr("float", "left")
+      //   .style("padding-left", "5px")
+      //   .style("margin", "0px")
+      //   .style("display", "inline-block")
+      //   .style("position", "relative")
+      //   .style("top", "-5px")
+      //   .text(function(d, i) {
+      //     if (i != breaks.length - 1) {
+      //       return labels[i];
+      //       //return displayformat(stops[i][0]) + " - " + displayformat(stops[i + 1][0] - 1);
+      //     } else {
+      //       return "No Data";
+      //     }
+      //   });
     } // Ends create key
 
     function addFullscreen() {
@@ -576,6 +617,7 @@ function onLeave() {
   hoveredId = null;
 }
 
+//could probably do this by querying the featurestate - might be less resource intensive? maybe?
 function setAxisVal(areanm, areaval) {
   d3.select("#keyvalue").html(function() {
     if (!isNaN(areaval)) {
@@ -601,20 +643,20 @@ function hideaxisVal() {
   d3.select("#screenreadertext").text("");
 }
 
-function getColour(value1, value2) {
+function getColour(value1) {
 
   //Slight bodge hard code the categories
 
-  colour = (category1(value1) === "High" && category2(value2) === "High" ) ? dvc.varcolour[0] : // High persistance and risk
-          (category1(value1) === "Low" && category2(value2) === "High" ) ? dvc.varcolour[1] :  // Low persistance and high risk
-          (category1(value1) === "High" && category2(value2) === "Low" ) ? dvc.varcolour[2] :  // High persistance and low risk
-          dvc.varcolour[3]; // everything else (low persistance and risk)
+  // colour = (category1(value1) === "High" && category2(value2) === "High" ) ? dvc.varcolour[0] : // High persistance and risk
+  //         (category1(value1) === "Low" && category2(value2) === "High" ) ? dvc.varcolour[1] :  // Low persistance and high risk
+  //         (category1(value1) === "High" && category2(value2) === "Low" ) ? dvc.varcolour[2] :  // High persistance and low risk
+  //         dvc.varcolour[3]; // everything else (low persistance and risk)
 
-  return colour
+  // return colour
 
   //return chroma({h:color2(value2), s:color1(value1), l:color1(value1)}).rgba(); //Mix HSL values to colour map - incorrect
 
-  //return isNaN(value) ? dvc.nullColour : color(value); //old, non bivariate way of doing it
+  return isNaN(value1) ? dvc.nullColour : color1(value1); //old, non bivariate way of doing it
 }
 
 function csv2jsonOld(csv) {
