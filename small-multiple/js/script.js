@@ -99,8 +99,7 @@ function setupdropdown(data) {
   }).on('change', function(evt, params) {
 
     if (typeof params.selected != 'undefined') {
-      allselections = $(this).val();
-
+      allselections = $('#selectmenu').getSelectionOrder();
       var lastselection = params.selected;
 
       addMap(lastselection);
@@ -192,7 +191,7 @@ function highlight(area,name){
 	d3.selectAll(".reg"+area).raise()
 
 	d3.selectAll(".valueText").each(function(d,i){
-		d3.select(this).text(name+" "+dataObject[variables[allselections[i]]][area])
+		d3.select(this).text(name+" "+d3.format(".1f")(+dataObject[variables[allselections[i]]][area])+"%")
 	})
 	d3.selectAll(".reg"+area).attr('stroke','black').attr('stroke-width','2px')
 }
