@@ -162,7 +162,6 @@ if (Modernizr.webgl) {
           sourceLayer: 'buildings',
           id: key
         }, {
-          value: json[key],
           colour: getColour(json[key])
         });
 
@@ -172,7 +171,6 @@ if (Modernizr.webgl) {
           sourceLayer: 'boundaries',
           id: key
         }, {
-          value: json[key],
           colour: getColour(json[key])
         });
       }
