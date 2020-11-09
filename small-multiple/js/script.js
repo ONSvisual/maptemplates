@@ -126,7 +126,7 @@ function setupdropdown(data) {
 
 function removeMap(index) {
   d3.select('#map' + index).remove();
-	pymChild.sendHeight();
+  pymChild.sendHeight();
 }
 
 function setupGeo(geog) {
@@ -188,6 +188,8 @@ function addMap(variableIndex) {
 }
 
 function highlight(area,name){
+  allselections = $('#selectmenu').getSelectionOrder();
+
 	d3.selectAll(".reg"+area).raise()
 
 	d3.selectAll(".valueText").each(function(d,i){
