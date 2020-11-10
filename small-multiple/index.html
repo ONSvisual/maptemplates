@@ -22,11 +22,25 @@
     .container {
       display: flex;
       flex-wrap: wrap;
+      flex-direction: row;
+      align-items: stretch;
     }
 
     .item {
       border: 3px solid #F5F5F6;
       margin: 3px;
+      display:flex;
+      flex-direction: column;
+    }
+
+    .item p{
+      flex-grow: 1;
+    }
+
+    .sectionTitle{
+      font-weight: 700;
+      padding: 0 5px;
+      max-width: 233px;
     }
 
     .key{

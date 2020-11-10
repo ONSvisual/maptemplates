@@ -1,11 +1,11 @@
 var pymChild = null;
-var chart_width = 233;
+var chart_width = 245;
 var height = 288;
 var margin = config.margin
 
 // onload check to see if the web browser can handle 'inline svg'
 if (Modernizr.svg == true) {
-  d3.select("#fallback").selectAll("*").remove()
+  d3.select("#fallback").selectAll("*").remove();
 	d3.select("#screenreadertext").text(config.screenreadertext)
   d3.queue()
     .defer(d3.json, "data/geog.json")
@@ -95,7 +95,7 @@ function setupdropdown(data) {
   $('#selectmenu').chosen({
     width: "99%",
     max_selected_options: 6,
-    placeholder_text_multiple: "Type some sectors, or choose an option.",
+    placeholder_text_multiple: "Choose up to six sectors"
   }).on('change', function(evt, params) {
 
     if (typeof params.selected != 'undefined') {
@@ -142,6 +142,8 @@ function setupGeo(geog) {
 function addMap(variableIndex) {
   var div = d3.select(".container").append('div').attr('id', 'map' + variableIndex).attr('class', 'item');
 
+  div.append('p').attr('class','sectionTitle').text(variables[variableIndex])
+
   svg = div.append('svg')
     .attr('width', chart_width + margin.left + margin.right)
     .attr('height', height + margin.top + margin.bottom);
@@ -149,15 +151,10 @@ function addMap(variableIndex) {
   g = svg.append('g')
     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-  svg.append('text').text(variables[variableIndex])
-	.attr('x', margin.left)
-	.attr('y', 20)
-	.attr('font-weight',700);
-
 	svg.append('text').attr('id','valueText'+variables[variableIndex])
 	.attr('class','valueText')
 	.attr('x',margin.left)
-	.attr('y',40)
+	.attr('y',15)
 	.attr('text-anchor','start')
 
   map=g.append('g').selectAll('path.regions')

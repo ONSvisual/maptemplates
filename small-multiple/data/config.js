@@ -14,9 +14,9 @@ var config = {
     "#01665e"
   ],
   "margin":{
-    "top":55,
-    "right":10,
+    "top":15,
+    "right":5,
     "bottom":10,
-    "left":10
+    "left":5
   }
 };
