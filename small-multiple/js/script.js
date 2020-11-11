@@ -142,7 +142,7 @@ function setupGeo(geog) {
 function addMap(variableIndex) {
   var div = d3.select(".container").append('div').attr('id', 'map' + variableIndex).attr('class', 'item');
 
-  div.append('p').attr('class','sectionTitle').text(variables[variableIndex])
+  div.append('p').attr('class','sectionTitle').text(variables[variableIndex]);
 
   svg = div.append('svg')
     .attr('width', chart_width + margin.left + margin.right)
