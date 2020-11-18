@@ -8,32 +8,12 @@ if (Modernizr.webgl) {
   //Load data and config file
   d3.queue()
     .defer(d3.json, "data/config.json")
-    .defer(d3.csv, "data/data_observed_expected_cluster.csv")
-    //.defer(d3.csv, "data/data_cluster_groups.csv")
+    .defer(d3.csv, "data/data.csv")
     .await(ready);
 
   function ready(error, config, data) {
-    
     //turn csv data into json format
     json = csv2json(data);
-    
-    //read headings for date
-    headings = d3.keys(data[0]);
-
-    parseTime = d3.timeParse("%d/%m/%Y");
-
-    headingsParsed = {}
-
-    i = 1
-
-    while (i < 15) {
-      headingsParsed[i] = parseTime(headings[i])
-      i++
-    }
-
-    dataFromColumns = readCSVcolumns(data).sort();
-
-    //console.log(dataFromColumns);
 
     //Set up global variables
     dvc = config.ons;
@@ -117,12 +97,6 @@ if (Modernizr.webgl) {
       .domain([2])
       .range(["Low","High"])
 
-    quantile = d3.scaleQuantile()
-      .domain(dataFromColumns)
-      .range(["red", "blue", "green", "yellow", "purple"])
-
-    
-
 
     //now ranges are set we can call draw the key
     createKey(config);
@@ -151,69 +125,73 @@ if (Modernizr.webgl) {
             ['feature-state', 'colour'],
             'rgba(255, 255, 255, 0)'
           ],
-          'fill-color-transition': {
-            duration: 1000,
-            delay : 500
-          },
           'fill-opacity': [
-
-            'feature-state', 'opacity'
-
-            // 'interpolate',
-            // ['linear'],
-            // ['zoom'],
-            // 9,
-            // 0.9,
-            // 15,
-            // 0.1
-          ],
-
+            'interpolate',
+            ['linear'],
+            ['zoom'],
+            9,
+            0.9,
+            15,
+            0.1
+          ]
         }
       }, 'place_suburb');
 
-     
+      // // Add buildings tileset
+      // map.addSource('building-tiles', {
+      //   type: 'vector',
+      //   "tiles": ['https://cdn.ons.gov.uk/maptiles/administrative/area/v1/buildings/{z}/{x}/{y}.pbf'],
+      //   "promoteId": {
+      //     "buildings": "areacd"
+      //   },
+      //   "buffer": 0,
+      //   "maxzoom": 13,
+      // });
+
+      // // Add layer from the vector tile source with data-driven style
+      // map.addLayer({
+      //   id: 'area-building',
+      //   type: 'fill',
+      //   source: 'building-tiles',
+      //   'source-layer': 'buildings',
+      //   paint: {
+      //     'fill-color': ['case',
+      //       ['!=', ['feature-state', 'colour'], null],
+      //       ['feature-state', 'colour'],
+      //       'rgba(255, 255, 255, 0)'
+      //     ],
+      //     'fill-opacity': 0.8
+      //   }
+      // }, 'place_suburb');
 
       //loop the json data and set feature state for building layer and boundary layer
       for (var key in json) {
+        // setFeatureState for buildlings
+        // map.setFeatureState({
+        //   source: 'building-tiles',
+        //   sourceLayer: 'buildings',
+        //   id: key
+        // }, {
+        //   value: json[key],
+        //   colour: getColour(json[key])
+        // });
 
+        var count = 1;
+        var totalcolumns = 5;
 
-        //This section assigns just the first row to the featurestate
-
+        //setFeatureState for boundaries
         map.setFeatureState({
           source: 'area-tiles',
           sourceLayer: 'boundaries',
           id: key
         }, {
-          value: json[key].value1,
-          colour: getColour(json[key].value1),
-          opacity: getOpacity(json[key].value1)
+
+          
+
+          ["value" + count]: json[key]["value" + count],
+
+          colour: getColour(["value" + count])
         });
-      
-
-        // // This section loads the entire csv to the featurestate - but changing the colour by switching featurestate is slower than re-binding the data.
-        
-        // var thisAreaData = json[key];
-
-        // var obj = {};
-
-        // for (var timepoint in thisAreaData){
-        //   obj[timepoint] = getColour(thisAreaData[timepoint]);
-
-
-        //   //setFeatureState for boundaries
-        //   map.setFeatureState({
-        //     source: 'area-tiles',
-        //     sourceLayer: 'boundaries',
-        //     id: key
-        //   },
-          
-        //   {
-
-        //     ["colour" + timepoint]: obj[timepoint],
-            
-        //   });
-          
-        // }
       }
 
       //outlines around area
@@ -245,31 +223,29 @@ if (Modernizr.webgl) {
 
     //advance through the displayed data
 
-    $("#forward").click(function(event) {   
-      changeDate("forward");
-    });
+    displayedData = 1
 
-    $("#back").click(function(event) {
-      changeDate("back")
-    });
+    $("#forward").click(function(event) {
+      console.log("value " + displayedData)
 
-    var playing = 0
-    var timer
+      for (var key in json) {
 
-    $("#advance").click(function(event) {
+        map.setFeatureState({
+          source: 'area-tiles',
+          sourceLayer: 'boundaries',
+          id: key
+        }, {
+          value: json[key]["value" + displayedData],
+          colour: getColour(json[key]["value" + displayedData])
+        });
 
-      if (playing === 0){
-        changeDate("forward")
-        timer = setInterval(function(){changeDate("forward")},1000)
-        d3.select("#advanceIcon").attr("class", "glyphicon glyphicon-pause")
-        playing = 1
-      } else {
-        d3.selectAll("#advanceIcon").attr("class", "glyphicon glyphicon-play")
-        playing = 0
-        clearInterval(timer);
       }
 
+      displayedData = displayedData + 1
+
     });
+
+
 
     // clears search box on click
     // $(".search-control").click(function() {
@@ -309,6 +285,7 @@ if (Modernizr.webgl) {
     // When the mouse leaves the area boundaries layer, update the feature state of the
     // previously hovered feature.
     map.on('mouseleave', 'area-boundaries', onLeave);
+
 
     map.on('click', 'area-boundaries', onClick);
 
@@ -359,15 +336,6 @@ if (Modernizr.webgl) {
         .style("font-family", "Open Sans")
         .style("font-size", "14px")
         .append("p")
-        .attr("id", "keydate")
-        .style("font-size", "18px")
-        .style("margin-top", "10px")
-        .style("margin-bottom", "5px")
-        .style("margin-left", "10px")
-        .text(headings[displayedData]);
-      
-      d3.select("#keydiv")
-        .append("p")
         .attr("id", "keyvalue")
         .style("font-size", "18px")
         .style("margin-top", "10px")
@@ -375,13 +343,13 @@ if (Modernizr.webgl) {
         .style("margin-left", "10px")
         .text("");
 
-      // d3.select("#keydiv")
-      //   .append("p")
-      //   .attr("id", "keyunit")
-      //   .style("margin-top", "5px")
-      //   .style("margin-bottom", "5px")
-      //   .style("margin-left", "10px")
-      //   .text(dvc.varunit);
+      d3.select("#keydiv")
+        .append("p")
+        .attr("id", "keyunit")
+        .style("margin-top", "5px")
+        .style("margin-bottom", "5px")
+        .style("margin-left", "10px")
+        .text(dvc.varunit);
 
       // stops = [
       //   [dvc.breaks[0], dvc.varcolour[0]],
@@ -569,11 +537,11 @@ function highlightArea(e) {
       hover: true
     });
 
-    //console.log(json[e[0].properties.areacd]);
+    //console.log(json[e[0].properties.areacd].value1);
 
-    setAxisVal(e[0].properties.areanmhc, json[e[0].properties.areacd] !==undefined? json[e[0].properties.areacd]["value" + displayedData] : "no data");
-
-    setScreenreader(e[0].properties.areanmhc, json[e[0].properties.areacd] !==undefined? json[e[0].properties.areacd].value1 : "no data");
+    setAxisVal(e[0].properties.areanm, json[e[0].properties.areacd] !==undefined? json[e[0].properties.areacd].value1 : "no data");
+    
+    setScreenreader(e[0].properties.areanm, json[e[0].properties.areacd] !==undefined? json[e[0].properties.areacd].value1 : "no data");
   }
 }
 
@@ -642,15 +610,14 @@ function onLeave() {
   hoveredId = null;
 }
 
-//could probably do this by querying the featurestate - might be less resource intensive? maybe?
 function setAxisVal(areanm, areaval) {
   d3.select("#keyvalue").html(function() {
     if (!isNaN(areaval)) {
     //if (typeof areaval === 'string') {
     //if (areaval !== undefined) {
-      return areanm //+ "<br> Value:"  + areaval;
+      return areanm + "<br> Value:"  + displayformat(areaval);
     } else {
-      return areanm //+ "<br>No data available";
+      return areanm + "<br>No data available";
     }
   });
 }
@@ -668,10 +635,7 @@ function hideaxisVal() {
   d3.select("#screenreadertext").text("");
 }
 
-function getColour(value) {
-
-
-  //return quantile(value)
+function getColour(value1) {
 
   //Slight bodge hard code the categories
 
@@ -684,60 +648,7 @@ function getColour(value) {
 
   //return chroma({h:color2(value2), s:color1(value1), l:color1(value1)}).rgba(); //Mix HSL values to colour map - incorrect
 
-  //return isNaN(value1) ? dvc.nullColour : color1(value1); //old, non bivariate way of doing it
-
-  //return colour[value]
-
-  //MASSIVE Bodge - hardcoded colours as 
-
-    colour =(value === 5.2 ||
-             value === 2.46 ||
-             value === 4.4 ||
-             value === 4.05 ||
-             value === 1.89 ||
-             value === 1.44 ||
-             value === 1.53 ||
-             value === 8.63) ? dvc.varcolour[0] :
-
-            (value === 5.07) ? dvc.varcolour[1] :
-            (value === 3.6) ? dvc.varcolour[1] :
-            (value === 3.57) ? dvc.varcolour[1] :
-            (value === 2.97) ? dvc.varcolour[1] :
-            (value === 1.7) ? dvc.varcolour[1] :
-            (value === 1.75) ? dvc.varcolour[1] :
-            
-            (value === 3) ? dvc.varcolour[2] :
-            (value === 2.76) ? dvc.varcolour[2] :
-            (value === 3.71) ? dvc.varcolour[2] :
-            (value === 2.54) ? dvc.varcolour[2] :
-            (value === 1.72) ? dvc.varcolour[2] :
-            (value === 1.44) ? dvc.varcolour[2] :
-            (value === 1.33) ? dvc.varcolour[2] :
-
-
-
-
-
-  //          (category1(value1) === "Low" && category2(value2) === "High" ) ? dvc.varcolour[1] :  // Low persistance and high risk
-  //          (category1(value1) === "High" && category2(value2) === "Low" ) ? dvc.varcolour[2] :  // High persistance and low risk
-            "#23A58E"; // everything else
-
-    return colour
-
-  // if (value === 0) {
-  //   return "grey" 
-  // } else {
-  //   return "#23A58E"
-  // }
-}
-
-function getOpacity(value) {
-
-  if (value === 0) {
-      return 0
-  } else {
-      return 0.7
-  }
+  return isNaN(value1) ? dvc.nullColour : color1(value1); //old, non bivariate way of doing it
 }
 
 function csv2jsonOld(csv) {
@@ -769,198 +680,3 @@ function csv2json(csv) {
   return json;
 
 }
-
-// function getUniqueValuesFromColummn(column, csv) {
-
-//   coloursScales={}
-//   for (columns in csv):
-//        colourScales[column]=d3.scaleQuantile()
-//             .domain(d3.map(data,function(e){return column}).keys())
-//             .range([colours]) 
-
-// }
-
-// What you need to do 
-// make csv2json only read the current active date
-// remove duplicates/get unique and use that for scale ordnial to give each cluster a unique colour
-// update the ordinal domain every time the date is changed
-// get the range from Henry's new tool
-
-
-
-function readCSVcolumns(csv) {
-  var dataColumns = [],
-  i = 0,
-  len = csv.length
-  while (i < len) {
-    for(j=1; j<csv.columns.length;j++){
-      dataColumns.push(+csv[i][csv.columns[j]]);
-      //console.log(j)
-    }
-    i++;
-  }
-  return dataColumns;
-}
-
-function csv2jsonReverse(csv) {
-  return null
-}
-
-function updateFeatureState(displayedData) {
-
-  for (var key in json) {
-
-    map.setFeatureState({
-      source: 'area-tiles',
-      sourceLayer: 'boundaries',
-      id: key
-    }, {
-      value: json[key]["value" + displayedData],
-      colour: getColour(json[key]["value" + displayedData]),
-      opacity: getOpacity(json[key]["value" + displayedData])
-    });
-
-  }
-}
-
-var numberColumns = 14
-var displayedData = 1
-
-function changeDate(direction)  {
-
-  if (direction === "forward") {
-    if (displayedData < numberColumns){
-      displayedData = displayedData + 1
-    } else {
-      displayedData = 1
-    }
-    updateFeatureState(displayedData)
-  } else {
-    if (displayedData > 1){
-      displayedData = displayedData - 1
-    } else {
-      displayedData = numberColumns
-    }
-    updateFeatureState(displayedData)
-  }
-
-  sliderSimple.silentValue(displayedData)
-
-  d3.select("#keydate").text(headings[displayedData])
-
-}
-
-var sliderSimple = d3
-.sliderBottom()
-.min(1)
-.max(14)
-.width(parseInt(d3.select('body').style("width"))-80)
-.tickFormat(d3.format(',.0f'))
-.ticks(14)
-.default(1)
-.step(1)
-.handle(
-  d3.symbol()
-    .type(d3.symbolCircle)
-    .size(500)
-)
-.fill("#206595")
-.on('onchange', val => {
-  updateFeatureState(Math.round(val))
-  displayedData = (Math.round(val))
-  d3.select("#keydate").text(headings[displayedData])
-  //document.getElementById("value-simple").value=d3.format('.0f')(val)
-});
-
-var gSimple = d3
-.select('div#slider-simple')
-.append('svg')
-.attr('width', parseInt(d3.select('body').style("width")))
-.attr('height', 100)
-.append('g')
-.attr('transform', 'translate(30,30)');
-
-gSimple.call(sliderSimple);
-
-//document.getElementById("value-simple").value=d3.format('.0f')(sliderSimple.value());
-
-// function sliderchange(){
-// sliderSimple.silentValue(document.getElementById('value-simple').value)
-// }
-
-d3.select('#handle').on('keydown',function(){
-  console.log("keypress")
-if(document.getElementById("handle")===document.activeElement){//if handle is focussed
-  // var max = document.getElementById('value-simple').max
-  // var min = document.getElementById('value-simple').min
-  var max = 14
-  var min = 1
-
-  if (d3.event.key=='ArrowLeft') {
-    if(+document.getElementById('value-simple').value-1<min){
-      sliderSimple.silentValue(min)
-      document.getElementById("value-simple").value=min
-    }else{
-      sliderSimple.silentValue(+document.getElementById('value-simple').value-1)
-      document.getElementById("value-simple").value=+document.getElementById("value-simple").value-100
-    }
-  }
-  if (d3.event.key=='ArrowUp') {
-    d3.event.preventDefault();
-    if(+document.getElementById('value-simple').value+1>max){
-      sliderSimple.silentValue(max)
-      document.getElementById("value-simple").value=max
-    }else{
-      sliderSimple.silentValue(+document.getElementById('value-simple').value+1)
-      document.getElementById("value-simple").value=+document.getElementById("value-simple").value+1
-    }
-  }
-  if (d3.event.key=='ArrowRight') {
-    if(+document.getElementById('value-simple').value+1>max){
-      sliderSimple.silentValue(max)
-      document.getElementById("value-simple").value=max
-    }else{
-      sliderSimple.silentValue(+document.getElementById('value-simple').value+1)
-      document.getElementById("value-simple").value=+document.getElementById("value-simple").value+1
-    }              }
-  if (d3.event.key=='ArrowDown') {
-    d3.event.preventDefault();
-    if(+document.getElementById('value-simple').value-1<min){
-      sliderSimple.silentValue(min)
-      document.getElementById("value-simple").value=min
-    }else{
-      sliderSimple.silentValue(+document.getElementById('value-simple').value-1)
-      document.getElementById("value-simple").value=+document.getElementById("value-simple").value-1
-    }
-  }
-  if (d3.event.key=='PageDown') {
-    d3.event.preventDefault();
-    if(+document.getElementById('value-simple').value-1<min){
-      sliderSimple.silentValue(min)
-      document.getElementById("value-simple").value=min
-    }else{
-      sliderSimple.silentValue(+document.getElementById('value-simple').value-1)
-      document.getElementById("value-simple").value=+document.getElementById("value-simple").value-1
-    }
-  }
-  if (d3.event.key=='PageUp') {
-    d3.event.preventDefault();
-    if(+document.getElementById('value-simple').value+1>max){
-      sliderSimple.silentValue(max)
-      document.getElementById("value-simple").value=max
-    }else{
-      sliderSimple.silentValue(+document.getElementById('value-simple').value+1)
-      document.getElementById("value-simple").value=+document.getElementById("value-simple").value+1
-    }              }
-  if (d3.event.key=='Home') {
-    d3.event.preventDefault();
-    sliderSimple.silentValue(min)
-    document.getElementById("value-simple").value=min
-  }
-  if (d3.event.key=='End') {
-    d3.event.preventDefault();
-    sliderSimple.silentValue(max)
-    document.getElementById("value-simple").value=max
-  }
-}
-})

@@ -1,7 +1,8 @@
 {"ons":{
 "maptitle": "Median house price",
-"varcolour": ["", "grey", "red", "blue", "green"],
-"varunit": "Clusters",
+"varcolour": ["#206095", "#118C7B", "#003C57", "#A8BD3A", "#27A0CC", "#871A5B","#F66068","#746CB1","#22D0B6"],
+"varcolour2": ["red", "green", "blue", "orange", "pink"],
+"varunit": "",
 "displaydecimals": 0,
 "legenddecimals": 0,
 "breaks": [0,0,1,4,6,7],
