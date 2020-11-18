@@ -22,6 +22,8 @@ if (Modernizr.webgl) {
 
     parseTime = d3.timeParse("%d/%m/%Y");
 
+    screenReadDate = d3.timeFormat()
+
     headingsParsed = {}
 
     i = 1
@@ -657,7 +659,13 @@ function setAxisVal(areanm, areaval) {
 
 function setScreenreader(name, value1) {
   if (!isNaN(value1)) {
-    d3.select("#screenreadertext").text("The average house price paid in " + name + " is " + value1);
+
+    if (value1 > 0) {
+      d3.select("#screenreadertext").text(name + " is in a cluster on " + headings[displayedData]);
+    } else {
+      d3.select("#screenreadertext").text(name + " is not in cluster on " + headings[displayedData]);
+    }
+
   } else {
     d3.select("#screenreadertext").text("There is no data available for " + name);
   }
@@ -854,9 +862,9 @@ var sliderSimple = d3
 .sliderBottom()
 .min(1)
 .max(14)
-.width(parseInt(d3.select('body').style("width"))-80)
+.width(parseInt(d3.select('body').style("width"))-200)
 .tickFormat(d3.format(',.0f'))
-.ticks(14)
+.ticks(7)
 .default(1)
 .step(1)
 .handle(
@@ -875,10 +883,10 @@ var sliderSimple = d3
 var gSimple = d3
 .select('div#slider-simple')
 .append('svg')
-.attr('width', parseInt(d3.select('body').style("width")))
-.attr('height', 100)
+.attr('width', parseInt(d3.select('body').style("width"))-150)
+.attr('height', 75)
 .append('g')
-.attr('transform', 'translate(30,30)');
+.attr('transform', 'translate(30,20)');
 
 gSimple.call(sliderSimple);
 

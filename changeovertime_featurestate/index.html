@@ -43,6 +43,10 @@
     font-size: 27px;
   }
 
+  .playbackcontrols div {
+      display: inline;
+  }
+
 
   #selectnav:before{
       width: 46px;
@@ -163,6 +167,10 @@
 			/*background-color:rgba(0,0,0,0.8);*/
 			z-index:3;
 		}
+
+    .playbackcontrols {
+      margin-top: 615px;
+    }
 
 		#keydiv {
 			position:absolute;
@@ -328,21 +336,23 @@
   </div>
 
   <div class="playbackcontrols">
-    <br>
-    <button id="back" type="submit" style="background: none;border:0;">
-      <span class="visuallyhidden">Advance date</span>
-      <span class="glyphicon glyphicon-step-backward"></span>
-    </button>
+    <div>
+      <br>
+      <button id="back" type="submit" style="background: none;border:0;">
+        <span class="visuallyhidden">Advance date</span>
+        <span class="glyphicon glyphicon-step-backward"></span>
+      </button>
 
-    <button id="advance" type="submit" style="background: none;border:0;">
-      <span class="visuallyhidden">Advance date</span>
-      <span id="advanceIcon" class="glyphicon glyphicon-play"></span>
-    </button>
+      <button id="advance" type="submit" style="background: none;border:0;">
+        <span class="visuallyhidden">Advance date</span>
+        <span id="advanceIcon" class="glyphicon glyphicon-play"></span>
+      </button>
 
-    <button id="forward" type="submit" style="background: none;border:0;">
-      <span class="visuallyhidden">Advance date</span>
-      <span class="glyphicon glyphicon-step-forward"></span>
-    </button>
+      <button id="forward" type="submit" style="background: none;border:0;">
+        <span class="visuallyhidden">Advance date</span>
+        <span class="glyphicon glyphicon-step-forward"></span>
+      </button>
+    </div>
 
     <div id="slider-simple"></div>
 
