@@ -9,12 +9,13 @@ if (Modernizr.webgl) {
   d3.queue()
     .defer(d3.json, "data/config.json")
     .defer(d3.csv, "data/data_observed_expected_cluster.csv")
-    //.defer(d3.csv, "data/data_cluster_groups.csv")
     .await(ready);
 
+  var displayedData;
+  
   function ready(error, config, data) {
     
-    //turn csv data into json format
+    //convert csv data into json
     json = csv2json(data);
     
     //read headings for date
@@ -22,9 +23,9 @@ if (Modernizr.webgl) {
 
     parseTime = d3.timeParse("%d/%m/%Y");
 
-    screenReadDate = d3.timeFormat()
+    formatDate = d3.timeFormat("%d/%m")
 
-    headingsParsed = {}
+    headingsParsed = []
 
     i = 1
 
@@ -32,10 +33,6 @@ if (Modernizr.webgl) {
       headingsParsed[i] = parseTime(headings[i])
       i++
     }
-
-    dataFromColumns = readCSVcolumns(data).sort();
-
-    //console.log(dataFromColumns);
 
     //Set up global variables
     dvc = config.ons;
@@ -101,32 +98,8 @@ if (Modernizr.webgl) {
       colour = dvc.varcolour;
     }
 
-    //set up d3 color scales - not used
-    color1 = d3.scaleThreshold()
-      .domain(breaks.slice(1))//([0,0.01,1,4,7])
-      .range(colour);
 
-    color2 = d3.scaleThreshold()
-      .domain([1,2,3])
-      .range([200,220,240,260])
-
-
-    category1 = d3.scaleThreshold() //categorise the prevelance
-      .domain([6])
-      .range(["Low","High"])
-
-    category2 = d3.scaleThreshold() //categorise the risk
-      .domain([2])
-      .range(["Low","High"])
-
-    quantile = d3.scaleQuantile()
-      .domain(dataFromColumns)
-      .range(["red", "blue", "green", "yellow", "purple"])
-
-    
-
-
-    //now ranges are set we can call draw the key
+    //draw the key
     createKey(config);
 
     map.on('load', function() {
@@ -153,21 +126,12 @@ if (Modernizr.webgl) {
             ['feature-state', 'colour'],
             'rgba(255, 255, 255, 0)'
           ],
-          'fill-color-transition': {
-            duration: 1000,
-            delay : 500
-          },
-          'fill-opacity': [
 
-            'feature-state', 'opacity'
+          'fill-opacity': ['case',
+            ['!=', ['feature-state', 'opacity'], null],
+            ['feature-state', 'opacity'],
+            0
 
-            // 'interpolate',
-            // ['linear'],
-            // ['zoom'],
-            // 9,
-            // 0.9,
-            // 15,
-            // 0.1
           ],
 
         }
@@ -377,6 +341,8 @@ if (Modernizr.webgl) {
         .style("margin-left", "10px")
         .text("");
 
+      // // additional key stuff commented out due to no colour encoding, so no key required
+
       // d3.select("#keydiv")
       //   .append("p")
       //   .attr("id", "keyunit")
@@ -539,6 +505,172 @@ if (Modernizr.webgl) {
       highlightArea(e.features)
     }
 
+    function updateFeatureState(displayedData) {
+
+      for (var key in json) {
+    
+        map.setFeatureState({
+          source: 'area-tiles',
+          sourceLayer: 'boundaries',
+          id: key
+        }, {
+          value: json[key]["value" + displayedData],
+          colour: getColour(json[key]["value" + displayedData]),
+          opacity: getOpacity(json[key]["value" + displayedData])
+        });
+    
+      }
+    }
+    
+    var numberColumns = 14
+    displayedData = 1
+    
+    function changeDate(direction)  {
+    
+      if (direction === "forward") {
+        if (displayedData < numberColumns){
+          displayedData = displayedData + 1
+        } else {
+          displayedData = 1
+        }
+        updateFeatureState(displayedData)
+      } else {
+        if (displayedData > 1){
+          displayedData = displayedData - 1
+        } else {
+          displayedData = numberColumns
+        }
+        updateFeatureState(displayedData)
+      }
+    
+      sliderSimple.silentValue(displayedData)
+    
+      d3.select("#keydate").text(headings[displayedData])
+    
+    }
+
+    // time slider bits
+
+    var sliderSimple = d3
+      .sliderBottom()
+      .min(1)
+      .max(14)
+      .width(parseInt(d3.select('body').style("width"))-210)
+      .tickFormat(d3.format(',.0f'))
+      .ticks(7)
+      .default(1)
+      .step(1)
+      .handle(
+        d3.symbol()
+          .type(d3.symbolCircle)
+          .size(500)
+      )
+      .fill("#206595")
+      .on('onchange', val => {
+        updateFeatureState(Math.round(val))
+        displayedData = (Math.round(val))
+        d3.select("#keydate").text(headings[displayedData])
+        //document.getElementById("value-simple").value=d3.format('.0f')(val)
+      });
+
+      var gSimple = d3
+      .select('div#slider-simple')
+      .append('svg')
+      .attr('width', parseInt(d3.select('body').style("width"))-140)
+      .attr('height', 75)
+      .append('g')
+      .attr('transform', 'translate(30,20)');
+
+      gSimple.call(sliderSimple);
+
+      //document.getElementById("value-simple").value=d3.format('.0f')(sliderSimple.value());
+
+      // function sliderchange(){
+      // sliderSimple.silentValue(document.getElementById('value-simple').value)
+      // }
+
+      //Time slider accessibility
+
+      d3.select('#handle').on('keydown',function(){
+        console.log("keypress")
+      if(document.getElementById("handle")===document.activeElement){//if handle is focussed
+        // var max = document.getElementById('value-simple').max
+        // var min = document.getElementById('value-simple').min
+        var max = 14
+        var min = 1
+
+        if (d3.event.key=='ArrowLeft') {
+          if(+document.getElementById('value-simple').value-1<min){
+            sliderSimple.silentValue(min)
+            document.getElementById("value-simple").value=min
+          }else{
+            sliderSimple.silentValue(+document.getElementById('value-simple').value-1)
+            document.getElementById("value-simple").value=+document.getElementById("value-simple").value-100
+          }
+        }
+        if (d3.event.key=='ArrowUp') {
+          d3.event.preventDefault();
+          if(+document.getElementById('value-simple').value+1>max){
+            sliderSimple.silentValue(max)
+            document.getElementById("value-simple").value=max
+          }else{
+            sliderSimple.silentValue(+document.getElementById('value-simple').value+1)
+            document.getElementById("value-simple").value=+document.getElementById("value-simple").value+1
+          }
+        }
+        if (d3.event.key=='ArrowRight') {
+          if(+document.getElementById('value-simple').value+1>max){
+            sliderSimple.silentValue(max)
+            document.getElementById("value-simple").value=max
+          }else{
+            sliderSimple.silentValue(+document.getElementById('value-simple').value+1)
+            document.getElementById("value-simple").value=+document.getElementById("value-simple").value+1
+          }              }
+        if (d3.event.key=='ArrowDown') {
+          d3.event.preventDefault();
+          if(+document.getElementById('value-simple').value-1<min){
+            sliderSimple.silentValue(min)
+            document.getElementById("value-simple").value=min
+          }else{
+            sliderSimple.silentValue(+document.getElementById('value-simple').value-1)
+            document.getElementById("value-simple").value=+document.getElementById("value-simple").value-1
+          }
+        }
+        if (d3.event.key=='PageDown') {
+          d3.event.preventDefault();
+          if(+document.getElementById('value-simple').value-1<min){
+            sliderSimple.silentValue(min)
+            document.getElementById("value-simple").value=min
+          }else{
+            sliderSimple.silentValue(+document.getElementById('value-simple').value-1)
+            document.getElementById("value-simple").value=+document.getElementById("value-simple").value-1
+          }
+        }
+        if (d3.event.key=='PageUp') {
+          d3.event.preventDefault();
+          if(+document.getElementById('value-simple').value+1>max){
+            sliderSimple.silentValue(max)
+            document.getElementById("value-simple").value=max
+          }else{
+            sliderSimple.silentValue(+document.getElementById('value-simple').value+1)
+            document.getElementById("value-simple").value=+document.getElementById("value-simple").value+1
+          }              }
+        if (d3.event.key=='Home') {
+          d3.event.preventDefault();
+          sliderSimple.silentValue(min)
+          document.getElementById("value-simple").value=min
+        }
+        if (d3.event.key=='End') {
+          d3.event.preventDefault();
+          sliderSimple.silentValue(max)
+          document.getElementById("value-simple").value=max
+        }
+      }
+      })
+
+        d3.selectAll(".tick text").each(function(d,i){d3.select(this).text(formatDate(headingsParsed[d]))})
+
+
   } //end function ready
 
 } else {
@@ -571,11 +703,9 @@ function highlightArea(e) {
       hover: true
     });
 
-    //console.log(json[e[0].properties.areacd]);
-
     setAxisVal(e[0].properties.areanmhc, json[e[0].properties.areacd] !==undefined? json[e[0].properties.areacd]["value" + displayedData] : "no data");
 
-    setScreenreader(e[0].properties.areanmhc, json[e[0].properties.areacd] !==undefined? json[e[0].properties.areacd].value1 : "no data");
+    setScreenreader(e[0].properties.areanmhc, json[e[0].properties.areacd] !==undefined? json[e[0].properties.areacd]["value" + displayedData] : "no data");
   }
 }
 
@@ -650,17 +780,17 @@ function setAxisVal(areanm, areaval) {
     if (!isNaN(areaval)) {
     //if (typeof areaval === 'string') {
     //if (areaval !== undefined) {
-      return areanm //+ "<br> Value:"  + areaval;
+      return areanm + "<br> Value:"  + areaval;
     } else {
       return areanm //+ "<br>No data available";
     }
   });
 }
 
-function setScreenreader(name, value1) {
-  if (!isNaN(value1)) {
+function setScreenreader(name, value) {
+  if (!isNaN(value)) {
 
-    if (value1 > 0) {
+    if (value > 0) {
       d3.select("#screenreadertext").text(name + " is in a cluster on " + headings[displayedData]);
     } else {
       d3.select("#screenreadertext").text(name + " is not in cluster on " + headings[displayedData]);
@@ -679,24 +809,7 @@ function hideaxisVal() {
 function getColour(value) {
 
 
-  //return quantile(value)
-
-  //Slight bodge hard code the categories
-
-  // colour = (category1(value1) === "High" && category2(value2) === "High" ) ? dvc.varcolour[0] : // High persistance and risk
-  //         (category1(value1) === "Low" && category2(value2) === "High" ) ? dvc.varcolour[1] :  // Low persistance and high risk
-  //         (category1(value1) === "High" && category2(value2) === "Low" ) ? dvc.varcolour[2] :  // High persistance and low risk
-  //         dvc.varcolour[3]; // everything else (low persistance and risk)
-
-  // return colour
-
-  //return chroma({h:color2(value2), s:color1(value1), l:color1(value1)}).rgba(); //Mix HSL values to colour map - incorrect
-
-  //return isNaN(value1) ? dvc.nullColour : color1(value1); //old, non bivariate way of doing it
-
-  //return colour[value]
-
-  //MASSIVE Bodge - hardcoded colours as 
+  //MASSIVE Bodge - hardcoded colours as there is no easy way to differentiate the clusters and ensure that nearby clusters do not have the same colour
 
     colour =(value === 5.2 ||
              value === 2.46 ||
@@ -722,16 +835,12 @@ function getColour(value) {
             (value === 1.44) ? dvc.varcolour[2] :
             (value === 1.33) ? dvc.varcolour[2] :
 
-
-
-
-
-  //          (category1(value1) === "Low" && category2(value2) === "High" ) ? dvc.varcolour[1] :  // Low persistance and high risk
-  //          (category1(value1) === "High" && category2(value2) === "Low" ) ? dvc.varcolour[2] :  // High persistance and low risk
             "#23A58E"; // everything else
 
     return colour
 
+
+  // //Use this code to return a single colour (possibly after I have recieved the red circles)
   // if (value === 0) {
   //   return "grey" 
   // } else {
@@ -741,22 +850,12 @@ function getColour(value) {
 
 function getOpacity(value) {
 
+  //again, bit of a bodge, should probably set opacity with colour or something
   if (value === 0) {
       return 0
   } else {
       return 0.7
   }
-}
-
-function csv2jsonOld(csv) {
-  var json = {},
-    i = 0,
-    len = csv.length;
-  while (i < len) {
-    json[csv[i][csv.columns[0]]] = +csv[i][csv.columns[1]];
-    i++;
-  }
-  return json;
 }
 
 
@@ -773,202 +872,8 @@ function csv2json(csv) {
     }
     i++;
   }
-  //console.log(json);
+
   return json;
 
 }
 
-// function getUniqueValuesFromColummn(column, csv) {
-
-//   coloursScales={}
-//   for (columns in csv):
-//        colourScales[column]=d3.scaleQuantile()
-//             .domain(d3.map(data,function(e){return column}).keys())
-//             .range([colours]) 
-
-// }
-
-// What you need to do 
-// make csv2json only read the current active date
-// remove duplicates/get unique and use that for scale ordnial to give each cluster a unique colour
-// update the ordinal domain every time the date is changed
-// get the range from Henry's new tool
-
-
-
-function readCSVcolumns(csv) {
-  var dataColumns = [],
-  i = 0,
-  len = csv.length
-  while (i < len) {
-    for(j=1; j<csv.columns.length;j++){
-      dataColumns.push(+csv[i][csv.columns[j]]);
-      //console.log(j)
-    }
-    i++;
-  }
-  return dataColumns;
-}
-
-function csv2jsonReverse(csv) {
-  return null
-}
-
-function updateFeatureState(displayedData) {
-
-  for (var key in json) {
-
-    map.setFeatureState({
-      source: 'area-tiles',
-      sourceLayer: 'boundaries',
-      id: key
-    }, {
-      value: json[key]["value" + displayedData],
-      colour: getColour(json[key]["value" + displayedData]),
-      opacity: getOpacity(json[key]["value" + displayedData])
-    });
-
-  }
-}
-
-var numberColumns = 14
-var displayedData = 1
-
-function changeDate(direction)  {
-
-  if (direction === "forward") {
-    if (displayedData < numberColumns){
-      displayedData = displayedData + 1
-    } else {
-      displayedData = 1
-    }
-    updateFeatureState(displayedData)
-  } else {
-    if (displayedData > 1){
-      displayedData = displayedData - 1
-    } else {
-      displayedData = numberColumns
-    }
-    updateFeatureState(displayedData)
-  }
-
-  sliderSimple.silentValue(displayedData)
-
-  d3.select("#keydate").text(headings[displayedData])
-
-}
-
-var sliderSimple = d3
-.sliderBottom()
-.min(1)
-.max(14)
-.width(parseInt(d3.select('body').style("width"))-200)
-.tickFormat(d3.format(',.0f'))
-.ticks(7)
-.default(1)
-.step(1)
-.handle(
-  d3.symbol()
-    .type(d3.symbolCircle)
-    .size(500)
-)
-.fill("#206595")
-.on('onchange', val => {
-  updateFeatureState(Math.round(val))
-  displayedData = (Math.round(val))
-  d3.select("#keydate").text(headings[displayedData])
-  //document.getElementById("value-simple").value=d3.format('.0f')(val)
-});
-
-var gSimple = d3
-.select('div#slider-simple')
-.append('svg')
-.attr('width', parseInt(d3.select('body').style("width"))-150)
-.attr('height', 75)
-.append('g')
-.attr('transform', 'translate(30,20)');
-
-gSimple.call(sliderSimple);
-
-//document.getElementById("value-simple").value=d3.format('.0f')(sliderSimple.value());
-
-// function sliderchange(){
-// sliderSimple.silentValue(document.getElementById('value-simple').value)
-// }
-
-d3.select('#handle').on('keydown',function(){
-  console.log("keypress")
-if(document.getElementById("handle")===document.activeElement){//if handle is focussed
-  // var max = document.getElementById('value-simple').max
-  // var min = document.getElementById('value-simple').min
-  var max = 14
-  var min = 1
-
-  if (d3.event.key=='ArrowLeft') {
-    if(+document.getElementById('value-simple').value-1<min){
-      sliderSimple.silentValue(min)
-      document.getElementById("value-simple").value=min
-    }else{
-      sliderSimple.silentValue(+document.getElementById('value-simple').value-1)
-      document.getElementById("value-simple").value=+document.getElementById("value-simple").value-100
-    }
-  }
-  if (d3.event.key=='ArrowUp') {
-    d3.event.preventDefault();
-    if(+document.getElementById('value-simple').value+1>max){
-      sliderSimple.silentValue(max)
-      document.getElementById("value-simple").value=max
-    }else{
-      sliderSimple.silentValue(+document.getElementById('value-simple').value+1)
-      document.getElementById("value-simple").value=+document.getElementById("value-simple").value+1
-    }
-  }
-  if (d3.event.key=='ArrowRight') {
-    if(+document.getElementById('value-simple').value+1>max){
-      sliderSimple.silentValue(max)
-      document.getElementById("value-simple").value=max
-    }else{
-      sliderSimple.silentValue(+document.getElementById('value-simple').value+1)
-      document.getElementById("value-simple").value=+document.getElementById("value-simple").value+1
-    }              }
-  if (d3.event.key=='ArrowDown') {
-    d3.event.preventDefault();
-    if(+document.getElementById('value-simple').value-1<min){
-      sliderSimple.silentValue(min)
-      document.getElementById("value-simple").value=min
-    }else{
-      sliderSimple.silentValue(+document.getElementById('value-simple').value-1)
-      document.getElementById("value-simple").value=+document.getElementById("value-simple").value-1
-    }
-  }
-  if (d3.event.key=='PageDown') {
-    d3.event.preventDefault();
-    if(+document.getElementById('value-simple').value-1<min){
-      sliderSimple.silentValue(min)
-      document.getElementById("value-simple").value=min
-    }else{
-      sliderSimple.silentValue(+document.getElementById('value-simple').value-1)
-      document.getElementById("value-simple").value=+document.getElementById("value-simple").value-1
-    }
-  }
-  if (d3.event.key=='PageUp') {
-    d3.event.preventDefault();
-    if(+document.getElementById('value-simple').value+1>max){
-      sliderSimple.silentValue(max)
-      document.getElementById("value-simple").value=max
-    }else{
-      sliderSimple.silentValue(+document.getElementById('value-simple').value+1)
-      document.getElementById("value-simple").value=+document.getElementById("value-simple").value+1
-    }              }
-  if (d3.event.key=='Home') {
-    d3.event.preventDefault();
-    sliderSimple.silentValue(min)
-    document.getElementById("value-simple").value=min
-  }
-  if (d3.event.key=='End') {
-    d3.event.preventDefault();
-    sliderSimple.silentValue(max)
-    document.getElementById("value-simple").value=max
-  }
-}
-})
