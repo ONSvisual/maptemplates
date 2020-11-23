@@ -30,7 +30,7 @@ if (Modernizr.webgl) {
     i = 1
 
     while (i < 15) {
-      headingsParsed[i] = parseTime(headings[i])
+      headingsParsed[i-1] = parseTime(headings[i])
       i++
     }
 
@@ -553,13 +553,15 @@ if (Modernizr.webgl) {
 
     var sliderSimple = d3
       .sliderBottom()
-      .min(1)
-      .max(14)
+      .min(d3.min(headingsParsed))
+      .max(d3.max(headingsParsed))
       .width(parseInt(d3.select('body').style("width"))-210)
-      .tickFormat(d3.format(',.0f'))
-      .ticks(7)
-      .default(1)
-      .step(1)
+      //.tickFormat(d3.format(',.0f'))
+      .tickFormat(formatDate)
+      .ticks(4)
+      .tickValues(headingsParsed)
+      .default(d3.min(headingsParsed))
+      //.step(headingsParsed)
       .handle(
         d3.symbol()
           .type(d3.symbolCircle)
@@ -567,7 +569,8 @@ if (Modernizr.webgl) {
       )
       .fill("#206595")
       .on('onchange', val => {
-        updateFeatureState(Math.round(val))
+        //console.log(headingsParsed.indexOf(val))
+        updateFeatureState(Math.round(headingsParsed.indexOf(val)))
         displayedData = (Math.round(val))
         d3.select("#keydate").text(headings[displayedData])
         //document.getElementById("value-simple").value=d3.format('.0f')(val)
@@ -596,8 +599,8 @@ if (Modernizr.webgl) {
       if(document.getElementById("handle")===document.activeElement){//if handle is focussed
         // var max = document.getElementById('value-simple').max
         // var min = document.getElementById('value-simple').min
-        var max = 14
-        var min = 1
+        var max = d3.max(headingsParsed)
+        var min = d3.min(headingsParsed)
 
         if (d3.event.key=='ArrowLeft') {
           if(+document.getElementById('value-simple').value-1<min){
@@ -668,7 +671,7 @@ if (Modernizr.webgl) {
       }
       })
 
-        d3.selectAll(".tick text").each(function(d,i){d3.select(this).text(formatDate(headingsParsed[d]))})
+       // d3.selectAll(".tick text").each(function(d,i){d3.select(this).text(formatDate(headingsParsed[d]))})
 
 
   } //end function ready
