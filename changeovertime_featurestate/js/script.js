@@ -50,7 +50,7 @@ if (Modernizr.webgl) {
       container: 'map', // container id
       style: 'data/style.json', //stylesheet location
       center: [-3.12, 53], // starting position 51.5074° N, 0.1278
-      maxBounds: [[-12.836, 49.441], [7.604, 55.945]],//limit it to just E&W
+      //maxBounds: [[-12.836, 49.441], [7.604, 55.945]],//limit it to just E&W
       zoom: 5, // starting zoom
       minZoom: 4,
       maxZoom: 17, //
@@ -553,7 +553,7 @@ if (Modernizr.webgl) {
 
     var sliderSimple = d3
       .sliderBottom()
-      .min(d3.min(headingsParsed))
+      .min(parseTime("01/03/2020"))
       .max(d3.max(headingsParsed))
       .width(parseInt(d3.select('body').style("width"))-210)
       //.tickFormat(d3.format(',.0f'))
@@ -561,6 +561,7 @@ if (Modernizr.webgl) {
       //.ticks(7)
       //.tickValues(headingsParsed)
       .default(d3.min(headingsParsed))
+      .displayFormat(formatDate)
       .marks(headingsParsed)
       .handle(
         d3.symbol()
@@ -569,7 +570,7 @@ if (Modernizr.webgl) {
       )
       .fill("#206595");
 
-      if (parseInt(d3.select('body').style('width')) > 900) {
+      if (parseInt(d3.select('body').style('width')) > 1500) {
         console.log("wide")
         sliderSimple
           .tickFormat(formatDate)
