@@ -543,7 +543,7 @@ if (Modernizr.webgl) {
         updateFeatureState(displayedData)
       }
     
-      sliderSimple.silentValue(displayedData)
+      sliderSimple.silentValue(headingsParsed[displayedData-1])
     
       d3.select("#keydate").text(headings[displayedData])
     
@@ -558,10 +558,10 @@ if (Modernizr.webgl) {
       .width(parseInt(d3.select('body').style("width"))-210)
       //.tickFormat(d3.format(',.0f'))
       .tickFormat(formatDate)
-      .ticks(4)
+      .ticks(7)
       .tickValues(headingsParsed)
       .default(d3.min(headingsParsed))
-      //.step(headingsParsed)
+      .marks(headingsParsed)
       .handle(
         d3.symbol()
           .type(d3.symbolCircle)
@@ -569,9 +569,8 @@ if (Modernizr.webgl) {
       )
       .fill("#206595")
       .on('onchange', val => {
-        //console.log(headingsParsed.indexOf(val))
-        updateFeatureState(Math.round(headingsParsed.indexOf(val)))
-        displayedData = (Math.round(val))
+        updateFeatureState(headingsParsed.indexOf(val) + 1)
+        displayedData = (headingsParsed.indexOf(val) + 1)
         d3.select("#keydate").text(headings[displayedData])
         //document.getElementById("value-simple").value=d3.format('.0f')(val)
       });
