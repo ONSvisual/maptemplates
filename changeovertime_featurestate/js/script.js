@@ -557,9 +557,9 @@ if (Modernizr.webgl) {
       .max(d3.max(headingsParsed))
       .width(parseInt(d3.select('body').style("width"))-210)
       //.tickFormat(d3.format(',.0f'))
-      .tickFormat(formatDate)
-      .ticks(7)
-      .tickValues(headingsParsed)
+      //.tickFormat(formatDate)
+      //.ticks(7)
+      //.tickValues(headingsParsed)
       .default(d3.min(headingsParsed))
       .marks(headingsParsed)
       .handle(
@@ -567,8 +567,22 @@ if (Modernizr.webgl) {
           .type(d3.symbolCircle)
           .size(500)
       )
-      .fill("#206595")
-      .on('onchange', val => {
+      .fill("#206595");
+
+      if (parseInt(d3.select('body').style('width')) > 900) {
+        console.log("wide")
+        sliderSimple
+          .tickFormat(formatDate)
+          .tickValues(headingsParsed);
+      }else{
+        console.log("thin")
+        sliderSimple
+          .tickFormat(d3.timeFormat("%b"))
+          .ticks(5);
+      }
+
+
+      sliderSimple.on('onchange', val => {
         updateFeatureState(headingsParsed.indexOf(val) + 1)
         displayedData = (headingsParsed.indexOf(val) + 1)
         d3.select("#keydate").text(headings[displayedData])
@@ -879,3 +893,10 @@ function csv2json(csv) {
 
 }
 
+
+
+//To Do:
+
+// Fix Fullscreen - map sizing, and make slider overlay?
+// Fix keyboard controls for accessibility
+// Remove JQuery
