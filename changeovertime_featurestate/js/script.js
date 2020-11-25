@@ -9,12 +9,13 @@ if (Modernizr.webgl) {
   d3.queue()
     .defer(d3.json, "data/config.json")
     .defer(d3.csv, "data/data_observed_expected_cluster.csv")
+    .defer(d3.json, "data/England_Clusters.json")
     .await(ready);
 
   var displayedData;
   
-  function ready(error, config, data) {
-    
+  function ready(error, config, data, geog) {
+
     //convert csv data into json
     json = csv2json(data);
     
@@ -22,6 +23,8 @@ if (Modernizr.webgl) {
     headings = d3.keys(data[0]);
 
     parseTime = d3.timeParse("%d/%m/%Y");
+
+    formatClusterTime = d3.timeFormat("%Y/%-m/%-d");
 
     formatDate = d3.timeFormat("%d/%m")
 
@@ -102,6 +105,13 @@ if (Modernizr.webgl) {
     //draw the key
     createKey(config);
 
+
+    //convert topojson to geojson
+		for(key in geog.objects){
+      var areas = topojson.feature(geog, geog.objects[key]);
+      console.log(areas);
+		}
+
     map.on('load', function() {
 
       // Add boundaries tileset
@@ -137,7 +147,25 @@ if (Modernizr.webgl) {
         }
       }, 'place_suburb');
 
+      //Add the Cluster extents from the JSON
+
+      map.addSource('cluster-extent', { 'type': 'geojson', 'data': areas });
+
+      console.log(formatClusterTime(headingsParsed[displayedData - 1]))
+
+      map.addLayer({
+        'id': 'cluster-extent',
+        'type': 'line',
+        'source': 'cluster-extent',
+        'touchAction':'none',
+        'layout': {},
+        'paint': {
+          'line-color': 'red',
+          "line-width": 3.5,
+        }
+      }, 'place_city');
      
+      updateFeatureState(1)
 
       //loop the json data and set feature state for building layer and boundary layer
       for (var key in json) {
@@ -520,6 +548,18 @@ if (Modernizr.webgl) {
         });
     
       }
+
+      //also update the opacity of the cluster circles
+
+      map.setPaintProperty(
+        'cluster-extent', 
+        'line-opacity', 
+        ['case',
+          ['==', ["get", 'START_DATE'], formatClusterTime(headingsParsed[displayedData - 1])],
+          0.8,
+          0
+        ],
+      );
     }
     
     var numberColumns = 14
@@ -571,12 +611,12 @@ if (Modernizr.webgl) {
       .fill("#206595");
 
       if (parseInt(d3.select('body').style('width')) > 1500) {
-        console.log("wide")
+        //console.log("wide")
         sliderSimple
           .tickFormat(formatDate)
           .tickValues(headingsParsed);
       }else{
-        console.log("thin")
+        //console.log("thin")
         sliderSimple
           .tickFormat(d3.timeFormat("%b"))
           .ticks(5);
