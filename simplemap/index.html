@@ -130,7 +130,7 @@
         top: 45px;
         left: 0px;
         width: calc(30% + 3px);
-        height: 90px;
+        height: 120px;
         background-color: rgba(255, 255, 255, 0.8);
         z-index: 1;
       }
@@ -206,6 +206,11 @@
 
     .domain {
       stroke: none;
+    }
+
+    #keydiv p{
+      font-size: 16px;
+      padding-left:3px;
     }
 
     #source {
@@ -513,14 +518,17 @@
   </div>
   <div class="row">
     <div id='map' class="col-sm-12">
-      <div id='keydiv'></div>
+      <div id='keydiv'>
+        <p id="tier"></p>
+        <p id="nuts"></p>
+      </div>
       <div id='selectNav'></div>
       <div id='accessibilityInfo'>
         <p aria-live="polite" class='visuallyhidden'></p>
       </div>
     </div>
   </div>
-  <div class="row" id="source">Source: Office for National Statistics.</div>
+  <div class="row" id="source">Source: Office for National Statistics</div>
 
 
   <!--<script src="http://d3js.org/d3.v3.min.js"></script>

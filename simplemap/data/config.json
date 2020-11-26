@@ -1,10 +1,10 @@
 {"ons":{
-"maptitle": "Map about...",
-"varcolour": "YlGnBu",
-"varunit": "£'s",
+"maptitle": "Map about local authorities and NUTS2 areas",
+"varcolour": "Blues",
+"varunit": "",
 "displaydecimals": 0,
 "legenddecimals": 0,
 "breaks": "equal",
 "dropticks": false,
-"numberBreaks": 5
+"numberBreaks": 4
 }}

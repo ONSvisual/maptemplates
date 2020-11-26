@@ -10,11 +10,12 @@ if(Modernizr.webgl) {
 	d3.queue()
 		.defer(d3.csv, "data/data.csv")
 		.defer(d3.json, "data/config.json")
-		.defer(d3.json, "data/geog.json")
+		.defer(d3.json, "data/LA.json")
+		.defer(d3.json, "data/nuts2.json")
 		.await(ready);
 
 
-	function ready (error, data, config, geog){
+	function ready (error, data, config, geog, nuts2){
 
 		//Set up global variables
 		dvc = config.ons;
@@ -27,6 +28,7 @@ if(Modernizr.webgl) {
 		for (var column in data[0]) {
 			if (column == 'AREACD') continue;
 			if (column == 'AREANM') continue;
+			if (column == 'NUTS2') continue;
 			variable = column;
 		}
 
@@ -85,11 +87,15 @@ if(Modernizr.webgl) {
 		setupScales();
 
 		//now ranges are set we can call draw the key
-		createKey(config);
+		// createKey(config);
 
 		//convert topojson to geojson
 		for(key in geog.objects){
 			var areas = topojson.feature(geog, geog.objects[key])
+		}
+
+		for(key in nuts2.objects){
+			var nuts = topojson.feature(nuts2,nuts2.objects[key])
 		}
 
 		//Work out extend of loaded geography file so we can set map to fit total extent
@@ -120,8 +126,13 @@ if(Modernizr.webgl) {
 
 			rateById = {};
 			areaById = {};
+			nutsById = {};
 
-			data.forEach(function(d) {rateById[d.AREACD] = +d[variable]; areaById[d.AREACD] = d.AREANM}); //change to brackets
+			data.forEach(function(d) {
+				rateById[d.AREACD] = +d[variable];
+				areaById[d.AREACD] = d.AREANM;
+				nutsById[d.AREACD] = d.NUTS2;
+			}); //change to brackets
 
 
 			//Flatten data values and work out breaks
@@ -180,6 +191,7 @@ if(Modernizr.webgl) {
 		function defineLayers() {
 
 			map.addSource('area', { 'type': 'geojson', 'data': areas });
+			map.addSource('nuts2', { 'type': 'geojson', 'data': nuts});
 
 			  map.addLayer({
 				  'id': 'area',
@@ -197,6 +209,18 @@ if(Modernizr.webgl) {
 				  }
 			  }, 'place_city');
 
+				map.addLayer({
+				  'id': 'nuts2',
+				  'type': 'line',
+				  'source': 'nuts2',
+				  'touchAction':'none',
+				  'layout': {},
+				  'paint': {
+						"line-color": "#414042",
+						"line-width": 2
+				  }
+			  }, 'place_city');
+
 			//Get current year for copyright
 			today = new Date();
 			copyYear = today.getFullYear();
@@ -208,7 +232,7 @@ if(Modernizr.webgl) {
 				"source": "area",
 				"layout": {},
 				"paint": {
-					"line-color": "#000",
+					"line-color": "#ffa500",
 					"line-width": 2
 				},
 				"filter": ["==", "AREACD", ""]
@@ -443,30 +467,33 @@ if(Modernizr.webgl) {
 				}
 			});
 
-
-			d3.select("#currLine")
-				.style("opacity", function(){if(!isNaN(rateById[code])) {return 1} else{return 0}})
-				.transition()
-				.duration(400)
-				.attr("x1", function(){if(!isNaN(rateById[code])) {return x(rateById[code])} else{return x(midpoint)}})
-				.attr("x2", function(){if(!isNaN(rateById[code])) {return x(rateById[code])} else{return x(midpoint)}});
-
-
-			d3.select("#currVal")
-				.text(function(){if(!isNaN(rateById[code]))  {return displayformat(rateById[code])} else {return "Data unavailable"}})
-				.style("opacity",1)
-				.transition()
-				.duration(400)
-				.attr("x", function(){if(!isNaN(rateById[code])) {return x(rateById[code])} else{return x(midpoint)}});
+			d3.select("#keydiv").select('p#tier').html('<strong>Tier:</strong> '+rateById[code])
+			d3.select("#nuts").html("<strong>NUTS2 region: </strong>"+nutsById[code]);
+			// d3.select("#currLine")
+			// 	.style("opacity", function(){if(!isNaN(rateById[code])) {return 1} else{return 0}})
+			// 	.transition()
+			// 	.duration(400)
+			// 	.attr("x1", function(){if(!isNaN(rateById[code])) {return x(rateById[code])} else{return x(midpoint)}})
+			// 	.attr("x2", function(){if(!isNaN(rateById[code])) {return x(rateById[code])} else{return x(midpoint)}});
+			//
+			//
+			// d3.select("#currVal")
+			// 	.text(function(){if(!isNaN(rateById[code]))  {return displayformat(rateById[code])} else {return "Data unavailable"}})
+			// 	.style("opacity",1)
+			// 	.transition()
+			// 	.duration(400)
+			// 	.attr("x", function(){if(!isNaN(rateById[code])) {return x(rateById[code])} else{return x(midpoint)}});
 
 		}
 
 		function hideaxisVal() {
-			d3.select("#currLine")
-				.style("opacity",0)
+			// d3.select("#currLine")
+			// 	.style("opacity",0)
+			//
+			// d3.select("#currVal").text("")
+			// 	.style("opacity",0)
 
-			d3.select("#currVal").text("")
-				.style("opacity",0)
+			d3.select("#keydiv").selectAll('p').html("")
 		}
 
 		function createKey(config){
