@@ -184,7 +184,7 @@ if (Modernizr.webgl) {
         });
       
 
-        // // This section loads the entire csv to the featurestate - but changing the colour by switching featurestate is slower than re-binding the data.
+        // // This section loads the entire csv to the featurestate - but changing the colour by switching featurestate is MUCH slower than re-binding the data.
         
         // var thisAreaData = json[key];
 
@@ -573,15 +573,25 @@ if (Modernizr.webgl) {
         } else {
           displayedData = 1
         }
-        updateFeatureState(displayedData)
-      } else {
+      }
+      
+      if (direction === "back") {
         if (displayedData > 1){
           displayedData = displayedData - 1
         } else {
           displayedData = numberColumns
         }
-        updateFeatureState(displayedData)
       }
+
+      if (direction === "end") {
+        displayedData = numberColumns
+      }
+
+      if (direction === "start") {
+        displayedData = 1
+      }
+
+      updateFeatureState(displayedData)
     
       sliderSimple.silentValue(headingsParsed[displayedData-1])
     
@@ -596,10 +606,6 @@ if (Modernizr.webgl) {
       .min(parseTime("01/03/2020"))
       .max(d3.max(headingsParsed))
       .width(parseInt(d3.select('body').style("width"))-210)
-      //.tickFormat(d3.format(',.0f'))
-      //.tickFormat(formatDate)
-      //.ticks(7)
-      //.tickValues(headingsParsed)
       .default(d3.min(headingsParsed))
       .displayFormat(formatDate)
       .marks(headingsParsed)
@@ -640,92 +646,25 @@ if (Modernizr.webgl) {
 
       gSimple.call(sliderSimple);
 
-      //document.getElementById("value-simple").value=d3.format('.0f')(sliderSimple.value());
-
-      // function sliderchange(){
-      // sliderSimple.silentValue(document.getElementById('value-simple').value)
-      // }
-
       //Time slider accessibility
 
-      d3.select('#handle').on('keydown',function(){
+      d3.select('.playbackcontrols').on('keydown',function(){
         console.log("keypress")
-      if(document.getElementById("handle")===document.activeElement){//if handle is focussed
-        // var max = document.getElementById('value-simple').max
-        // var min = document.getElementById('value-simple').min
-        var max = d3.max(headingsParsed)
-        var min = d3.min(headingsParsed)
 
-        if (d3.event.key=='ArrowLeft') {
-          if(+document.getElementById('value-simple').value-1<min){
-            sliderSimple.silentValue(min)
-            document.getElementById("value-simple").value=min
-          }else{
-            sliderSimple.silentValue(+document.getElementById('value-simple').value-1)
-            document.getElementById("value-simple").value=+document.getElementById("value-simple").value-100
-          }
+        if (d3.event.key=='ArrowRight' || d3.event.key=='ArrowUp') {   
+          changeDate("forward")
         }
-        if (d3.event.key=='ArrowUp') {
-          d3.event.preventDefault();
-          if(+document.getElementById('value-simple').value+1>max){
-            sliderSimple.silentValue(max)
-            document.getElementById("value-simple").value=max
-          }else{
-            sliderSimple.silentValue(+document.getElementById('value-simple').value+1)
-            document.getElementById("value-simple").value=+document.getElementById("value-simple").value+1
-          }
+        if (d3.event.key=='ArrowLeft' || d3.event.key=='ArrowDown') {   
+          changeDate("back")
         }
-        if (d3.event.key=='ArrowRight') {
-          if(+document.getElementById('value-simple').value+1>max){
-            sliderSimple.silentValue(max)
-            document.getElementById("value-simple").value=max
-          }else{
-            sliderSimple.silentValue(+document.getElementById('value-simple').value+1)
-            document.getElementById("value-simple").value=+document.getElementById("value-simple").value+1
-          }              }
-        if (d3.event.key=='ArrowDown') {
-          d3.event.preventDefault();
-          if(+document.getElementById('value-simple').value-1<min){
-            sliderSimple.silentValue(min)
-            document.getElementById("value-simple").value=min
-          }else{
-            sliderSimple.silentValue(+document.getElementById('value-simple').value-1)
-            document.getElementById("value-simple").value=+document.getElementById("value-simple").value-1
-          }
+        if (d3.event.key=='PageDown' || d3.event.key=='End') {   
+          changeDate("end")
         }
-        if (d3.event.key=='PageDown') {
-          d3.event.preventDefault();
-          if(+document.getElementById('value-simple').value-1<min){
-            sliderSimple.silentValue(min)
-            document.getElementById("value-simple").value=min
-          }else{
-            sliderSimple.silentValue(+document.getElementById('value-simple').value-1)
-            document.getElementById("value-simple").value=+document.getElementById("value-simple").value-1
-          }
+        if (d3.event.key=='PageUp' || d3.event.key=='Home') {
+          changeDate("start")
         }
-        if (d3.event.key=='PageUp') {
-          d3.event.preventDefault();
-          if(+document.getElementById('value-simple').value+1>max){
-            sliderSimple.silentValue(max)
-            document.getElementById("value-simple").value=max
-          }else{
-            sliderSimple.silentValue(+document.getElementById('value-simple').value+1)
-            document.getElementById("value-simple").value=+document.getElementById("value-simple").value+1
-          }              }
-        if (d3.event.key=='Home') {
-          d3.event.preventDefault();
-          sliderSimple.silentValue(min)
-          document.getElementById("value-simple").value=min
-        }
-        if (d3.event.key=='End') {
-          d3.event.preventDefault();
-          sliderSimple.silentValue(max)
-          document.getElementById("value-simple").value=max
-        }
-      }
-      })
 
-       // d3.selectAll(".tick text").each(function(d,i){d3.select(this).text(formatDate(headingsParsed[d]))})
+    })
 
 
   } //end function ready
