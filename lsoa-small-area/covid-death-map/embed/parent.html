@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})
+  (window,document,'script','dataLayer','GTM-MBCBVQS');
+  </script> -->
+
+  <meta charset="UTF-8">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <title>Map title here</title>
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+  <link href='css/mapbox-gl.css' rel='stylesheet'/>
+  <link href='css/global.css' rel='stylesheet'/>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+
+<style>
+    body {
+		margin:0;
+		padding:0;
+		font-family: 'Open Sans', sans-serif;
+    font-size: 14px !important;
+		width:100%;
+    max-width: 600px;
+		margin: 0px auto;
+		display:block;
+	}
+
+
+</style>
+
+</head>
+<body>
+
+<h6>Parent page</h6>
+<fieldset>
+  <legend>Enter a postcode with a space in between</legend>
+  <label for="postcodeInput">Enter a postcode in Great Britain</label>
+  <div id="specialBorder" class="borderbox input-group">
+    <input id="postcode" style="text-transform:uppercase;" type="text" class="search-control;">
+  </div>
+  <button type="button" id="submit">Submit</button>
+
+  <div id="pcError">
+    <p id=pcErrorText></p>
+  </div>
+
+</fieldset>
+
+<h6>Child page</h6>
+<div id="child"></div>
+
+
+<script src="https://cdn.ons.gov.uk/vendor/d3/4.2.7/d3.min.js"></script>
+<script src="js/modernizr.min.js"></script>
+<script src="https://cdn.ons.gov.uk/vendor/jquery/2.1.4/jquery.min.js"></script>
+<script src="https://cdn.ons.gov.uk/vendor/pym/1.3.2/pym.min.js"></script>
+
+<script>
+  var pymParent = new pym.Parent('child', 'child.html', {});
+
+  d3.select('#submit').on('click', onLinkClick);
+
+  // function onLinkClick() {
+  //     postcode=document.getElementById('postcode').value
+  //     firstbit=postcode.match(/^[a-z]{1,2}/)[0].toUpperCase()
+  //     d3.csv("multi_csv/NSPL_FEB_2020_UK_"+firstbit+".csv",function(data){
+  //       thisPostcode=data.filter(function(d){return d.pcds==postcode.toUpperCase()})[0]
+  //       pymParent.sendMessage('msoacode', thisPostcode.msoa11);
+  //     })
+  //
+  //
+  // }
+
+  function onLinkClick() {
+
+  postcode=document.getElementById('postcode').value
+
+    var myURIstring=encodeURI("https://api.postcodes.io/postcodes/"+postcode);
+    $.support.cors = true;
+    $.ajax({
+      type: "GET",
+      crossDomain: true,
+      dataType: "jsonp",
+      url: myURIstring,
+      error: function (xhr, ajaxOptions, thrownError) {
+        },
+      success: function(data1){
+        if(data1.status == 200 ){
+          //$("#pcError").hide();
+          lat =data1.result.latitude;
+          lng = data1.result.longitude;
+          console.log(data1.result.msoa)
+
+          updateObj = {};
+
+          updateObj.postcode = postcode;
+
+          updateObj.coordinates = {}
+
+          updateObj.coordinates.latitude = lat;
+          updateObj.coordinates.longitude = lng;
+
+          console.log(updateObj);
+
+
+
+          pymParent.sendMessage('update', JSON.stringify(updateObj));
+          //successpc(lat,lng)
+        } else {
+          $(".search-control").val("Sorry, invalid postcode.");
+        }
+      }
+    })
+    };
+
+
+</script>
+
+
+
+<noscript>
+	<p>Your browser does not support JavaScript. If you're able to please enable Javascript to view the map.</p>
+</noscript>
+
+</body>
+</html>
