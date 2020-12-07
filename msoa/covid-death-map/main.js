@@ -2,10 +2,9 @@ var pymChild = new pym.Child();
 
 d3.queue()
 	.defer(d3.csv, "data/data.csv")
-	// .defer(d3.json, "data/msoacentroidshp.json")
 	.await(ready);
 
-function ready(error, featureService /*geogbound, geog*/) {
+function ready(error, featureService) {
 
 
 	if (error) {
@@ -48,18 +47,18 @@ function ready(error, featureService /*geogbound, geog*/) {
 
 	const areabyid = [];
 	const cases = [];
-	const cases2 = [];
+	const allCases = [];
 	const areanmhc = [];
 
 	data.forEach(function(d, i) {
 		cases[d.areacd] = +d.cases;
 		areanmhc[d.areacd] = d.areanmhc;
-		cases2[i] = +d.cases;
+		allCases[i] = +d.cases;
 		areabyid[d.areacd] = d.areanm;
 	});
 
 
-	var maxvalue = d3.max(cases2);
+	var maxvalue = d3.max(allCases);
 
 	// areas.features.map(function(d, i) {
 	// 	if (cases[d.properties.areacd] >= 0) {
