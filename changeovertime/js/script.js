@@ -1010,7 +1010,7 @@ if (Modernizr.webgl) {
         //Add
         var xAxisTime = d3.axisBottom(x)
           .tickSize(5)
-          .tickValues(dvc.timelineLabelsDT)
+          .tickValues(dvc.timelineLabelsDT);
 
         // create g2 before g so that its contents sit behind
         var g2 = svgkeyGroup.append("g")
@@ -1053,8 +1053,32 @@ if (Modernizr.webgl) {
           .attr("font-weight", "600")
           .style("font-family", "'open sans'")
           .style("font-size", "12px")
-          .call(xAxisTime)
+          .call(xAxisTime);
 
+        var longestLabelDimensions = {width: 0};
+
+        var xAxisLabels = d3.select("#timeaxis").selectAll('.tick').nodes();
+        xAxisLabels.forEach(function(a) {
+          if (d3.select(a).select('text').node().getBBox().width > longestLabelDimensions.width) {
+            longestLabelDimensions = a.getBBox();
+          }
+        });
+
+        var pointSpace = d3.select("#timeaxis").selectAll('path').node().getBBox().width / xAxisLabels.length;
+
+        if (longestLabelDimensions.width > pointSpace) {
+          var loop_count = 1;
+          xAxisLabels.forEach(function(a) {
+            if(loop_count % 2 === 0) {
+              var xTranslation = loop_count === xAxisLabels.length ? - longestLabelDimensions.width/4 : 0;
+              d3.select(a).select('text').attr('transform', `translate(${xTranslation}, ${longestLabelDimensions.height})`);
+              d3.select(a).select('line').attr('y2', longestLabelDimensions.height);
+            }
+            loop_count = loop_count + 1;
+          });
+
+          svgkey.attr('height', parseInt(svgkey.attr('height')) + longestLabelDimensions.height);
+        }
 
         //
         // g.append("line")
