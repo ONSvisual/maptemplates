@@ -1,0 +1,213 @@
+body {
+  padding-bottom: 60px;
+  font-family: 'Open Sans', Arial, Helvetica, sans-serif
+}
+
+img {
+  max-width: 100%;
+}
+
+#areanm {
+  font-size: 18px;
+  font-weight: bold;
+  color: #000;
+  height: 30px;
+  margin: 20px 0 10px 3px;
+}
+
+.btn {
+  vertical-align: middle;
+  margin-right: 10px;
+  padding: 10px 20px;
+}
+
+.btn:focus {
+  box-shadow: 0 0 0px 3pt orange;
+}
+
+.keys path {
+  display: none;
+
+}
+
+.keys line {
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.keys {
+  font-size: 10px;
+  fill: #666;
+}
+
+.selected {
+  stroke: #990000;
+  stroke-width: 2px;
+}
+
+#key rect {
+  stroke: #666;
+  stroke-width: 0.5px;
+  z-index: +1;
+}
+
+.svgRect {
+  fill: white;
+  fill-opacity: 0.0;
+}
+
+/* Zoom CSS */
+
+.zoom-control-zoom a,
+.zoom-control-layers-toggle {
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  display: block;
+}
+
+.zoom-control-zoom a {
+  width: 22px;
+  height: 22px;
+  text-align: center;
+  text-decoration: none;
+  color: #5381ca;
+}
+
+.zoom-control-zoom-in {
+  cursor: pointer;
+  font: bold 18px / 24px Arial, Helvetica, sans- serif;
+}
+
+.zoom-control-zoom-in:hover {
+  color: #fff;
+  background-color: #5381ca;
+}
+
+
+.zoom-bar-part {
+  background-color: rgba(255, 255, 255, 0.8);
+  border-bottom: 1px solid #aaa;
+}
+
+.zoom-control-zoom-out {
+  cursor: pointer;
+  font: bold 23px / 20px Tahoma, Verdana, sans-serif;
+}
+
+.zoom-control-zoom-out:hover {
+  color: #fff;
+  background-color: #5381ca;
+}
+
+.zoom-bar-part:focus {
+  box-shadow: 0 0 0 3pt orange;
+  background-color: #414042;
+  color: #ededed;
+
+}
+
+.zoom-bar-part-bottom {
+  border-bottom: none;
+}
+
+.zoom-container {
+  margin-left: 5px;
+  margin-top: 30px;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+
+.zoom-bar {
+
+  border: 1px solid #59a4da;
+}
+
+.zoom-popup-pane,
+.zoom-control {
+  cursor: auto;
+}
+
+.zoom-control {
+  float: left;
+  clear: both;
+}
+
+.zoom-control {
+  z-index: 1;
+  pointer-events: auto;
+}
+
+.areaname {
+  margin: 0px;
+  font-size: 12px;
+}
+
+.graphUnitSVGs {
+  border: 2px solid #fff;
+}
+
+
+.graphUnitSVGs text {
+  font-size: 14px;
+  fill: #000;
+}
+
+.keys text {
+  font-size: 12px;
+  fill: #000;
+}
+
+.graphUnitSVGs line,
+.keys line {
+  font-size: 11px;
+  stroke: #AAAAAA;
+}
+
+.svgTitle {
+  text-anchor: start;
+}
+
+.total {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+#ChartFooterDiv,#footer h4{
+  margin: 16px 0 16px 0;
+  font-size: 16px;
+  line-height: 32px;
+  padding: 24px 0 0 0;
+  font-weight: 700;
+  color: #323132;
+}
+
+#ChartFooterDiv{
+  padding-top: 0!important;
+  margin-top:0!important
+}
+
+@media (max-width:767px) {
+    #ChartFooterDiv, #footer h4{
+      line-height: 24px;
+      margin: 16px 0 16px 0;
+    }
+}
+
+
+
+
+.visuallyhidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.relative {
+  position: relative;
+}

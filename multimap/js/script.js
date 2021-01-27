@@ -193,11 +193,15 @@ if(Modernizr.webgl) {
 		// 	.attr("for",function(d,i){return "button" + i})
 		// 	.text(function(d,i){return dvc.varlabels[i]})
 		// 	.on('click',function(d,i){onchange(i)})
-
+		d3.select('#selectnav').append('label')
+		.attr('for','dropdown')
+		.attr('class','visuallyhidden')
+		.text('Choose a variable')
 
 		selectgroup = d3.select('#selectnav')
 						.append('select')
 						.attr('class','dropdown')
+						.attr('id','dropdown')
 						.on('change', onselect)
 						.selectAll("option")
 						.data(dvc.varlabels)
@@ -219,15 +223,15 @@ if(Modernizr.webgl) {
 
 
 			//Flatten data values and work out breaks
-			if(config.ons.breaks =="jenks" || config.ons.breaks =="equal") {
+			if(config.ons.breaks[a] =="jenks" || config.ons.breaks[a] =="equal") {
 				var values =  data.map(function(d) { return +d[variables[a]]; }).filter(function(d) {return !isNaN(d)}).sort(d3.ascending);
 			};
 
-			if(config.ons.breaks =="jenks") {
+			if(config.ons.breaks[a] =="jenks") {
 				breaks = [];
 
-				ss.ckmeans(values, (dvc.numberBreaks)).map(function(cluster,i) {
-					if(i<dvc.numberBreaks-1) {
+				ss.ckmeans(values, (dvc.numberBreaks[a])).map(function(cluster,i) {
+					if(i<dvc.numberBreaks[a]-1) {
 						breaks.push(cluster[0]);
 					} else {
 						breaks.push(cluster[0])
@@ -236,8 +240,8 @@ if(Modernizr.webgl) {
 					}
 				});
 			}
-			else if (config.ons.breaks == "equal") {
-				breaks = ss.equalIntervalBreaks(values, dvc.numberBreaks);
+			else if (config.ons.breaks[a] == "equal") {
+				breaks = ss.equalIntervalBreaks(values, dvc.numberBreaks[a]);
 			}
 			else {breaks = config.ons.breaks[a];};
 
@@ -248,20 +252,20 @@ if(Modernizr.webgl) {
 			});
 
 			//work out halfway point (for no data position)
-			midpoint = breaks[0] + ((breaks[dvc.numberBreaks] - breaks[0])/2)
+			midpoint = breaks[0] + ((breaks[dvc.numberBreaks[a]] - breaks[0])/2)
 
 		}
 
 		function setupScales() {
 			//set up d3 color scales
 			//Load colours
-			if(typeof dvc.varcolour === 'string') {
-				color=chroma.scale(dvc.varcolour).colors(dvc.numberBreaks)
+			if(typeof dvc.varcolour[a] === 'string') {
+				color=chroma.scale(dvc.varcolour[a]).colors(dvc.numberBreaks[a])
 				colour=[]
 				color.forEach(function(d){colour.push(chroma(d).darken(0.4).saturate(0.6).hex())})
-				// colour = colorbrewer[dvc.varcolour][dvc.numberBreaks];
+				// colour = colorbrewer[dvc.varcolour[a]][dvc.numberBreaks];
 			} else {
-				colour = dvc.varcolour;
+				colour = dvc.varcolour[a];
 			}
 
 			//set up d3 color scales
@@ -499,8 +503,9 @@ if(Modernizr.webgl) {
 			$("#areaselect").val(code).trigger('chosen:updated');
 			d3.select('abbr').on('keypress',function(evt){
 				if(d3.event.keyCode==13 || d3.event.keyCode==32){
-					console.log('clear')
-					$("#areaselect").val("").trigger('chosen:updated');
+					d3.event.preventDefault();
+					onLeave();
+					resetZoom();
 				}
 			})
 		}
@@ -572,7 +577,7 @@ if(Modernizr.webgl) {
 				.attr("id", "key")
 				.attr('aria-hidden',true)
 				.attr("width", keywidth)
-				.attr("height",75);
+				.attr("height",80);
 
 
 			var color = d3.scaleThreshold()
@@ -581,7 +586,7 @@ if(Modernizr.webgl) {
 
 			// Set up scales for legend
 			x = d3.scaleLinear()
-				.domain([breaks[0], breaks[dvc.numberBreaks]]) /*range for data*/
+				.domain([breaks[0], breaks[dvc.numberBreaks[a]]]) /*range for data*/
 				.range([0,keywidth-30]); /*range for pixels*/
 
 
@@ -662,7 +667,7 @@ if(Modernizr.webgl) {
 			if(dvc.dropticks) {
 				d3.select("#horiz").selectAll("text").attr("transform",function(d,i){
 						// if there are more that 4 breaks, so > 5 ticks, then drop every other.
-						if(i % 2){return "translate(0,10)"} }
+						if(i % 2){return "translate(0,13)"} }
 				);
 			}
 

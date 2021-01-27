@@ -19,10 +19,9 @@
     (window, document, 'script', 'dataLayer', 'GTM-MBCBVQS');
   </script>
 
-  <meta charset="UTF-8">
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Multiple variables map</title>
-  <meta name='viewport' content='initial-scale=1,maximum-scale=1' />
 
   <link href='css/mapbox-gl.css' rel='stylesheet' />
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
@@ -131,7 +130,7 @@
         top: 45px;
         left: 0px;
         width: calc(30% + 3px);
-        height: 90px;
+        height: 95px;
         background-color: rgba(255, 255, 255, 0.8);
         z-index: 1;
       }
@@ -150,7 +149,7 @@
       }
 
       #map {
-        margin-top: 140px;
+        margin-top: 145px;
         height: 500px;
         width: 100%;
         overflow: visible;
@@ -158,7 +157,7 @@
 
       #selectNav {
         position: absolute;
-        top: -140px;
+        top: -145px;
         left: 0px;
         width: 100%;
         height: 45px;
@@ -178,10 +177,10 @@
 
       #keydiv {
         position: absolute;
-        top: -95px;
+        top: -100px;
         left: 0px;
         width: 100%;
-        height: 95px;
+        height: 100px;
         background-color: rgba(255, 255, 255, 0.8);
         z-index: 1;
       }
@@ -452,6 +451,7 @@
 
     input[type='radio']:checked+label {
       color: white;
+      background: #206095;
     }
 
     input[type='radio']:focus+label::before, input[type='radio']:hover+label::before {

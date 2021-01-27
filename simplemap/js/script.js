@@ -8,7 +8,7 @@ if(Modernizr.webgl) {
 
 	//Load data and config file
 	d3.queue()
-		.defer(d3.csv, "data/chnglem.csv")
+		.defer(d3.csv, "data/data.csv")
 		.defer(d3.json, "data/config.json")
 		.defer(d3.json, "data/geog.json")
 		.await(ready);
@@ -19,15 +19,15 @@ if(Modernizr.webgl) {
 		//Set up global variables
 		dvc = config.ons;
 		oldAREACD = "";
+		selected = false;
 		firsthover = true;
 
-
-		//get column name
+		//Get column names
+		variable = null;
 		for (var column in data[0]) {
 			if (column == 'AREACD') continue;
 			if (column == 'AREANM') continue;
-			dvc.varname = column;
-
+			variable = column;
 		}
 
 		//set title of page
@@ -44,14 +44,15 @@ if(Modernizr.webgl) {
 		//set up basemap
 		map = new mapboxgl.Map({
 		  container: 'map', // container id
-		  style: 'data/style.json', //stylesheet location
+		  style: 'data/style.json', //stylesheet location //includes key for API
 		  center: [-2.5, 54], // starting position
+		  minZoom: 3.5,//
 		  zoom: 4.5, // starting zoom
 		  maxZoom: 13, //
-		  attributionControl: false
+		  attributionControl: false //
 		});
 		//add fullscreen option
-		map.addControl(new mapboxgl.FullscreenControl());
+		//map.addControl(new mapboxgl.FullscreenControl());
 
 		// Add zoom and rotation controls to the map.
 		map.addControl(new mapboxgl.NavigationControl());
@@ -61,7 +62,6 @@ if(Modernizr.webgl) {
 
 		// Disable map rotation using touch rotation gesture
 		map.touchZoomRotate.disableRotation();
-
 
 		// Add geolocation controls to the map.
 		map.addControl(new mapboxgl.GeolocateControl({
@@ -75,62 +75,14 @@ if(Modernizr.webgl) {
 			compact: true
 		}));
 
+		//get location on click
+		d3.select(".mapboxgl-ctrl-geolocate").on("click",geolocate);
 
+		//addFullscreen();
 
-		addFullscreen();
+		defineBreaks();
 
-		//set up d3 color scales
-
-		rateById = {};
-		areaById = {};
-
-		data.forEach(function(d) { rateById[d.AREACD] = +eval("d." + dvc.varname); areaById[d.AREACD] = d.AREANM});
-
-
-		//Flatten data values and work out breaks
-		var values =  data.map(function(d) { return +eval("d." + dvc.varname); }).filter(function(d) {return !isNaN(d)}).sort(d3.ascending);
-
-		if(config.ons.breaks =="jenks") {
-			breaks = [];
-
-			ss.ckmeans(values, (dvc.numberBreaks)).map(function(cluster,i) {
-				if(i<dvc.numberBreaks-1) {
-					breaks.push(cluster[0]);
-				} else {
-					breaks.push(cluster[0])
-					//if the last cluster take the last max value
-					breaks.push(cluster[cluster.length-1]);
-				}
-			});
-		}
-		else if (config.ons.breaks == "equal") {
-			breaks = ss.equalIntervalBreaks(values, dvc.numberBreaks);
-		}
-		else {breaks = config.ons.breaks;};
-
-
-		//round breaks to specified decimal places
-		breaks = breaks.map(function(each_element){
-			return Number(each_element.toFixed(dvc.legenddecimals));
-		});
-
-		//work out halfway point (for no data position)
-		midpoint = breaks[0] + ((breaks[dvc.numberBreaks] - breaks[0])/2)
-
-		//Load colours
-		if(typeof dvc.varcolour === 'string') {
-			// colour = colorbrewer[dvc.varcolour][dvc.numberBreaks];
-			color=chroma.scale(dvc.varcolour).colors(dvc.numberBreaks)
-			colour=[]
-		  color.forEach(function(d){colour.push(chroma(d).darken(0.4).saturate(0.6).hex())})
-		} else {
-			colour = dvc.varcolour;
-		}
-
-		//set up d3 color scales
-		color = d3.scaleThreshold()
-				.domain(breaks.slice(1))
-				.range(colour);
+		setupScales();
 
 		//now ranges are set we can call draw the key
 		createKey(config);
@@ -148,14 +100,84 @@ if(Modernizr.webgl) {
 			map.fitBounds([[bounds[0],bounds[1]], [bounds[2], bounds[3]]])
 		},1000);
 
+
+
 		//and add properties to the geojson based on the csv file we've read in
 		areas.features.map(function(d,i) {
-
-		  d.properties.fill = color(rateById[d.properties.AREACD])
+		  if(!isNaN(rateById[d.properties.AREACD]))
+		  	{d.properties.fill = color(rateById[d.properties.AREACD])}
+		  else {d.properties.fill = '#ccc'};
 		});
 
+		map.on('load', defineLayers);
 
-		map.on('load', function() {
+		if ($('html').hasClass('touch')) {
+			map.scrollZoom.disable();
+			map.dragPan.disable();
+		};
+
+		function defineBreaks(){
+
+			rateById = {};
+			areaById = {};
+
+			data.forEach(function(d) {rateById[d.AREACD] = +d[variable]; areaById[d.AREACD] = d.AREANM}); //change to brackets
+
+
+			//Flatten data values and work out breaks
+			if(config.ons.breaks =="jenks" || config.ons.breaks =="equal") {
+				var values =  data.map(function(d) { return +d[variable]; }).filter(function(d) {return !isNaN(d)}).sort(d3.ascending);
+			};
+
+			if(config.ons.breaks =="jenks") {
+				breaks = [];
+
+				ss.ckmeans(values, (dvc.numberBreaks)).map(function(cluster,i) {
+					if(i<dvc.numberBreaks-1) {
+						breaks.push(cluster[0]);
+					} else {
+						breaks.push(cluster[0])
+						//if the last cluster take the last max value
+						breaks.push(cluster[cluster.length-1]);
+					}
+				});
+			}
+			else if (config.ons.breaks == "equal") {
+				breaks = ss.equalIntervalBreaks(values, dvc.numberBreaks);
+			}
+			else {breaks = config.ons.breaks;};
+
+
+			//round breaks to specified decimal places
+			breaks = breaks.map(function(each_element){
+				return Number(each_element.toFixed(dvc.legenddecimals));
+			});
+
+			//work out halfway point (for no data position)
+			midpoint = breaks[0] + ((breaks[dvc.numberBreaks] - breaks[0])/2)
+
+		}
+
+		function setupScales() {
+			//set up d3 color scales
+			//Load colours
+			if(typeof dvc.varcolour === 'string') {
+				color=chroma.scale(dvc.varcolour).colors(dvc.numberBreaks)
+				colour=[]
+				color.forEach(function(d){colour.push(chroma(d).darken(0.4).saturate(0.6).hex())})
+				// colour = colorbrewer[dvc.varcolour][dvc.numberBreaks];
+			} else {
+				colour = dvc.varcolour;
+			}
+
+			//set up d3 color scales
+			color = d3.scaleThreshold()
+					.domain(breaks.slice(1))
+					.range(colour);
+
+		}
+
+		function defineLayers() {
 
 			map.addSource('area', { 'type': 'geojson', 'data': areas });
 
@@ -163,16 +185,17 @@ if(Modernizr.webgl) {
 				  'id': 'area',
 				  'type': 'fill',
 				  'source': 'area',
+				  'touchAction':'none',
 				  'layout': {},
 				  'paint': {
 					  'fill-color': {
 							type: 'identity',
-							property: 'fill',
+							property: 'fill'
 					   },
 					  'fill-opacity': 0.7,
 					  'fill-outline-color': '#fff'
 				  }
-			  });
+			  }, 'place_city');
 
 			//Get current year for copyright
 			today = new Date();
@@ -189,7 +212,7 @@ if(Modernizr.webgl) {
 					"line-width": 2
 				},
 				"filter": ["==", "AREACD", ""]
-			});
+			}, 'place_city');
 
 			  map.addLayer({
 				  'id': 'area_labels',
@@ -212,50 +235,35 @@ if(Modernizr.webgl) {
 
 			//test whether ie or not
 			function detectIE() {
-			  var ua = window.navigator.userAgent;
+				  var ua = window.navigator.userAgent;
 
-			  // Test values; Uncomment to check result …
+				  var msie = ua.indexOf('MSIE ');
+				  if (msie > 0) {
+					// IE 10 or older => return version number
+					return parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
+				  }
 
-			  // IE 10
-			  // ua = 'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)';
+				  var trident = ua.indexOf('Trident/');
+				  if (trident > 0) {
+					// IE 11 => return version number
+					var rv = ua.indexOf('rv:');
+					return parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
+				  }
 
-			  // IE 11
-			  // ua = 'Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko';
+				  var edge = ua.indexOf('Edge/');
+				  if (edge > 0) {
+					// Edge (IE 12+) => return version number
+					return parseInt(ua.substring(edge + 5, ua.indexOf('.', edge)), 10);
+				  }
 
-			  // Edge 12 (Spartan)
-			  // ua = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36 Edge/12.0';
-
-			  // Edge 13
-			  // ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2486.0 Safari/537.36 Edge/13.10586';
-
-			  var msie = ua.indexOf('MSIE ');
-			  if (msie > 0) {
-				// IE 10 or older => return version number
-				return parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
-			  }
-
-			  var trident = ua.indexOf('Trident/');
-			  if (trident > 0) {
-				// IE 11 => return version number
-				var rv = ua.indexOf('rv:');
-				return parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
-			  }
-
-			  var edge = ua.indexOf('Edge/');
-			  if (edge > 0) {
-				// Edge (IE 12+) => return version number
-				return parseInt(ua.substring(edge + 5, ua.indexOf('.', edge)), 10);
-			  }
-
-			  // other browser
-			  return false;
+				  // other browser
+				  return false;
 			}
 
 
 			if(detectIE()){
-				onMove = onMove.debounce(100);
-				onLeave = onLeave.debounce(100);
-				console.log("ie");
+				onMove = onMove.debounce(200);
+				onLeave = onLeave.debounce(200);
 			};
 
 			//Highlight stroke on mouseover (and show area information)
@@ -267,13 +275,69 @@ if(Modernizr.webgl) {
 			//Add click event
 			map.on("click", "area", onClick);
 
-			//get location on click
-			d3.select(".mapboxgl-ctrl-geolocate").on("click",geolocate);
 
-		});
+
+
+		}
+
+
+		function updateLayers() {
+
+			//update properties to the geojson based on the csv file we've read in
+			areas.features.map(function(d,i) {
+			   if(!isNaN(rateById[d.properties.AREACD]))
+			    {d.properties.fill = color(rateById[d.properties.AREACD])}
+			   else {d.properties.fill = '#ccc'};
+
+			});
+
+			//Reattach geojson data to area layer
+			map.getSource('area').setData(areas);
+
+			//set up style object
+			styleObject = {
+									type: 'identity',
+									property: 'fill'
+						}
+			//repaint area layer map usign the styles above
+			map.setPaintProperty('area', 'fill-color', styleObject);
+
+		}
+
+
+		function onchange(i) {
+
+			a = i;
+
+			defineBreaks();
+			setupScales();
+			createKey(config);
+
+			if(selected) {
+				setAxisVal($("#areaselect").val());
+			}
+			updateLayers();
+
+			dataLayer.push({
+          'event': 'navSelect',
+          'selected': i
+      })
+		}
+
+		function onselect() {
+			a = $(".dropdown").val();
+			onchange(a);
+		}
+
 
 		function onMove(e) {
+			// console.log(e)
+
+				map.getCanvasContainer().style.cursor = 'pointer';
+
 				newAREACD = e.features[0].properties.AREACD;
+
+
 
 				if(firsthover) {
             dataLayer.push({
@@ -291,14 +355,16 @@ if(Modernizr.webgl) {
 
 					selectArea(e.features[0].properties.AREACD);
 					setAxisVal(e.features[0].properties.AREACD);
+
 				}
 		};
 
 
 		function onLeave() {
+				map.getCanvasContainer().style.cursor = null;
 				map.setFilter("state-fills-hover", ["==", "AREACD", ""]);
 				oldAREACD = "";
-				$("#areaselect").val("").trigger("chosen:updated");
+				$("#areaselect").val(null).trigger('chosen:updated');
 				hideaxisVal();
 		};
 
@@ -323,24 +389,30 @@ if(Modernizr.webgl) {
 		function disableMouseEvents() {
 				map.off("mousemove", "area", onMove);
 				map.off("mouseleave", "area", onLeave);
+
+				selected = true;
 		}
 
 		function enableMouseEvents() {
 				map.on("mousemove", "area", onMove);
 				map.on("click", "area", onClick);
 				map.on("mouseleave", "area", onLeave);
+
+				selected = false;
 		}
 
 		function selectArea(code) {
-			$("#areaselect").val(code).trigger("chosen:updated");
+			$("#areaselect").val(code).trigger('chosen:updated');
+			d3.select('abbr').on('keypress',function(evt){
+				if(d3.event.keyCode==13 || d3.event.keyCode==32){
+					console.log('clear')
+					$("#areaselect").val("").trigger('chosen:updated');
+					onLeave();
+					resetZoom();
+				}
+			})
 		}
 
-		$('#areaselect').on('select2:unselect', function () {
-            dataLayer.push({
-                'event': 'deselectCross',
-                'selected': 'deselect'
-            })
-    });
 
 		function zoomToArea(code) {
 
@@ -362,6 +434,16 @@ if(Modernizr.webgl) {
 
 
 		function setAxisVal(code) {
+			d3.select('#accessibilityInfo').select('p.visuallyhidden')
+			.text(function(){
+				if (!isNaN(rateById[code])) {
+					return areaById[code]+": "+ displayformat(rateById[code]) +" "+ dvc.varunit;
+				} else {
+					return "Data unavailable";
+				}
+			});
+
+
 			d3.select("#currLine")
 				.style("opacity", function(){if(!isNaN(rateById[code])) {return 1} else{return 0}})
 				.transition()
@@ -389,13 +471,16 @@ if(Modernizr.webgl) {
 
 		function createKey(config){
 
+			d3.select("#keydiv").selectAll("*").remove();
+
 			keywidth = d3.select("#keydiv").node().getBoundingClientRect().width;
 
 			var svgkey = d3.select("#keydiv")
 				.append("svg")
 				.attr("id", "key")
+				.attr('aria-hidden',true)
 				.attr("width", keywidth)
-				.attr("height",65);
+				.attr("height",75);
 
 
 			var color = d3.scaleThreshold()
@@ -414,7 +499,7 @@ if(Modernizr.webgl) {
 				.tickFormat(legendformat);
 
 			var g2 = svgkey.append("g").attr("id","horiz")
-				.attr("transform", "translate(15,30)");
+				.attr("transform", "translate(15,35)");
 
 
 			keyhor = d3.select("#horiz");
@@ -455,8 +540,6 @@ if(Modernizr.webgl) {
 				.attr("fill","#000")
 				.text("");
 
-
-
 			keyhor.selectAll("rect")
 				.data(color.range().map(function(d, i) {
 				  return {
@@ -490,12 +573,13 @@ if(Modernizr.webgl) {
 						if(i % 2){return "translate(0,10)"} }
 				);
 			}
-			//Temporary	hardcode unit text
-			dvc.unittext = "change in life expectancy";
 
-			d3.select("#keydiv").append("p").attr("id","keyunit").style("margin-top","-10px").style("margin-left","10px").text(dvc.varunit);
+			//label the units
+			d3.select("#keydiv").append("p").attr("id","keyunit").attr('aria-hidden',true).style("margin-top","-10px").style("margin-left","10px").style('font-size','14px').text(dvc.varunit);
 
 	} // Ends create key
+
+	pymChild.sendHeight();
 
 	function addFullscreen() {
 
@@ -517,7 +601,6 @@ if(Modernizr.webgl) {
 
 	function exitHandler() {
 
-		console.log("shrink");
 			if (document.webkitIsFullScreen === false)
 			{
 				shrinkbody();
@@ -582,50 +665,57 @@ if(Modernizr.webgl) {
 			// Build option menu for occupations
 			var optns = d3.select("#selectNav").append("div").attr("id","sel").append("select")
 				.attr("id","areaselect")
-				.attr("style","width:98%")
+				.attr("style","width:calc(100% - 6px)")
 				.attr("class","chosen-select");
 
-
 			optns.append("option")
-				.attr("value","first")
-				.text("");
+				// .attr("value","first")
+				// .text("");
 
 			optns.selectAll("p").data(menuarea).enter().append("option")
 				.attr("value", function(d){ return d[1]})
+				.attr("id",function(d){return d[1]})
 				.text(function(d){ return d[0]});
 
 			myId=null;
 
-			$('#areaselect').chosen({width: "98%", allow_single_deselect:true,placeholder_text_single:"Choose an area"}).on('change',function(evt,params){
+			 $('#areaselect').chosen({placeholder_text_single:"Select an area",allow_single_deselect:true})
 
-					if(typeof params != 'undefined') {
+			 d3.select('input.chosen-search-input').attr('id','chosensearchinput')
+	     d3.select('div.chosen-search').insert('label','input.chosen-search-input').attr('class','visuallyhidden').attr('for','chosensearchinput').html("Type to select an area")
+
+			$('#areaselect').on('change',function(){
+
+					if($('#areaselect').val() != "") {
+							areacode = $('#areaselect').val()
 
 							disableMouseEvents();
 
-							map.setFilter("state-fills-hover", ["==", "AREACD", params.selected]);
+							map.setFilter("state-fills-hover", ["==", "AREACD", areacode]);
 
-							selectArea(params.selected);
-							setAxisVal(params.selected);
-
-							zoomToArea(params.selected);
+							selectArea(areacode);
+							setAxisVal(areacode);
+							zoomToArea(areacode);
 
 							dataLayer.push({
-									'event': 'mapDropSelect',
-									'selected': params.selected
-							})
+                  'event': 'mapDropSelect',
+                  'selected': areacode
+              })
 					}
 					else {
+							dataLayer.push({
+									'event': 'deselectCross',
+									'selected': 'deselect'
+							})
+
 							enableMouseEvents();
 							hideaxisVal();
 							onLeave();
 							resetZoom();
 					}
-
 			});
-
-	};
-
-	}
+	};//end selectlist
+}//end ready
 
 } else {
 

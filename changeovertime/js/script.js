@@ -26,6 +26,7 @@ if (Modernizr.webgl) {
     chartDrawn = false;
     thisdata = data;
     overallwidth = d3.select("body").node().getBoundingClientRect().width;
+    navvalue = 0;
 
     if (overallwidth < 600) {
       mobile = true;
@@ -163,7 +164,7 @@ if (Modernizr.webgl) {
       fieldset
       .append("div")
       .attr('class','visuallyhidden')
-      .attr('aria-role','polite')
+      .attr('aria-live','polite')
       .append('span')
       .attr('id','selected');
 
@@ -436,9 +437,6 @@ if (Modernizr.webgl) {
       //Add click event
       map.on("click", "area", onClick);
 
-
-
-
     }
 
 
@@ -498,57 +496,7 @@ if (Modernizr.webgl) {
     }
 
     function setButtons() {
-      d3.select("#play").on("click", function() {
-        if(d3.select("#play").classed('playing')===true){
-          d3.select("#play").classed('playing',false);
-          d3.select("#play").attr('aria-checked',"false");
-
-          d3.select("#playImage").attr("src", "images/play.svg");
-          setButtons();
-          clearInterval(animating);
-          d3.selectAll(".btn--neutral").classed("btn--neutral-disabled", false);
-
-        }else{
-          d3.select("#play").attr('aria-checked',"true");
-          d3.select("#play").classed('playing',true);
-
-
-          animating = setInterval(function() {
-            animate();
-          }, 2000);
-          d3.selectAll(".btn--neutral").classed("btn--neutral-disabled", true);
-          d3.select("#playImage").attr("src", "images/pause.svg");
-
-        }
-
-        // d3.select("#play").attr("aria-checked",d3.select(this).attr("aria-checked")? false : true);
-
-        // dataLayer.push({
-        //   'event': 'playButton',
-        //   'selected': 'play'
-        // });
-
-
-        // d3.select("#play").attr("id", "pause");
-
-        // d3.select("#pause").on("click", function() {
-        //   // dataLayer.push({
-        //   //   'event': 'playButton',
-        //   //   'selected': 'pause'
-        //   // });
-        //
-        //   d3.select("#pause").attr("aria-checked",d3.select(this).attr("aria-checked")? false : true);
-        //
-        //
-        //   d3.select("#pause").attr("id", "play");
-        //   d3.select("#playImage").attr("src", "images/play.svg");
-        //   setButtons();
-        //   clearInterval(animating);
-        //   d3.selectAll(".btn--neutral").classed("btn--neutral-disabled", false);
-        // });
-
-
-      })
+      d3.select("#play").on("click", onPlay)
 
       d3.select("#forward").on("click", animate);
 
@@ -556,64 +504,72 @@ if (Modernizr.webgl) {
 
     }
 
+    function onPlay() {
+      // if playing, pause
+      if(d3.select("#play").classed('playing')===true){
+        d3.select("#play").classed('playing',false);
+        d3.select("#play").attr('aria-checked',"false");
+
+        d3.select("#playImage").attr("src", "images/play.svg");
+        setButtons();
+        clearInterval(animating);
+        d3.selectAll(".btn--neutral").classed("btn--neutral-disabled", false);
+
+      // if paused, play
+      }else{
+        d3.select("#play").attr('aria-checked',"true");
+        d3.select("#play").classed('playing',true);
+
+        animate()
+        animating = setInterval(function() {
+          animate();
+        }, 2000);
+        d3.selectAll(".btn--neutral").classed("btn--neutral-disabled", true);
+        d3.select("#playImage").attr("src", "images/pause.svg");
+
+      }
+    }
+
     function animate() {
 
       if (a < variables.length - 1) {
         a = a + 1;
-        setRates(thisdata);
-        updateLayers();
-        updateTimeLabel();
-
-        if (selected) {
-          setAxisVal($("#areaselect").val());
-          if (mobile == false) {
-            updateChart($("#areaselect").val());
-          }
-        }
       } else {
         a = 0;
-        setRates(thisdata);
-        updateLayers();
-        updateTimeLabel();
-
-        if (selected) {
-          setAxisVal($("#areaselect").val());
-          if (mobile == false) {
-            updateChart($("#areaselect").val());
-          }
-        }
       }
-
+      updateFrame();
     }
 
     function rev_animate() {
 
       if (a > 0) {
         a = a - 1;
-        setRates(thisdata);
-        updateLayers();
-        updateTimeLabel();
-
-        if (selected) {
-          setAxisVal($("#areaselect").val());
-          if (mobile == false) {
-            updateChart($("#areaselect").val());
-          }
-        }
       } else {
         a = variables.length - 1;
-        setRates(data);
-        updateLayers();
-        updateTimeLabel();
+      }
+      updateFrame();
+    }
 
-        if (selected) {
-          setAxisVal($("#areaselect").val());
-          if (mobile == false) {
-            updateChart($("#areaselect").val());
-          }
+    function updateFrame() {
+      setRates(thisdata);
+      updateLayers();
+      updateTimeLabel();
+
+      if (selected) {
+        setAxisVal($("#areaselect").val());
+        if (mobile == false) {
+          updateChart($("#areaselect").val());
         }
       }
-
+      if (mobile == false) {
+        if (dvc.average[navvalue] != null) {
+          d3.select("#currPoint2")
+            .transition()
+            .duration(300)
+            .attr("cx", x(dvc.timepoints[a]))
+            .attr("cy", y(dvc.average[navvalue][a]))
+        }
+      }
     }
 
     function updateTimeLabel() {
@@ -704,7 +660,9 @@ if (Modernizr.webgl) {
       $("#areaselect").val(code).trigger('chosen:updated');
       d3.select('abbr').on('keypress',function(evt){
 				if(d3.event.keyCode==13 || d3.event.keyCode==32){
-					$("#areaselect").val("").trigger('chosen:updated');
+          d3.event.preventDefault();
+					onLeave();
+          resetZoom();
 				}
 			})
     }
@@ -794,13 +752,8 @@ if (Modernizr.webgl) {
           .transition()
           .duration(300)
           .attr("x", x(dvc.timepoints[a]))
-          .attr("y", function() {
-            if (!isNaN(rateById[code])) {
-              return y(rateById[code]) - 20
-            } else {
-              return y(midpoint)
-            }
-          });
+          .attr("y", findCurrValy )
+          .attr("text-anchor", "middle");
 
         d3.select("#currVal2")
           .text(function() {
@@ -814,13 +767,23 @@ if (Modernizr.webgl) {
           .transition()
           .duration(300)
           .attr("x", x(dvc.timepoints[a]))
-          .attr("y", function() {
-            if (!isNaN(rateById[code])) {
-              return y(rateById[code]) - 20
-            } else {
-              return y(midpoint)
+          .attr("y", findCurrValy)
+          .attr("text-anchor", "middle");
+
+        function findCurrValy() {
+          if (!isNaN(rateById[code])) { // if there exists a numerical value
+            // if value is greater than threshold, put it below the line
+            var yThreshold = ( y.domain()[0] + y.domain()[1] ) * 2 / 3
+            if (rateById[code] > yThreshold ) {
+              yAdjustment = 22
+            } else { // otherwise it goes above
+              yAdjustment = -12
             }
-          });
+            return y(rateById[code]) + yAdjustment
+          } else { // if there is no numerical value
+            return y(midpoint)
+          }
+        }
 
         d3.select("#currPoint")
           .text(function() {
@@ -934,17 +897,27 @@ if (Modernizr.webgl) {
           });
 
 
-        svgkey.append("g")
-          .attr("transform", "translate(45,10)")
-          .attr("id", "chartgroup")
-          .append("path")
+        var gline1 = svgkeyGroup.select("#chartgroup")
+        // var gline1 = svgkeyGroup.append("g")
+          // .attr("transform", "translate(45,10)")
+          // .attr("id", "chartgroup")
+
+        gline1.append("path")
           .attr("id", "line1")
           .style("opacity", 1)
           .attr("d", line1(linedata))
-          .attr("stroke", "#666")
+          .attr("stroke", "black")
           .attr("stroke-width", "2px")
           .attr("fill", "none");
 
+        gline1.append("circle")
+          .attr("id", "currPoint")
+          .attr("r", "4px")
+          .attr("cy", y(linedata[a][1]))
+          .attr("cx", x(dvc.timepoints[a]))
+          .attr("fill", "#666")
+          .attr("stroke", "black")
+          .style("opacity", 0)
 
       } else {
 
@@ -1011,7 +984,10 @@ if (Modernizr.webgl) {
           .attr('aria-hidden',true)
           .attr("id", "key")
           .attr("width", keywidth)
-          .attr("height", keyheight + 30);
+          .attr("height", keyheight + 30)
+
+        svgkeyGroup = svgkey.append("g")
+          .attr("transform", "translate(45,10)");
 
         // Set up scales for legend
         y = d3.scaleLinear()
@@ -1035,10 +1011,14 @@ if (Modernizr.webgl) {
         var xAxisTime = d3.axisBottom(x)
           .tickSize(5)
           .tickValues(dvc.timelineLabelsDT)
-          .tickFormat(legendformat);
 
-        var g = svgkey.append("g").attr("id", "vert")
-          .attr("transform", "translate(45,10)")
+        // create g2 before g so that its contents sit behind
+        var g2 = svgkeyGroup.append("g")
+          // .attr("transform", "translate(45,10)")
+          .attr("id", "chartgroup")
+
+        var g = svgkeyGroup.append("g").attr("id", "vert")
+          // .attr("transform", "translate(45,10)")
           .attr("font-weight", "600")
           .style("font-family", "'open sans'")
           .style("font-size", "12px");
@@ -1068,8 +1048,8 @@ if (Modernizr.webgl) {
 
         g.call(yAxis).append("text");
 
-        svgkey.append("g").attr("id", "timeaxis")
-          .attr("transform", "translate(45," + (10 + keyheight) + ")")
+        svgkeyGroup.append("g").attr("id", "timeaxis")
+          .attr("transform", "translate(0," + keyheight + ")")
           .attr("font-weight", "600")
           .style("font-family", "'open sans'")
           .style("font-size", "12px")
@@ -1105,56 +1085,61 @@ if (Modernizr.webgl) {
           .attr("fill", "#000")
           .text("");
 
-        g.append("circle")
-          .attr("id", "currPoint")
-          .attr("r", "4px")
-          .attr("cy", y(10))
-          .attr("cx", x(dvc.timepoints[a]))
-          .attr("fill", "#666")
-          .attr("opacity", 0);
+        varNum = navvalue;
 
-        if (typeof navvalue === 'undefined') {
-          linedata2 = d3.zip(dvc.timepoints, dvc.average[0]);
-        } else {
-          linedata2 = d3.zip(dvc.timepoints, dvc.average[navvalue]);
-        };
+        // check there are average values
+        if (dvc.average[varNum] != null) {
+          linedata2 = d3.zip(dvc.timepoints, dvc.average[varNum]);
 
-        line2 = d3.line()
-          .defined(function(d) {
-            return !isNaN(d[0]);
-          })
-          .x(function(d) {
-            return x(d[0]);
-          })
-          .y(function(d) {
-            return y(d[1]);
-          });
+          line2 = d3.line()
+            .defined(function(d) {
+              return !isNaN(d[0]);
+            })
+            .x(function(d) {
+              return x(d[0]);
+            })
+            .y(function(d) {
+              return y(d[1]);
+            });
 
 
-        svgkey.append("g")
-          .attr("transform", "translate(45,10)")
-          .attr("id", "chartgroup")
-          .append("path")
-          .attr("id", "line2")
-          .style("opacity", 0.3)
-          .attr("d", line2(linedata2))
-          .attr("stroke", "#666")
-          .attr("stroke-width", "2px")
-          .attr("fill", "none");
+            g2.append("path")
+              .attr("id", "line2")
+              .attr("d", line2(linedata2))
+              .attr("stroke", "#aaa")
+              .attr("stroke-width", "2px")
+              .attr("fill", "none");
 
-        svgkey.append("text")
-          .attr("id", "averagelabel")
-          .attr("x", function(d) {
-            return x(linedata2[linedata2.length - 1][0])
-          })
-          .attr("y", function(d) {
-            return y(linedata2[linedata2.length - 1][1])
-          })
-          .attr("font-size", "12px")
-          .style("opacity", 0.3)
-          .attr("fill", "#666")
-          .attr("text-anchor", "middle")
-          .text(dvc.averageText);
+            // add time dot for line2
+            g2.append("circle")
+              .attr("id", "currPoint2")
+              .attr('r',"4px")
+              .attr("cy", function() {
+                if (dvc.average[navvalue] != null) {
+                  return y(dvc.average[navvalue][a]) // set start position
+                } else {
+                  return y(0) // placeholder because no data for this variable
+                }
+              })
+              .attr("cx", x(dvc.timepoints[a]))
+              .attr("fill", "#b0b0b0")
+              .attr("stroke", "black")
+
+            g2.append("text")
+                .attr("id", "averagelabel")
+                .attr("x", function(d) {
+                  return x(linedata2[linedata2.length - 1][0])
+                })
+                .attr("y", function(d) {
+                  return y(linedata2[linedata2.length - 1][1]) - 10 // use this number at end to adjust height of label
+                })
+                .attr("font-size", "12px")
+                .attr("fill", "#757575")
+                .attr("text-anchor", "end")
+                .text(dvc.averageText);
+
+            }
+
 
       } else {
         // Horizontal legend
