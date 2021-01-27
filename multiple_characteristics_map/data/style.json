@@ -28,7 +28,8 @@
   "sources": {
     "openmaptiles": {
       "type": "vector",
-      "tiles": ["https://cdn.ons.gov.uk/maptiles/osm/v1/{z}/{x}/{y}.pbf"]
+      "tiles": ["https://cdn.ons.gov.uk/maptiles/osm/v2/{z}/{x}/{y}.pbf"],
+      "maxzoom":14
     }
   },
   "sprite": "https://cdn.ons.gov.uk/maptiles/osm/spritesv1/sprite",
