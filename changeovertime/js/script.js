@@ -1093,7 +1093,7 @@ if (Modernizr.webgl) {
 
           line2 = d3.line()
             .defined(function(d) {
-              return !isNaN(d[0]);
+              return !isNaN(d[1]);
             })
             .x(function(d) {
               return x(d[0]);
