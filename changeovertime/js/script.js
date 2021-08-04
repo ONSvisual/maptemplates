@@ -140,8 +140,8 @@ if (Modernizr.webgl) {
 
     //and add properties to the geojson based on the csv file we've read in
     areas.features.map(function(d, i) {
+      d.properties.fill = isNaN(rateById[d.properties.AREACD])?dvc.nullcolour:color(rateById[d.properties.AREACD])
 
-      d.properties.fill = color(rateById[d.properties.AREACD])
     });
 
 
@@ -445,7 +445,7 @@ if (Modernizr.webgl) {
       //update properties to the geojson based on the csv file we've read in
       areas.features.map(function(d, i) {
 
-        d.properties.fill = color(rateById[d.properties.AREACD])
+        d.properties.fill = isNaN(rateById[d.properties.AREACD])?dvc.nullcolour:color(rateById[d.properties.AREACD])
       });
 
       //Reattach geojson data to area layer
@@ -716,25 +716,25 @@ if (Modernizr.webgl) {
         d3.select("#currLine")
           .style("opacity", function() {
             if (!isNaN(rateById[code])) {
-              return 1
+              return 1;
             } else {
-              return 0
+              return 0;
             }
           })
           .transition()
           .duration(300)
           .attr("y1", function() {
             if (!isNaN(rateById[code])) {
-              return y(rateById[code])
+              return y(rateById[code]);
             } else {
-              return y(midpoint)
+              return y(midpoint);
             }
           })
           .attr("y2", function() {
             if (!isNaN(rateById[code])) {
-              return y(rateById[code])
+              return y(rateById[code]);
             } else {
-              return y(midpoint)
+              return y(midpoint);
             }
           })
           .attr("x2", x(dvc.timepoints[a]))
@@ -743,30 +743,43 @@ if (Modernizr.webgl) {
         d3.select("#currVal")
           .text(function() {
             if (!isNaN(rateById[code])) {
-              return displayformat(rateById[code])
+              return displayformat(rateById[code]);
             } else {
-              return "Data unavailable"
+              return "Data unavailable";
             }
           })
           .style("opacity", 1)
           .transition()
           .duration(300)
-          .attr("x", x(dvc.timepoints[a]))
+          .attr("x", function(d){
+            if(isNaN(rateById[code])){
+                return x(dvc.timepoints[Math.round(dvc.timepoints.length/2)]);
+            }else{
+                return x(dvc.timepoints[a]);
+            }
+          })
           .attr("y", findCurrValy )
           .attr("text-anchor", "middle");
 
         d3.select("#currVal2")
           .text(function() {
             if (!isNaN(rateById[code])) {
-              return displayformat(rateById[code])
+              return displayformat(rateById[code]);
             } else {
-              return "Data unavailable"
+              return "Data unavailable";
             }
           })
           .style("opacity", 1)
           .transition()
           .duration(300)
-          .attr("x", x(dvc.timepoints[a]))
+          .attr("x", function(d){
+            if(isNaN(rateById[code])){
+                return x(dvc.timepoints[Math.round(dvc.timepoints.length/2)])
+            }else{
+                return x(dvc.timepoints[a])
+            }
+
+          })
           .attr("y", findCurrValy)
           .attr("text-anchor", "middle");
 
