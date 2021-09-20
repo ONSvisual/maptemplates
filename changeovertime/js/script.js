@@ -1091,7 +1091,7 @@ if (Modernizr.webgl) {
 
         d3.select("#keydiv").append("p").attr("id", "keyunit").attr('aria-hidden',true).style("margin-top", "25px").style("margin-left", "10px").style("font-size","14px").text(dvc.varunit[b]);
 
-        keyheight = 150;
+        keyheight = dvc.keyHeight;
 
         svgkey = d3.select("#keydiv")
           .append("svg")
