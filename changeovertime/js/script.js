@@ -56,7 +56,7 @@ if (Modernizr.webgl) {
     if (dvc.varlabels.length > 1) {
       buildNav();
     } else {
-      d3.select("#topNav").attr("display", "none")
+      d3.select("#topNav").attr("display", "none").style("height", "0px");
     }
     //set title of page
     //Need to test that this shows up in GA
