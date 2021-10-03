@@ -2,22 +2,6 @@
 <html lang="en">
 
 <head>
-  <script>
-    (function(w, d, s, l, i) {
-      w[l] = w[l] || [];
-      w[l].push({
-        'gtm.start': new Date().getTime(),
-        event: 'gtm.js'
-      });
-      var f = d.getElementsByTagName(s)[0],
-        j = d.createElement(s),
-        dl = l != 'dataLayer' ? '&l=' + l : '';
-      j.async = true;
-      j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
-      f.parentNode.insertBefore(j, f);
-    })
-    (window, document, 'script', 'dataLayer', 'GTM-MBCBVQS');
-  </script>
   <meta name="description" content="Radio buttons group">
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -27,6 +11,7 @@
   <link href='css/mapbox-gl.css' rel='stylesheet' />
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet">
   <link rel="stylesheet" href="css/chosen.css">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
 
   <style>
     body {
@@ -47,6 +32,7 @@
     }
 
     .dropdown {
+      position: static;
       height: 40px;
       border-radius: 0px !important;
       font-size: 16px;
@@ -99,9 +85,31 @@
       width: calc(100% - 8px);
     }
 
+    #map {
+      z-index: 1;
+    }
+    #chartcol {
+      z-index: 2;
+    }
+
+    .parameter-value path{
+      fill:#0F8243;
+      stroke:white;
+      stroke-width:1.5px;
+    }
+    .parameter-value path:focus{
+      fill:#0F8243;
+      stroke:orange;
+      stroke-width:3px;
+    }
+
     @media (min-width: 600px) {
       #map {
         height: 500px;
+      }
+
+      #timePeriod {
+        display: none;
       }
 
       #horiz {
@@ -114,12 +122,13 @@
 
       #controls {
         padding-top: 35px;
-        margin-left: 20px;
+        text-align: center;
       }
 
       #currVal {
         font-size: 12px;
       }
+
     }
 
     @media (max-width: 599px) {
@@ -139,9 +148,9 @@
       }
 
       #controls {
-        display: none;
-        /* display: table;
-        margin: 0 auto 10px auto; */
+        display: inline-block;
+        float: left;
+        margin-top: 5px;
       }
 
       #selectnav{
@@ -168,10 +177,6 @@
 
       #chartgroup {
         display: none;
-      }
-
-      #key text {
-        font-weight: 600 !important;
       }
 
       #currVal {
@@ -389,6 +394,16 @@
       }
     }
 
+    .timeControlButtons {
+      background: none;
+      border: none;
+      color: #206095;
+      font-size: 27px;
+    }
+    .parameter-value text {
+      font-size: 28px;
+    }
+
     /* Radio button */
     fieldset {
         border: none;
@@ -466,6 +481,21 @@
         }
       }
 
+      #slider-simple {
+        display: inline-block;
+        float: left;
+        /* right: 30px; */
+      }
+      #slider-svg {
+        display: inline-block;
+        float: left;
+        padding-top: 5px;
+      }
+      #slider-simple > svg {
+        position: relative;
+        right: 30px;
+      }
+
     .visuallyhidden {
       position: absolute;
       width: 1px;
@@ -484,6 +514,7 @@
   <noscript>
     <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MBCBVQS" height="0" width="0" style="display:none;visibility:hidden"></iframe>
   </noscript>
+
   <div class="row" id="topNav" style="height:45px">
     <div id='nav' class="col-sm-12">
     </div>
@@ -491,7 +522,7 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-sm-4 col-xs-12">
+    <div id="chartcol" class="col-sm-4 col-xs-12">
       <div id='selectNav'></div>
       <div id='keydiv'>
       </div>
@@ -499,16 +530,17 @@
         <p aria-live="polite" class='visuallyhidden'></p>
       </div>
 
+      <div id="slider-simple"></div>
       <div id='controls'>
-        <button type="button" aria-label="Go back one time point" id="back" class="btn btn--neutral btn--bold btn--large">
-          <img alt="" src="images/rewind.png" height="20" width="20">
-        </button>
-        <button type="button" role="switch" aria-checked="false" aria-label="Play and pause toggle" id="play" class="btn btn--primary-alternative btn--bold btn--large">
-          <img alt="" id="playImage" src="images/play.png" height="20" width="10">
-        </button>
-        <button type="button" aria-label="Go forward one time point" id="forward" class="btn btn--neutral btn--bold btn--large">
-          <img alt="" src="images/fast-forward.png" height="20" width="20">
-        </button>
+        <button id="back" class="timeControlButtons">
+              <span class="glyphicon glyphicon-chevron-left">
+          </button>
+        <button id="play" class="timeControlButtons">
+              <span class="glyphicon glyphicon-play">
+          </button>
+        <button id="forward" class="timeControlButtons">
+              <span class="glyphicon glyphicon-chevron-right">
+          </button>
       </div>
     </div>
     <div id='map' class="col-sm-8 col-xs-12">
@@ -521,19 +553,6 @@
       <div id="source"></div>
 
 
-      <div id="footer">
-        <h6> Notes: </h6>
-        <ol>
-          <li>Add</li>
-          <li>Footnotes</li>
-          <li>Here.</li>
-        </ol>
-
-        <h6>Download this map</h6>
-        <a class="btn btn--primary" aria-label="Download as an image" download href="image.png">Image</a>
-        <a class="btn btn--primary" aria-label="Download the data behind this map as an .csv file" href="data.csv">.csv</a>
-        <a class="btn btn--primary" aria-label="Download the data behind this map as an .xlsx file" href="datadownload.xlsx">.xlsx</a>
-      </div>
     </div>
   </div>
 
@@ -541,6 +560,7 @@
 <script src="http://d3js.org/topojson.v1.min.js"></script>-->
 
   <script src="https://cdn.ons.gov.uk/vendor/d3/4.2.7/d3.min.js"></script>
+  <script src="js/d3-simple-slider.js"></script>
   <script src="js/topojson.v2.min.js"></script>
   <script src="js/simple-statistics.min.js"></script>
   <script src="js/modernizr.min.js"></script>

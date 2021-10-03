@@ -22,7 +22,6 @@ if (Modernizr.webgl) {
     dvc = config.ons;
     oldAREACD = "";
     selected = false;
-    firsthover = true;
     chartDrawn = false;
     thisdata = data;
     overallwidth = d3.select("body").node().getBoundingClientRect().width;
@@ -57,7 +56,7 @@ if (Modernizr.webgl) {
     if (dvc.varlabels.length > 1) {
       buildNav();
     } else {
-      d3.select("#topNav").attr("display", "none")
+      d3.select("#topNav").attr("display", "none").style("height", "0px");
     }
     //set title of page
     //Need to test that this shows up in GA
@@ -69,6 +68,8 @@ if (Modernizr.webgl) {
     //Set up number formats
     displayformat = d3.format("." + dvc.displaydecimals + "f");
     legendformat = d3.format("." + dvc.legenddecimals + "f");
+    dateparse = d3.timeParse(dvc.dateParse)
+    dateformat = d3.timeFormat(dvc.dateFormat)
 
     //set up basemap
     map = new mapboxgl.Map({
@@ -117,6 +118,9 @@ if (Modernizr.webgl) {
 
     setTimeLabel(a);
 
+    keywidth = parseFloat(d3.select("#chartcol").style("width"));
+    makeSlider();
+
     //now ranges are set we can call draw the key
     createKey(config);
 
@@ -140,8 +144,8 @@ if (Modernizr.webgl) {
 
     //and add properties to the geojson based on the csv file we've read in
     areas.features.map(function(d, i) {
+      d.properties.fill = isNaN(rateById[d.properties.AREACD])?dvc.nullcolour:color(rateById[d.properties.AREACD])
 
-      d.properties.fill = color(rateById[d.properties.AREACD])
     });
 
 
@@ -238,7 +242,7 @@ if (Modernizr.webgl) {
     }
 
     function setTimeLabel() {
-      d3.select("#timePeriod").select('p').text(dvc.timepoints[a]);
+      d3.select("#timePeriod").select('p').text(dateformat(dateparse(dvc.timepoints[a])));
     }
 
     function checkIfFirstorLast() {
@@ -437,6 +441,8 @@ if (Modernizr.webgl) {
       //Add click event
       map.on("click", "area", onClick);
 
+      onPlay();
+
     }
 
 
@@ -445,7 +451,7 @@ if (Modernizr.webgl) {
       //update properties to the geojson based on the csv file we've read in
       areas.features.map(function(d, i) {
 
-        d.properties.fill = color(rateById[d.properties.AREACD])
+        d.properties.fill = isNaN(rateById[d.properties.AREACD])?dvc.nullcolour:color(rateById[d.properties.AREACD])
       });
 
       //Reattach geojson data to area layer
@@ -484,73 +490,77 @@ if (Modernizr.webgl) {
           }
         }
         updateLayers();
-
-        dataLayer.push({
-          'event': 'navSelect',
-          'selected': i
-        })
       });
-
-
 
     }
 
     function setButtons() {
       d3.select("#play").on("click", onPlay)
 
-      d3.select("#forward").on("click", animate);
+      d3.select("#forward").on("click", fwd_animate);
 
       d3.select("#back").on("click", rev_animate);
 
     }
 
     function onPlay() {
-      // if playing, pause
-      if(d3.select("#play").classed('playing')===true){
-        d3.select("#play").classed('playing',false);
-        d3.select("#play").attr('aria-checked',"false");
+      fwd_animate(); // don't need a delay bfeore first animation
+      animating = setInterval(function() {
+        fwd_animate()
+      }, 1500);
 
-        d3.select("#playImage").attr("src", "images/play.svg");
-        setButtons();
-        clearInterval(animating);
-        d3.selectAll(".btn--neutral").classed("btn--neutral-disabled", false);
+      // replace play control with pause
+      d3.select("#play").select("span")
+        .classed("glyphicon-play", false)
+        .classed("glyphicon-pause", true);
 
-      // if paused, play
-      }else{
-        d3.select("#play").attr('aria-checked',"true");
-        d3.select("#play").classed('playing',true);
-
-        animate()
-        animating = setInterval(function() {
-          animate();
-        }, 2000);
-        d3.selectAll(".btn--neutral").classed("btn--neutral-disabled", true);
-        d3.select("#playImage").attr("src", "images/pause.svg");
-
-      }
+      // switch id/class of play to pause
+      d3.select("#play").attr("id", "pause");
+      // change button event from play to pause
+      d3.select("#pause").on("click", onPause);
     }
 
-    function animate() {
+    function onPause() {
+      // replace pause symbol with play symbol
+      d3.select("#pause").select("span")
+        .classed("glyphicon-pause", false)
+        .classed("glyphicon-play", true);
+      d3.select("#pause").attr("id", "play")
+      // make symbols clickable - TODO is this required?
+      setButtons();
+      clearInterval(animating);
+    }
 
+    function fwd_animate() {
+      // go forwards in time
       if (a < variables.length - 1) {
         a = a + 1;
       } else {
         a = 0;
       }
-      updateFrame();
+
+      moveSliderToVal();
+      updateVisuals();
     }
 
     function rev_animate() {
-
+      // go back in time
       if (a > 0) {
         a = a - 1;
       } else {
         a = variables.length - 1;
       }
-      updateFrame();
+
+      moveSliderToVal();
+      updateVisuals();
     }
 
-    function updateFrame() {
+    function moveSliderToVal() {
+      sliderSimple.silentValue(a);
+    }
+
+    function updateVisuals() {
+
       setRates(thisdata);
       updateLayers();
       updateTimeLabel();
@@ -565,7 +575,8 @@ if (Modernizr.webgl) {
         if (dvc.average[navvalue] != null) {
           d3.select("#currPoint2")
             .transition()
-            .duration(300)
+            .ease(d3.easeQuadOut)
+            .duration(200)
             .attr("cx", x(dvc.timepoints[a]))
             .attr("cy", y(dvc.average[navvalue][a]))
         }
@@ -577,6 +588,109 @@ if (Modernizr.webgl) {
       d3.select("#timePeriod").select('p').text(dvc.timepoints[a])
 
     }
+
+    function makeSlider() {
+      var formatDate = d3.timeFormat("%D");
+      sliderDomain = [0, variables.length-1];
+      var mobileWidth = parseInt(d3.select('body').style("width")) - 125
+      if (mobile) {
+        var sliderRange = [0, mobileWidth-70];
+      } else {
+        var sliderRange = [0, keywidth - dvc.keyMargin.right - dvc.keyMargin.left];
+      };
+      var sliderScale = d3.scaleLinear()
+        .domain(sliderDomain)
+        .range(sliderRange);
+
+      sliderSimple = d3
+        .sliderBottom(sliderScale)
+        .displayFormat(function(i) { return dateformat(dateparse(dvc.timepoints[i]))})
+        .step(1)
+        .default(a)
+        .displayValue(!mobile)
+        .handle(
+          d3.symbol()
+            .type(d3.symbolCircle)
+            .size(500)
+        )
+        .fill("#206095")
+        .ticks([]);
+
+      sliderSimple.on('onchange', function(val) {
+        // a is the master variable for the current timepoint
+        console.log('SLIDER VAL:')
+        console.log(a)
+        if (a !== val) { // if a has changed
+          a = val;
+          // onPause();
+          updateVisuals();
+        }
+      });
+
+      if (mobile) {
+        var sliderSvg = d3.select("#chartcol").append("svg").attr("id","slider-svg");
+      } else {
+        var sliderSvg = d3.select("div#slider-simple").append("svg");
+      }
+
+      var gSimple = sliderSvg
+        // .attr('width', parseInt(d3.select('#').style("width"))-140)
+        .attr('height', 80 - 30*mobile)
+        .attr('width', mobile ? mobileWidth : keywidth + dvc.keyMargin.left + dvc.keyMargin.right - 20 - 300*mobile)
+        .append('g')
+        .attr('transform', mobile ? 'translate(20,20)' : 'translate(' + (dvc.keyMargin.left + 30) + ',20)'); // extra 30 is to widen svg to go over top of map
+
+      gSimple.call(sliderSimple);
+    }
+
+    d3.select('body').on('keydown',function(){
+  if(document.getElementById("handle")===document.activeElement){//if handle is focussed
+    var min = sliderDomain[0];
+    var max = sliderDomain[1];
+    var pageUpDownSteps = 5;
+
+    if (d3.event.key=='ArrowLeft' || d3.event.key=='ArrowDown') {
+      d3.event.preventDefault();
+      if(a !== min){
+        sliderSimple.value(a-1)
+      }
+    }
+    if (d3.event.key=='ArrowRight' || d3.event.key=='ArrowUp') {
+      d3.event.preventDefault();
+      if(a !== max){
+        sliderSimple.value(a+1)
+      }
+    }
+    if (d3.event.key=='PageUp') {
+      d3.event.preventDefault();
+      if (a < max) {
+        if (a+pageUpDownSteps > max) { // if a is close to max
+          sliderSimple.value(max)
+        } else { // if a is not close to max
+          sliderSimple.value(a - pageUpDownSteps)
+        }
+      }
+    }
+    if (d3.event.key=='PageDown') {
+      d3.event.preventDefault();
+      if (a > min) {
+        if (a-pageUpDownSteps < min) { // if a is close to min
+          sliderSimple.value(min);
+        } else { // if a is not close to min
+          sliderSimple.value(a + pageUpDownSteps)
+        }
+      }
+    }
+    if (d3.event.key=='Home') {
+      d3.event.preventDefault();
+      sliderSimple.value(min)
+    }
+    if (d3.event.key=='End') {
+      d3.event.preventDefault();
+      sliderSimple.value(max)
+    }
+  }
+})
 
     function onselect() {
       b = $(".dropdown").val();
@@ -590,16 +704,8 @@ if (Modernizr.webgl) {
 
       newAREACD = e.features[0].properties.AREACD;
 
-      if (firsthover) {
-        dataLayer.push({
-          'event': 'mapHoverSelect',
-          'selected': newAREACD
-        })
-
-        firsthover = false;
-      }
-
       if (newAREACD != oldAREACD) {
+        selected = true
         oldAREACD = e.features[0].properties.AREACD;
         map.setFilter("state-fills-hover", ["==", "AREACD", e.features[0].properties.AREACD]);
 
@@ -613,6 +719,7 @@ if (Modernizr.webgl) {
 
 
     function onLeave() {
+      selected = false;
       map.getCanvasContainer().style.cursor = null;
       map.setFilter("state-fills-hover", ["==", "AREACD", ""]);
       oldAREACD = "";
@@ -625,6 +732,8 @@ if (Modernizr.webgl) {
       newAREACD = e.features[0].properties.AREACD;
 
       if (newAREACD != oldAREACD) {
+        selected = true;
+
         oldAREACD = e.features[0].properties.AREACD;
         map.setFilter("state-fills-hover", ["==", "AREACD", e.features[0].properties.AREACD]);
 
@@ -635,25 +744,17 @@ if (Modernizr.webgl) {
         }
       }
 
-      dataLayer.push({
-        'event': 'mapClickSelect',
-        'selected': newAREACD
-      });
     }
 
     function disableMouseEvents() {
       map.off("mousemove", "area", onMove);
       map.off("mouseleave", "area", onLeave);
-
-      selected = true;
     }
 
     function enableMouseEvents() {
       map.on("mousemove", "area", onMove);
       map.on("click", "area", onClick);
       map.on("mouseleave", "area", onLeave);
-
-      selected = false;
     }
 
     function selectArea(code) {
@@ -716,25 +817,25 @@ if (Modernizr.webgl) {
         d3.select("#currLine")
           .style("opacity", function() {
             if (!isNaN(rateById[code])) {
-              return 1
+              return 1;
             } else {
-              return 0
+              return 0;
             }
           })
           .transition()
           .duration(300)
           .attr("y1", function() {
             if (!isNaN(rateById[code])) {
-              return y(rateById[code])
+              return y(rateById[code]);
             } else {
-              return y(midpoint)
+              return y(midpoint);
             }
           })
           .attr("y2", function() {
             if (!isNaN(rateById[code])) {
-              return y(rateById[code])
+              return y(rateById[code]);
             } else {
-              return y(midpoint)
+              return y(midpoint);
             }
           })
           .attr("x2", x(dvc.timepoints[a]))
@@ -743,30 +844,44 @@ if (Modernizr.webgl) {
         d3.select("#currVal")
           .text(function() {
             if (!isNaN(rateById[code])) {
-              return displayformat(rateById[code])
+              return displayformat(rateById[code]);
             } else {
-              return "Data unavailable"
+              return "Data unavailable";
             }
           })
           .style("opacity", 1)
           .transition()
+          .ease(d3.easeQuadOut)
           .duration(300)
-          .attr("x", x(dvc.timepoints[a]))
+          .attr("x", function(d){
+            if(isNaN(rateById[code])){
+                return x(dvc.timepoints[Math.round(dvc.timepoints.length/2)]);
+            }else{
+                return x(dvc.timepoints[a]);
+            }
+          })
           .attr("y", findCurrValy )
           .attr("text-anchor", "middle");
 
         d3.select("#currVal2")
           .text(function() {
             if (!isNaN(rateById[code])) {
-              return displayformat(rateById[code])
+              return displayformat(rateById[code]);
             } else {
-              return "Data unavailable"
+              return "Data unavailable";
             }
           })
           .style("opacity", 1)
           .transition()
+          .ease(d3.easeQuadOut)
           .duration(300)
-          .attr("x", x(dvc.timepoints[a]))
+          .attr("x", function(d){
+            if(isNaN(rateById[code])){
+                return x(dvc.timepoints[Math.round(dvc.timepoints.length/2)])
+            }else{
+                return x(dvc.timepoints[a])
+            }
+          })
           .attr("y", findCurrValy)
           .attr("text-anchor", "middle");
 
@@ -801,6 +916,7 @@ if (Modernizr.webgl) {
             }
           })
           .transition()
+          .ease(d3.easeQuadOut)
           .duration(300)
           .attr("cx", x(dvc.timepoints[a]))
           .attr("cy", function() {
@@ -940,7 +1056,7 @@ if (Modernizr.webgl) {
           .transition()
           .duration(300)
           .attr("d", line1(linedata))
-
+      }
 
       }
 
@@ -975,9 +1091,7 @@ if (Modernizr.webgl) {
 
         d3.select("#keydiv").append("p").attr("id", "keyunit").attr('aria-hidden',true).style("margin-top", "25px").style("margin-left", "10px").style("font-size","14px").text(dvc.varunit[b]);
 
-        keyheight = 150;
-
-        keywidth = d3.select("#keydiv").node().getBoundingClientRect().width;
+        keyheight = dvc.keyHeight;
 
         svgkey = d3.select("#keydiv")
           .append("svg")
@@ -987,7 +1101,7 @@ if (Modernizr.webgl) {
           .attr("height", keyheight + 30)
 
         svgkeyGroup = svgkey.append("g")
-          .attr("transform", "translate(45,10)");
+          .attr("transform", "translate(" + dvc.keyMargin.left + ",10)");
 
         // Set up scales for legend
         y = d3.scaleLinear()
@@ -997,7 +1111,7 @@ if (Modernizr.webgl) {
         // Set up scales for chart
         x = d3.scalePoint()
           .domain(dvc.timepoints) /*range for data*/
-          .range([0, keywidth - 60])
+          .range([0, keywidth - dvc.keyMargin.left - dvc.keyMargin.right])
           .align(0.5); /*range for pixels*/
 
 
@@ -1022,8 +1136,6 @@ if (Modernizr.webgl) {
           .attr("font-weight", "600")
           .style("font-family", "'open sans'")
           .style("font-size", "12px");
-
-        d3.selectAll("path").attr("display", "none")
 
         g.selectAll("rect")
           .data(color.range().map(function(d, i) {
@@ -1055,18 +1167,6 @@ if (Modernizr.webgl) {
           .style("font-size", "12px")
           .call(xAxisTime)
 
-
-        //
-        // g.append("line")
-        //   .attr("id", "currLine")
-        //   .attr("y1", y(10))
-        //   .attr("y2", y(10))
-        //   .attr("x1", -10)
-        //   .attr("x2", 0)
-        //   .attr("stroke-width", "2px")
-        //   .attr("stroke", "#000")
-        //   .attr("opacity", 0);
-
         g.append("text")
           .attr("id", "currVal")
           .attr("y", y(11))
@@ -1077,7 +1177,6 @@ if (Modernizr.webgl) {
           .attr("stroke-linecap", "butt")
           .attr("stroke-linejoin", "miter")
           .text("");
-
 
         g.append("text")
           .attr("id", "currVal2")
@@ -1093,7 +1192,7 @@ if (Modernizr.webgl) {
 
           line2 = d3.line()
             .defined(function(d) {
-              return !isNaN(d[0]);
+              return !isNaN(+d[1]);
             })
             .x(function(d) {
               return x(d[0]);
@@ -1306,11 +1405,6 @@ if (Modernizr.webgl) {
     }
 
     function geolocate() {
-      dataLayer.push({
-        'event': 'geoLocate',
-        'selected': 'geolocate'
-      })
-
       var options = {
         enableHighAccuracy: true,
         timeout: 5000,
@@ -1399,6 +1493,9 @@ if (Modernizr.webgl) {
 
         if ($('#areaselect').val() != "") {
 
+          // if there's a place in areaselect, somewhere is selected
+          selected = true;
+
           areacode = $('#areaselect').val()
 
           disableMouseEvents();
@@ -1406,22 +1503,12 @@ if (Modernizr.webgl) {
           map.setFilter("state-fills-hover", ["==", "AREACD", areacode]);
 
           selectArea(areacode);
-          setAxisVal(areacode);
           if (mobile == false) {
             updateChart(areacode);
           }
+          setAxisVal(areacode);
           zoomToArea(areacode);
-
-          dataLayer.push({
-            'event': 'mapDropSelect',
-            'selected': areacode
-          })
         } else {
-
-          dataLayer.push({
-            'event': 'deselectCross',
-            'selected': 'deselect'
-          })
 
           enableMouseEvents();
           hideaxisVal();
@@ -1433,7 +1520,6 @@ if (Modernizr.webgl) {
 
     };
     pymChild.sendHeight()
-  }
 
 } else {
   //provide fallback for browsers that don't support webGL

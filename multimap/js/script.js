@@ -157,6 +157,8 @@ if(Modernizr.webgl) {
 
 			cell.append('label')
 			.attr('for',function(d,i){return 'button'+i;})
+			.append('div')
+			.style("padding-right","10px")
 			.html(function(d){return d;});
 
 			d3.selectAll('input[type="radio"]').on('change', function(d) {
