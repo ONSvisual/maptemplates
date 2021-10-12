@@ -1058,8 +1058,6 @@ if (Modernizr.webgl) {
           .attr("d", line1(linedata))
       }
 
-      }
-
     }
 
     function hideaxisVal() {
@@ -1517,7 +1515,7 @@ if (Modernizr.webgl) {
         }
 
       });
-
+    }
     };
     pymChild.sendHeight()
 
