@@ -618,8 +618,6 @@ if (Modernizr.webgl) {
 
       sliderSimple.on('onchange', function(val) {
         // a is the master variable for the current timepoint
-        console.log('SLIDER VAL:')
-        console.log(a)
         if (a !== val) { // if a has changed
           a = val;
           // onPause();
