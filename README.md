@@ -11,3 +11,6 @@
 - [Side by side map](https://onsvisual.github.io/maptemplates/Side-by-side-map/index.html)
 - [Hexmap](https://onsvisual.github.io/maptemplates/hexmap/)
 - [LSOA house price map](https://onsvisual.github.io/maptemplates/lsoa-small-area/houseprice/index.html)
+- [MSOA deaths map](https://onsvisual.github.io/maptemplates/msoa/covid-death-map/index.html)
+- [MSOA simple map](https://onsvisual.github.io/maptemplates/msoa/simplemap/index.html)
+
