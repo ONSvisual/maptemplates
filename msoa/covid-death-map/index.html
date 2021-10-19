@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Coronavirus UK - Deaths Map</title>
+  <meta name="viewport" content="initial-scale=1" />
+  <link href="https://cdn.ons.gov.uk/vendor/mapbox-gl/1.10.1/css/mapbox-gl.css" rel="stylesheet" />
+  <link href='css/bootstrap.min.css' rel='stylesheet'/>
+  <link href='https://cdn.ons.gov.uk/sixteens/a62dd01/css/main.css' rel='stylesheet'/>
+  <link href='css/global.css' rel='stylesheet'/>
+
+    <!-- Google Tag Manager -->
+	<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-MBCBVQS');</script>
+    <!-- End Google Tag Manager -->
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      color: #1b5f97;
+      max-width: 944px;
+      /* height:500px; */
+    }
+
+    @font-face{font-family:'Open Sans';src:
+    url("https://cdn.ons.gov.uk/assets/fonts/open-sans-regular/OpenSans-Regular-webfont.eot?") format("eot"),
+    url("https://cdn.ons.gov.uk/assets/fonts/open-sans-regular/OpenSans-Regular-webfont.woff2") format("woff2"),
+    url("https://cdn.ons.gov.uk/assets/fonts/open-sans-regular/OpenSans-Regular-webfont.woff") format("woff"),
+    url("https://cdn.ons.gov.uk/assets/fonts/open-sans-regular/OpenSans-Regular-webfont.ttf") format("truetype"),
+    url("https://cdn.ons.gov.uk/assets/fonts/open-sans-regular/OpenSans-Regular-webfont.svg") format("svg");font-weight:400}
+
+    @font-face{font-family:'Open Sans';src:
+    url("https://cdn.ons.gov.uk/assets/fonts/open-sans-bold/OpenSans-Bold-webfont.eot?") format("eot"),
+    url("https://cdn.ons.gov.uk/assets/fonts/open-sans-bold/OpenSans-Bold-webfont.woff2") format("woff2"),
+    url("https://cdn.ons.gov.uk/assets/fonts/open-sans-bold/OpenSans-Bold-webfont.woff") format("woff"),
+    url("https://cdn.ons.gov.uk/assets/fonts/open-sans-bold/OpenSans-Bold-webfont.ttf") format("truetype"),
+    url("https://cdn.ons.gov.uk/assets/fonts/open-sans-bold/OpenSans-Bold-webfont.svg") format("svg");font-weight:700}
+
+    #map {
+      position: relative;
+      top: 0;
+      bottom: 0;
+      width: 100%;
+
+    }
+
+    #key {
+      background-color: rgba(0, 0, 0, 0.8);
+      width: 22.22%;
+      height: auto;
+      overflow: auto;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .total {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: 15px;
+    }
+
+    .table {
+      font-family: 'Montserrat', sans-serif;
+      color: white;
+      border-collapse: collapse;
+    }
+
+
+
+    #keydiv {
+      position:absolute;
+      top:0px;
+      left:0px;
+      width:100%;
+      min-height:70px;
+      background-color:rgba(255,255,255,0.9);
+      z-index:1;
+      font-size:17px;
+      /* font-weight:bold; */
+    }
+
+    h4{
+      margin-top:0px;
+    }
+
+    .input--button {
+      width: 50%;
+    }
+
+    /* .input--radio:focus:checked {
+      border: 0px;
+    }
+
+    .input--radio, .input--radio:checked{
+      box-shadow: none;
+    }
+    .input--radio:focus {
+      box-shadow: 0px 0px 0px 4px orange;
+    } */
+
+    #selectNav {
+      position:absolute;
+      top:0px;
+      left:0px;
+      height:40px;
+      background-color:rgba(0,0,0,0.9);
+      z-index:1;
+    }
+
+    #placename {
+      font-size:18px;
+      font-weight:bold;
+      line-height: 24px;
+    }
+
+    @media (min-width: 555px) {
+      #map {
+        height: 600px;
+        width: 100%;
+      }
+
+      /* .mapboxgl-canvas-container {
+        z-index: 1;
+      } */
+
+      #selectNav {
+        width:70%;
+        min-width: 370px;
+        max-width: 520px;
+      }
+
+      #keycontainer {
+        position: absolute;
+        width: 70%;
+        min-width: 370px;
+        max-width: 520px;
+        top:40px;
+        left:0px;
+      }
+
+      #keydiv, #placename {
+        position: relative;
+        float: left;
+        width:50%;
+        /* min-width: 200px; */
+      }
+
+      #keydiv {
+        color:#323132;
+        background-color:rgba(255,255,255,0.9);
+        z-index:1;
+      }
+
+      #deathLabel {
+        color: #1b5f97;
+      }
+
+      #currVal {
+        font-size:14px;
+      }
+
+      #placename {
+        position: relative;
+        float: left;
+        padding-left: 10px;
+        width: 50%;
+        /* min-width: 200px; */
+        background-color:rgba(255,255,255,0.9);
+        z-index: 1;
+      }
+
+      /* #monthdeathstext {
+        display: none;
+      } */
+
+    }
+
+    @media (max-width: 554px) {
+
+      body {
+        padding-bottom: 160px;
+      }
+      /* .key-item {
+        display:none;
+      } */
+
+      #deathLabel {
+        display:none;
+        color: #1b5f97;
+
+      }
+
+
+        #map {
+        position:relative;
+        top:0px;
+        margin-top:155px;
+        height: 350px;
+        width: 100%;
+        overflow:visible;
+      }
+
+      #selectNav {
+        width:100%;
+        top: -155px;
+        /* height:78px; */
+        /* background-color:rgba(0,0,0,0.8); */
+        z-index:3;
+      }
+
+      #keycontainer {
+        position:absolute;
+        top:-115px;
+        left:0px;
+        width:100%;
+        z-index: 1;
+      }
+
+      #keydiv, #placename {
+        /* height:80px; */
+        background-color:rgba(255,255,255,0.9);
+        z-index: 1;
+      }
+
+      #keydiv {
+        position: relative;
+        float: left;
+      }
+
+      #graphic {
+        display: none;
+      }
+
+      #placename {
+        position: absolute;
+        top: 115px;
+      }
+
+      #currVal {
+        font-size:14px;
+
+      }
+
+      .mapboxgl-ctrl-fullscreen {
+        display:none !important;
+      }
+    }
+
+
+    .btnEnable {
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        width: 40px;
+        height: 40px;
+        border: none;
+        padding: 0px 0!important;
+        background-color: #0075A3;
+        font: 700 16px Arial;
+        color: #FFF;
+        filter: inherit;
+        -webkit-appearance: button;
+        cursor: pointer;
+    }
+    #pcText {
+    			width: 100%;
+    			height:40px;
+    			/* padding: 3px; */
+          /* padding-bottom: 10px; */
+    			color: #999999;
+          font-size: 16px;
+          box-sizing: border-box;
+          border:1px solid #f93;
+    }
+
+    #pcText:focus{
+      border:1px solid #36add9
+    }
+
+
+      h6 {
+          font-size: 16px;
+          font-weight: 700;
+          margin: 16px 0 0 0;
+          color:#323132!important;
+      }
+      /* .btn--primary {
+        background-color: #0F8243;
+        color: #fff!important;
+      } */
+      .btn {
+          font-family: "Open Sans",Helvetica,Arial,sans-serif;
+          font-weight: 400;
+          font-size: 15px !important;
+          display: inline-block;
+          width: auto;
+          height:
+          cursor: pointer;
+          padding: 6px 16px 10px 16px;
+          border: 0 none;
+          text-align: center;
+          -webkit-appearance: none;
+          transition: background-color 0.25s ease-out;
+          line-height: 24px;
+      }
+
+      .btn:focus {
+        outline: 3px solid orange;
+      }
+
+      a {
+          text-decoration: underline;
+          color: #206095;
+          word-wrap: break-word;
+      }
+
+      .clearable{
+        background: #fff url(./images/closeblue.svg) no-repeat right -15px center;
+        background-size: 15px 24px;
+        transition: background 0.4s;
+      }
+      .clearable.x  { background-position: right 10px center; } /* (jQ) Show icon */
+      .clearable.onX{ cursor: pointer; }              /* (jQ) hover cursor style */
+      .clearable::-ms-clear {display: none; width:0; height:0;} /* Remove IE default X */
+
+      .details__summary {
+          color:#fff;
+
+      }
+
+      /* .tick text {
+        fill:#000;
+        font-size: 14px;
+      }
+
+      .key .legendRect {
+
+        	float: left;
+            height: 13px;
+            margin-top: 4px;
+            background-color: #fff;
+        } */
+
+        #notes {
+          position:relative;
+          color: #323132;
+
+        }
+
+       ul, ol {
+          margin: 0px 0;
+          padding-left: 16px;
+        }
+
+        li {
+          font-size: 14px;
+          font-weight: 400;
+          line-height: 24px;
+          margin: 0px 0px !important;
+          padding: 6px 0 10px 16px;
+        }
+
+        label {
+            line-height: 30px;
+            margin-top: 4px;
+        }
+
+        .legendlabel {
+            font-size:16px;
+            margin-left: 10px;
+            width:140px;
+            float:left;
+            color: #1b5f97;
+            font-weight: bold;
+        }
+
+        .legendVal {
+            font-weight: 700;
+            font-size:17px;
+            width:21px;
+            text-align:right;
+            margin-left:  20px;
+            float:left;
+            color: #1b5f97;
+
+        }
+
+        .key-item-container {
+          position: absolute;
+        }
+
+        .key-item {
+          padding-left:4px;
+          /* height:20px; */
+          clear: both;
+        }
+
+        #msoacodetext {
+          font-size:16px;
+          font-weight: 400;
+        }
+
+
+        .key-0 {
+          margin-top:6px;
+        }
+
+        #timeControls {
+          position: absolute;
+          top: 80px;
+          margin-left: 0px;
+          padding-left: 2px !important;
+        }
+
+        #timeName {
+          display: inline-block;
+          text-align: center;
+          font-size: 16px;
+          width: 124px;
+          margin-left: 6px;
+          margin-right: 6px;
+          color: #1b5f97;
+
+        }
+
+        .timeControlButtons {
+          background: rgba(255,255,255,0.5);
+          border: none;
+          color: #206095;
+          font-size: 16px;
+        }
+
+		.visuallyhidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            margin: -1px;
+            padding:0;
+            overflow: hidden;
+            clip: rect(0,0,0,0); border: 0;
+            display:block !important;
+        }
+        .search-control {
+          text-transform: uppercase;
+        }
+        ::-webkit-input-placeholder {
+           text-transform: initial;
+        }
+        :-moz-placeholder {
+           text-transform: initial;
+        }
+        ::-moz-placeholder {
+           text-transform: initial;
+        }
+        :-ms-input-placeholder {
+           text-transform: initial;
+        }
+
+        .btn-primary {
+          background-color: #206095;
+          color: #fff;
+        }
+
+        .btn-primary:hover {
+          background-color:#003C57;
+        }
+
+        .btn-primary:focus {
+          outline: 3px solid #FF9933 !important;
+          outline-offset: -1px;
+          background-color:#003C57;
+        }
+
+
+        .domain
+        /* required. BOTH MUST BE NONE */
+          {
+          fill: none;
+          stroke: none;
+        }
+
+        /* y-axis tick labels */
+        #graphic .axis, #graphic .bar-values
+        /* required */
+          {
+          font-size: 12px;
+          fill: #666;
+          font-family: "Open Sans", sans-serif;
+        }
+
+        #graphic .bar-values {
+          fill: #206095;
+          font-weight: bold;
+          text-anchor: middle;
+        }
+
+        #graphic .bar-values text.borders {
+          stroke-width: 3px;
+          stroke: white;
+        }
+
+        /* x-axis baseline; not to be confused with centreline. Can consider overlaying this with #centreline */
+        #graphic .axis path
+        /* required */
+          {
+          fill: none;
+          stroke: #ccc;
+          shape-rendering: crispEdges;
+        }
+
+        #graphic .axis line
+        /* required */
+          {
+          fill: none;
+          stroke: #ccc;
+          shape-rendering: crispEdges;
+        }
+
+        /* y-axis line path */
+        #graphic .axis.y path
+        /* required */
+          {
+          display: none;
+        }
+
+        /* y-axis full width grid lines */
+        #graphic .grid .tick line
+        /* required */
+          {
+          stroke: #CCC;
+          stroke-width: 1px;
+          shape-rendering: crispEdges;
+        }
+
+        /* plotted graph line */
+        #graphic .line
+        /* required */
+          {
+          fill: none;
+          /* must be 'none' */
+          stroke-width: 3px;
+          stroke-linecap: round;
+          stroke-linejoin: round;
+        }
+
+        /* .bar-values text {
+          font-size: 14px;
+          font-weight: bold;
+        } */
+
+  </style>
+</head>
+
+<body>
+
+<noscript>
+<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MBCBVQS" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+</noscript>
+
+  <div id="map">
+    <div id="keycontainer">
+      <div id='keydiv'>
+      </div>
+      <div id="placename"></div>
+    </div>
+    <div id='selectNav'>
+      <div class="input-group">
+          <input tabindex=1 aria-label="Enter a postcode to highlight number of deaths in an area." type="text" class="search-control clearable" placeholder="Enter a postcode">
+          <div class="input-group-addon search-group">
+              <button aria-label="Search button" tabindex=2 id="submitPost" type="submit" style="background: none;border:0;">
+                <span class="visuallyhidden">Postcode search</span>
+                <span class="glyphicon glyphicon-search"></span>
+              </button>
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="source">
+    <h6>Source: Office for National Statistics - Deaths due to COVID-19</h6>
+  </div>
+
+
+
+  <script defer src="https://cdn.ons.gov.uk/vendor/mapbox-gl/1.10.1/js/mapbox-gl.js"></script>
+  <script defer src="js/d3.v4.min.js"></script>
+  <script defer src="https://cdn.ons.gov.uk/vendor/jquery/2.1.4/jquery.min.js"></script>
+  <script defer src="https://cdn.ons.gov.uk/vendor/pym/1.3.2/pym.min.js"></script>
+  <script defer src="js/d3-queue.min.js"></script>
+  <script defer src="js/topojson.v2.min.js"></script>
+  <script defer src="main.js"></script>
+</body>
+
+</html>
