@@ -1,0 +1,16 @@
+{"ons":{
+"maptitle": "Green space",
+"varcolour": ["#7FCDBB", "#41B6C4", "#1D91C0", "#225EA8", "#0C2C84"],
+"varlabels": ["Percentage of addresses with private outdoor space","Average size of private outdoor space"],
+"varunit": ["% of dwellings without outdoor space","metres squared"],
+"varload":0,
+"displayFormat": [".0%",",.0f"],
+"displaySuffix":["","m²"],
+"legendFormat": [".0%",",.0f"],
+"legenddecimals":[2,0],
+"breaks": ["jenks","jenks"],
+"dropticks": true,
+"numberBreaks": [5,5],
+"nullColour": "#666",
+"source":"Office for National Statistics"
+}}
