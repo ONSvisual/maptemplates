@@ -512,7 +512,7 @@ if (Modernizr.webgl) {
       breaks = generateBreaks(data, dvc);
 
       //work out halfway point (for no data position)
-      midpoint = breaks[0] + ((breaks[dvc.numberBreaks] - breaks[0]) / 2)
+      midpoint = breaks[0] + ((breaks[dvc.numberBreaks[a]] - breaks[0]) / 2)
 
       //Load colours
       if (typeof dvc.varcolour === 'string') {
@@ -746,6 +746,7 @@ if (Modernizr.webgl) {
         });
       }
       hoveredId = null;
+      hideaxisVal();
     }
 
     function setAxisVal(areanm, areaval) {
@@ -788,7 +789,7 @@ if (Modernizr.webgl) {
           if (!isNaN(areaval)) {
             return displayformat(areaval) + dvc.displaySuffix[a]
           } else {
-            return "Data unavailable"
+            return ""
           }
         })
         .style("opacity", 1)
