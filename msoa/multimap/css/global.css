@@ -714,7 +714,7 @@ input[type=checkbox]:focus {
 
 input[type=radio]:focus {
   outline: none;
-  position: inherit;
+  /*position: inherit;*/
   box-shadow: 0px 0px 0px 4px #FE781C;
 }
 
@@ -806,7 +806,7 @@ div #dropdown3 .chosen-container-single .chosen-single div b {
 
 input:focus {
   outline: 3px solid #FFA23A;
-  position: relative;
+  /*position: relative;*/
 }
 
 .button {

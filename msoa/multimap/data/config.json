@@ -1,16 +1,16 @@
 {"ons":{
-"maptitle": "Green space",
-"varcolour": ["#7FCDBB", "#41B6C4", "#1D91C0", "#225EA8", "#0C2C84"],
-"varlabels": ["Percentage of addresses with private outdoor space","Average size of private outdoor space"],
-"varunit": ["% of dwellings without outdoor space","metres squared"],
+"maptitle": "Energy Efficiency",
+"varcolour": ["#E92730","#f0702f","#f6ae35","#f1ec37","#95ca53","#2ea949","#0a8647"],
+"varlabels": ["All dwellings","Existing houses","New houses","Existing flats","New flats"],
+"varunit": ["Median energy efficiency score","Median energy efficiency score","Median energy efficiency score","Median energy efficiency score"],
 "varload":0,
-"displayFormat": [".0%",",.0f"],
-"displaySuffix":["","m²"],
-"legendFormat": [".0%",",.0f"],
-"legenddecimals":[2,0],
-"breaks": ["jenks","jenks"],
-"dropticks": true,
-"numberBreaks": [5,5],
+"displayFormat": [".0f",".0f",",.0f",",.0f",",.0f"],
+"displaySuffix":["","","","",""],
+"legendFormat": [".0f",".0f",",.0f",",.0f",",.0f"],
+"legenddecimals":[0,0,0,0,0],
+"breaks": [[0,20,38,54,68,80,91,103],[0,20,38,54,68,80,91,103],[0,20,38,54,68,80,91,103],[0,20,38,54,68,80,91,103],[0,20,38,54,68,80,91,103]],
+"dropticks": false,
+"numberBreaks": [7,7,7,7,7],
 "nullColour": "#666",
-"source":"Office for National Statistics"
+"source":"Department for Levelling Up, Housing and Communities – Energy Performance Certificate data on Open Data Communities and Valuation Office Agency – Property Attributes data."
 }}

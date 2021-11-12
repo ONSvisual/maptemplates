@@ -585,7 +585,7 @@ if (Modernizr.webgl) {
         .attr('for', function(d, i) {
           return 'button' + i;
         })
-        .append('div')
+        .append('div').attr("class","buttonLabel")
         .style("padding-right", "10px")
         .html(function(d) {
           return d;
