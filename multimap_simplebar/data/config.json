@@ -1,0 +1,38 @@
+{
+  "ons": {
+    "map": {
+      "maptitle": "Travel to work",
+      "varcolour": "Blues",
+      "varunit": "Location quotient",
+      "keyunit": "Great Britain average",
+      "mapVarName": "High Technology Manufacturing",
+      "displaydecimals": 1,
+      "legenddecimals": 1,
+      "breaks": "jenks",
+      "dropticks": true,
+      "numberBreaks": 5
+    },
+    "bar" : {
+      "graphic_data_url": "databars.csv",
+      "colour_palette": {
+        "1": "#24A79B",
+        "0": "#ABC149"
+      },
+      "keyNames": ["Great Britian share of total employment"],
+      "legendLabels": {},
+      "sourceText":["ONS"],
+      "xAxisLabel":"% of local employment",
+      "xAxisScale": [0,0.65],
+      "heightperstrip":35,
+      "dotradius":3,
+      "barMargin": {"top": 20, "right": 15, "bottom": 30, "left": 160},
+      "defaultBarVar": "default",
+      "stackVar": "Method",
+      "lineVar": "GB",
+      "lineColour": "#FF9933",
+      "lineLegendLabel": "England & Wales average",
+      "mobileBreakpoint" : 610,
+      "x_num_ticks_sm_md" : [3,4]
+    }
+  }
+}
