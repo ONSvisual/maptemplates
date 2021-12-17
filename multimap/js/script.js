@@ -417,11 +417,6 @@ if(Modernizr.webgl) {
 				setAxisVal($("#areaselect").val());
 			}
 			updateLayers();
-
-			dataLayer.push({
-          'event': 'navSelect',
-          'selected': i
-      })
 		}
 
 		function onselect() {
