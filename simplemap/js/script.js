@@ -75,6 +75,12 @@ if(Modernizr.webgl) {
 			compact: true
 		}));
 
+		// if touch screen, disable stuff
+		if ($('html').hasClass('touch')) {
+			map.scrollZoom.disable();
+			map.dragPan.disable();
+		};
+
 		//get location on click
 		d3.select(".mapboxgl-ctrl-geolocate").on("click",geolocate);
 
@@ -111,17 +117,17 @@ if(Modernizr.webgl) {
 
 		map.on('load', defineLayers);
 
-		if ($('html').hasClass('touch')) {
-			map.scrollZoom.disable();
-			map.dragPan.disable();
-		};
+
 
 		function defineBreaks(){
 
 			rateById = {};
 			areaById = {};
 
-			data.forEach(function(d) {rateById[d.AREACD] = +d[variable]; areaById[d.AREACD] = d.AREANM}); //change to brackets
+			data.forEach(function(d) {
+				rateById[d.AREACD] = +d[variable];
+				areaById[d.AREACD] = d.AREANM
+			}); //change to brackets
 
 
 			//Flatten data values and work out breaks
@@ -160,12 +166,10 @@ if(Modernizr.webgl) {
 
 		function setupScales() {
 			//set up d3 color scales
-			//Load colours
 			if(typeof dvc.varcolour === 'string') {
 				color=chroma.scale(dvc.varcolour).colors(dvc.numberBreaks)
 				colour=[]
 				color.forEach(function(d){colour.push(chroma(d).darken(0.4).saturate(0.6).hex())})
-				// colour = colorbrewer[dvc.varcolour][dvc.numberBreaks];
 			} else {
 				colour = dvc.varcolour;
 			}
@@ -331,23 +335,9 @@ if(Modernizr.webgl) {
 
 
 		function onMove(e) {
-			// console.log(e)
-
 				map.getCanvasContainer().style.cursor = 'pointer';
 
 				newAREACD = e.features[0].properties.AREACD;
-
-
-
-				if(firsthover) {
-            dataLayer.push({
-                'event': 'mapHoverSelect',
-                'selected': newAREACD
-            })
-
-            firsthover = false;
-        }
-
 
 				if(newAREACD != oldAREACD) {
 					oldAREACD = e.features[0].properties.AREACD;
@@ -355,7 +345,6 @@ if(Modernizr.webgl) {
 
 					selectArea(e.features[0].properties.AREACD);
 					setAxisVal(e.features[0].properties.AREACD);
-
 				}
 		};
 
@@ -379,11 +368,6 @@ if(Modernizr.webgl) {
 					selectArea(e.features[0].properties.AREACD);
 					setAxisVal(e.features[0].properties.AREACD);
 				}
-
-				dataLayer.push({
-            'event':'mapClickSelect',
-            'selected': newAREACD
-        })
 		};
 
 		function disableMouseEvents() {
@@ -405,7 +389,6 @@ if(Modernizr.webgl) {
 			$("#areaselect").val(code).trigger('chosen:updated');
 			d3.select('abbr').on('keypress',function(evt){
 				if(d3.event.keyCode==13 || d3.event.keyCode==32){
-					console.log('clear')
 					$("#areaselect").val("").trigger('chosen:updated');
 					onLeave();
 					resetZoom();
@@ -427,9 +410,7 @@ if(Modernizr.webgl) {
 		}
 
 		function resetZoom() {
-
 			map.fitBounds([[bounds[0], bounds[1]], [bounds[2], bounds[3]]]);
-
 		}
 
 
