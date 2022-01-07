@@ -625,6 +625,11 @@ if (Modernizr.webgl) {
         });
     }
 
+    function onselect() {
+			a = $(".dropdown").val();
+			onchange(a);
+		}
+
 
     function setScreenreader(name, value) {
       if (!isNaN(value)) {
