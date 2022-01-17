@@ -6,5 +6,8 @@
 "legenddecimals": 0,
 "breaks": "equal",
 "dropticks": false,
-"numberBreaks": 5
+"numberBreaks": 5,
+"fillOpacity": 0.7,
+"backgroundColour": "#f2f3f0",
+"legendRectHeight": 8
 }}

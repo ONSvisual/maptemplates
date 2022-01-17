@@ -182,7 +182,6 @@ if(Modernizr.webgl) {
 		}
 
 		function defineLayers() {
-
 			map.addSource('area', { 'type': 'geojson', 'data': areas });
 
 			  map.addLayer({
@@ -196,7 +195,7 @@ if(Modernizr.webgl) {
 							type: 'identity',
 							property: 'fill'
 					   },
-					  'fill-opacity': 0.7,
+					  'fill-opacity': dvc.fillOpacity,
 					  'fill-outline-color': '#fff'
 				  }
 			  }, 'place_city');
@@ -482,27 +481,33 @@ if(Modernizr.webgl) {
 			var g2 = svgkey.append("g").attr("id","horiz")
 				.attr("transform", "translate(15,35)");
 
+			// In order for the legend rects to match the map colours, the legend
+			// needs a background rectangle of the same colour as the map background.
+			g2.append("rect")
+				.attr("class", "blocks-background")
+				.attr("height", dvc.legendRectHeight)
+				.attr("x", function(d) { return x(color.domain()[0]); })
+				.attr("width", function(d) {
+				    var cd = color.domain();
+				    return x(cd[cd.length - 1]) - x(cd[0]);
+				})
+				.style("fill", dvc.backgroundColour);
 
-			keyhor = d3.select("#horiz");
-
-			g2.selectAll("rect")
+			g2.selectAll("rect.blocks")
 				.data(color.range().map(function(d,i) {
-
 				  return {
-					x0: i ? x(color.domain()[i+1]) : x.range()[0],
-					x1: i < color.domain().length ? x(color.domain()[i+1]) : x.range()[1],
-					z: d
+					x0: x(color.domain()[i]),
+					x1: x(color.domain()[i+1]),
+					fill: d
 				  };
 				}))
 			  .enter().append("rect")
 				.attr("class", "blocks")
-				.attr("height", 8)
-				.attr("x", function(d) {
-					 return d.x0; })
+				.attr("height", dvc.legendRectHeight)
+				.attr("x", function(d) { return d.x0; })
 				.attr("width", function(d) {return d.x1 - d.x0; })
-				.style("opacity",0.8)
-				.style("fill", function(d) { return d.z; });
-
+				.style("opacity", dvc.fillOpacity)
+				.style("fill", function(d) { return d.fill; });
 
 			g2.append("line")
 				.attr("id", "currLine")
@@ -521,25 +526,13 @@ if(Modernizr.webgl) {
 				.attr("fill","#000")
 				.text("");
 
-			keyhor.selectAll("rect")
-				.data(color.range().map(function(d, i) {
-				  return {
-					x0: i ? x(color.domain()[i]) : x.range()[0],
-					x1: i < color.domain().length ? x(color.domain()[i+1]) : x.range()[1],
-					z: d
-				  };
-				}))
-				.attr("x", function(d) { return d.x0; })
-				.attr("width", function(d) { return d.x1 - d.x0; })
-				.style("fill", function(d) { return d.z; });
-
-			keyhor.call(xAxis).append("text")
+			g2.call(xAxis).append("text")
 				.attr("id", "caption")
 				.attr("x", -63)
 				.attr("y", -20)
 				.text("");
 
-			keyhor.append("rect")
+			g2.append("rect")
 				.attr("id","keybar")
 				.attr("width",8)
 				.attr("height",0)
