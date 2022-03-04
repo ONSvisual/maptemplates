@@ -253,16 +253,6 @@ if (Modernizr.webgl) {
       d3.select("#timePeriod").select('p').text(dateformat(dateparse(dvc.timepoints[a])));
     }
 
-    function checkIfFirstorLast() {
-      if (a = 0) {
-
-      }
-
-
-    }
-
-
-
     function defineBreaks(data) {
       //Flatten data values and work out breaks
       var values = thisdata.map(function(d) {
@@ -449,7 +439,10 @@ if (Modernizr.webgl) {
       //Add click event
       map.on("click", "area", onClick);
 
-      onPlay();
+      if(dvc.play=="true"){
+        onPlay();
+      }
+
 
     }
 
