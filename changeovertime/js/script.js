@@ -144,7 +144,7 @@ if (Modernizr.webgl) {
 
     //and add properties to the geojson based on the csv file we've read in
     areas.features.map(function(d, i) {
-      d.properties.fill = isNaN(rateById[d.properties.AREACD])?dvc.nullcolour:color(rateById[d.properties.AREACD])
+      d.properties.fill = isNaN(rateById[d.properties.AREACD]) ? dvc.nullcolour : color(rateById[d.properties.AREACD])
 
     });
 
@@ -158,46 +158,54 @@ if (Modernizr.webgl) {
 
     function buildNav() {
 
-      fieldset=d3.select('#nav').append('fieldset');
+      fieldset = d3.select('#nav').append('fieldset');
 
       fieldset
-      .append('legend')
-      .attr('class','visuallyhidden')
-      .html('Choose a variable');
+        .append('legend')
+        .attr('class', 'visuallyhidden')
+        .html('Choose a variable');
 
       fieldset
-      .append("div")
-      .attr('class','visuallyhidden')
-      .attr('aria-live','polite')
-      .append('span')
-      .attr('id','selected');
+        .append("div")
+        .attr('class', 'visuallyhidden')
+        .attr('aria-live', 'polite')
+        .append('span')
+        .attr('id', 'selected');
 
-      grid=fieldset.append('div')
-      .attr('class','grid grid--full large-grid--fit');
+      grid = fieldset.append('div')
+        .attr('class', 'grid grid--full large-grid--fit');
 
-      cell=grid.selectAll('div')
-      .data(dvc.varlabels)
-      .enter()
-      .append('div')
-      .attr('class','grid-cell');
+      cell = grid.selectAll('div')
+        .data(dvc.varlabels)
+        .enter()
+        .append('div')
+        .attr('class', 'grid-cell');
 
       cell.append('input')
-      .attr('type','radio')
-      .attr('class','visuallyhidden')
-      .attr('id',function(d,i){return 'button'+i;})
-      .attr('value',function(d,i){return i;})
-      .attr('name','button');
+        .attr('type', 'radio')
+        .attr('class', 'visuallyhidden')
+        .attr('id', function(d, i) {
+          return 'button' + i;
+        })
+        .attr('value', function(d, i) {
+          return i;
+        })
+        .attr('name', 'button');
 
       cell.append('label')
-      .attr('for',function(d,i){return 'button'+i;})
-      .html(function(d){return d;});
+        .attr('for', function(d, i) {
+          return 'button' + i;
+        })
+        .html(function(d) {
+          return d;
+        });
 
       d3.selectAll('input[type="radio"]').on('change', function(d) {
         onchange(document.querySelector('input[name="button"]:checked').value);
         d3.select('#selected').text(dvc.varlabels[document.querySelector('input[name="button"]:checked').value] + " is selected");
       });
 
-      d3.select('#button0').property('checked',true);
+      d3.select('#button0').property('checked', true);
       d3.select('#selected').text(dvc.varlabels[document.querySelector('input[name="button"]:checked').value] + " is selected");
 
 
@@ -205,14 +213,14 @@ if (Modernizr.webgl) {
       selectgroup = d3.select('#selectnav');
 
       selectgroup.append('label')
-        .attr('for','mobileDropdown')
-        .attr('class','visuallyhidden')
+        .attr('for', 'mobileDropdown')
+        .attr('class', 'visuallyhidden')
         .html('Choose a variable');
 
 
       selectgroup.append('select')
         .attr('class', 'dropdown')
-        .attr('id','mobileDropdown')
+        .attr('id', 'mobileDropdown')
         .on('change', onselect)
         .selectAll("option")
         .data(dvc.varlabels)
@@ -451,7 +459,7 @@ if (Modernizr.webgl) {
       //update properties to the geojson based on the csv file we've read in
       areas.features.map(function(d, i) {
 
-        d.properties.fill = isNaN(rateById[d.properties.AREACD])?dvc.nullcolour:color(rateById[d.properties.AREACD])
+        d.properties.fill = isNaN(rateById[d.properties.AREACD]) ? dvc.nullcolour : color(rateById[d.properties.AREACD])
       });
 
       //Reattach geojson data to area layer
@@ -591,10 +599,10 @@ if (Modernizr.webgl) {
 
     function makeSlider() {
       var formatDate = d3.timeFormat("%D");
-      sliderDomain = [0, variables.length-1];
+      sliderDomain = [0, variables.length - 1];
       var mobileWidth = parseInt(d3.select('body').style("width")) - 125
       if (mobile) {
-        var sliderRange = [0, mobileWidth-70];
+        var sliderRange = [0, mobileWidth - 70];
       } else {
         var sliderRange = [0, keywidth - dvc.keyMargin.right - dvc.keyMargin.left];
       };
@@ -604,14 +612,16 @@ if (Modernizr.webgl) {
 
       sliderSimple = d3
         .sliderBottom(sliderScale)
-        .displayFormat(function(i) { return dateformat(dateparse(dvc.timepoints[i]))})
+        .displayFormat(function(i) {
+          return dateformat(dateparse(dvc.timepoints[i]))
+        })
         .step(1)
         .default(a)
         .displayValue(!mobile)
         .handle(
           d3.symbol()
-            .type(d3.symbolCircle)
-            .size(500)
+          .type(d3.symbolCircle)
+          .size(500)
         )
         .fill("#206095")
         .ticks([]);
@@ -626,69 +636,69 @@ if (Modernizr.webgl) {
       });
 
       if (mobile) {
-        var sliderSvg = d3.select("#chartcol").append("svg").attr("id","slider-svg");
+        var sliderSvg = d3.select("#chartcol").append("svg").attr("id", "slider-svg");
       } else {
         var sliderSvg = d3.select("div#slider-simple").append("svg");
       }
 
       var gSimple = sliderSvg
         // .attr('width', parseInt(d3.select('#').style("width"))-140)
-        .attr('height', 80 - 30*mobile)
-        .attr('width', mobile ? mobileWidth : keywidth + dvc.keyMargin.left + dvc.keyMargin.right - 20 - 300*mobile)
+        .attr('height', 80 - 30 * mobile)
+        .attr('width', mobile ? mobileWidth : keywidth + dvc.keyMargin.left + dvc.keyMargin.right - 20 - 300 * mobile)
         .append('g')
         .attr('transform', mobile ? 'translate(20,20)' : 'translate(' + (dvc.keyMargin.left + 30) + ',20)'); // extra 30 is to widen svg to go over top of map
 
       gSimple.call(sliderSimple);
     }
 
-    d3.select('body').on('keydown',function(){
-  if(document.getElementById("handle")===document.activeElement){//if handle is focussed
-    var min = sliderDomain[0];
-    var max = sliderDomain[1];
-    var pageUpDownSteps = 5;
+    d3.select('body').on('keydown', function() {
+      if (document.getElementById("handle") === document.activeElement) { //if handle is focussed
+        var min = sliderDomain[0];
+        var max = sliderDomain[1];
+        var pageUpDownSteps = 5;
 
-    if (d3.event.key=='ArrowLeft' || d3.event.key=='ArrowDown') {
-      d3.event.preventDefault();
-      if(a !== min){
-        sliderSimple.value(a-1)
-      }
-    }
-    if (d3.event.key=='ArrowRight' || d3.event.key=='ArrowUp') {
-      d3.event.preventDefault();
-      if(a !== max){
-        sliderSimple.value(a+1)
-      }
-    }
-    if (d3.event.key=='PageUp') {
-      d3.event.preventDefault();
-      if (a < max) {
-        if (a+pageUpDownSteps > max) { // if a is close to max
+        if (d3.event.key == 'ArrowLeft' || d3.event.key == 'ArrowDown') {
+          d3.event.preventDefault();
+          if (a !== min) {
+            sliderSimple.value(a - 1)
+          }
+        }
+        if (d3.event.key == 'ArrowRight' || d3.event.key == 'ArrowUp') {
+          d3.event.preventDefault();
+          if (a !== max) {
+            sliderSimple.value(a + 1)
+          }
+        }
+        if (d3.event.key == 'PageUp') {
+          d3.event.preventDefault();
+          if (a < max) {
+            if (a + pageUpDownSteps > max) { // if a is close to max
+              sliderSimple.value(max)
+            } else { // if a is not close to max
+              sliderSimple.value(a - pageUpDownSteps)
+            }
+          }
+        }
+        if (d3.event.key == 'PageDown') {
+          d3.event.preventDefault();
+          if (a > min) {
+            if (a - pageUpDownSteps < min) { // if a is close to min
+              sliderSimple.value(min);
+            } else { // if a is not close to min
+              sliderSimple.value(a + pageUpDownSteps)
+            }
+          }
+        }
+        if (d3.event.key == 'Home') {
+          d3.event.preventDefault();
+          sliderSimple.value(min)
+        }
+        if (d3.event.key == 'End') {
+          d3.event.preventDefault();
           sliderSimple.value(max)
-        } else { // if a is not close to max
-          sliderSimple.value(a - pageUpDownSteps)
         }
       }
-    }
-    if (d3.event.key=='PageDown') {
-      d3.event.preventDefault();
-      if (a > min) {
-        if (a-pageUpDownSteps < min) { // if a is close to min
-          sliderSimple.value(min);
-        } else { // if a is not close to min
-          sliderSimple.value(a + pageUpDownSteps)
-        }
-      }
-    }
-    if (d3.event.key=='Home') {
-      d3.event.preventDefault();
-      sliderSimple.value(min)
-    }
-    if (d3.event.key=='End') {
-      d3.event.preventDefault();
-      sliderSimple.value(max)
-    }
-  }
-})
+    })
 
     function onselect() {
       b = $(".dropdown").val();
@@ -757,13 +767,13 @@ if (Modernizr.webgl) {
 
     function selectArea(code) {
       $("#areaselect").val(code).trigger('chosen:updated');
-      d3.select('abbr').on('keypress',function(evt){
-				if(d3.event.keyCode==13 || d3.event.keyCode==32){
+      d3.select('abbr').on('keypress', function(evt) {
+        if (d3.event.keyCode == 13 || d3.event.keyCode == 32) {
           d3.event.preventDefault();
-					onLeave();
+          onLeave();
           resetZoom();
-				}
-			})
+        }
+      })
     }
 
 
@@ -802,13 +812,13 @@ if (Modernizr.webgl) {
 
     function setAxisVal(code) {
       d3.select('#accessibilityInfo').select('p.visuallyhidden')
-      .text(function(){
-        if (!isNaN(rateById[code])) {
-          return areaById[code]+": "+ displayformat(rateById[code]) +" "+ dvc.varunit[b];
-        } else {
-          return "Data unavailable";
-        }
-      });
+        .text(function() {
+          if (!isNaN(rateById[code])) {
+            return areaById[code] + ": " + displayformat(rateById[code]) + " " + dvc.varunit[b];
+          } else {
+            return "Data unavailable";
+          }
+        });
 
 
       if (mobile == false) {
@@ -851,14 +861,14 @@ if (Modernizr.webgl) {
           .transition()
           .ease(d3.easeQuadOut)
           .duration(300)
-          .attr("x", function(d){
-            if(isNaN(rateById[code])){
-                return x(dvc.timepoints[Math.round(dvc.timepoints.length/2)]);
-            }else{
-                return x(dvc.timepoints[a]);
+          .attr("x", function(d) {
+            if (isNaN(rateById[code])) {
+              return x(dvc.timepoints[Math.round(dvc.timepoints.length / 2)]);
+            } else {
+              return x(dvc.timepoints[a]);
             }
           })
-          .attr("y", findCurrValy )
+          .attr("y", findCurrValy)
           .attr("text-anchor", "middle");
 
         d3.select("#currVal2")
@@ -873,11 +883,11 @@ if (Modernizr.webgl) {
           .transition()
           .ease(d3.easeQuadOut)
           .duration(300)
-          .attr("x", function(d){
-            if(isNaN(rateById[code])){
-                return x(dvc.timepoints[Math.round(dvc.timepoints.length/2)])
-            }else{
-                return x(dvc.timepoints[a])
+          .attr("x", function(d) {
+            if (isNaN(rateById[code])) {
+              return x(dvc.timepoints[Math.round(dvc.timepoints.length / 2)])
+            } else {
+              return x(dvc.timepoints[a])
             }
           })
           .attr("y", findCurrValy)
@@ -886,8 +896,8 @@ if (Modernizr.webgl) {
         function findCurrValy() {
           if (!isNaN(rateById[code])) { // if there exists a numerical value
             // if value is greater than threshold, put it below the line
-            var yThreshold = ( y.domain()[0] + y.domain()[1] ) * 2 / 3
-            if (rateById[code] > yThreshold ) {
+            var yThreshold = (y.domain()[0] + y.domain()[1]) * 2 / 3
+            if (rateById[code] > yThreshold) {
               yAdjustment = 22
             } else { // otherwise it goes above
               yAdjustment = -12
@@ -1013,8 +1023,8 @@ if (Modernizr.webgl) {
 
         var gline1 = svgkeyGroup.select("#chartgroup")
         // var gline1 = svgkeyGroup.append("g")
-          // .attr("transform", "translate(45,10)")
-          // .attr("id", "chartgroup")
+        // .attr("transform", "translate(45,10)")
+        // .attr("id", "chartgroup")
 
         gline1.append("path")
           .attr("id", "line1")
@@ -1085,13 +1095,13 @@ if (Modernizr.webgl) {
 
       if (mobile == false) {
 
-        d3.select("#keydiv").append("p").attr("id", "keyunit").attr('aria-hidden',true).style("margin-top", "25px").style("margin-left", "10px").style("font-size","14px").text(dvc.varunit[b]);
+        d3.select("#keydiv").append("p").attr("id", "keyunit").attr('aria-hidden', true).style("margin-top", "25px").style("margin-left", "10px").style("font-size", "14px").text(dvc.varunit[b]);
 
         keyheight = dvc.keyHeight;
 
         svgkey = d3.select("#keydiv")
           .append("svg")
-          .attr('aria-hidden',true)
+          .attr('aria-hidden', true)
           .attr("id", "key")
           .attr("width", keywidth)
           .attr("height", keyheight + 30)
@@ -1198,42 +1208,42 @@ if (Modernizr.webgl) {
             });
 
 
-            g2.append("path")
-              .attr("id", "line2")
-              .attr("d", line2(linedata2))
-              .attr("stroke", "#aaa")
-              .attr("stroke-width", "2px")
-              .attr("fill", "none");
+          g2.append("path")
+            .attr("id", "line2")
+            .attr("d", line2(linedata2))
+            .attr("stroke", "#aaa")
+            .attr("stroke-width", "2px")
+            .attr("fill", "none");
 
-            // add time dot for line2
-            g2.append("circle")
-              .attr("id", "currPoint2")
-              .attr('r',"4px")
-              .attr("cy", function() {
-                if (dvc.average[navvalue] != null) {
-                  return y(dvc.average[navvalue][a]) // set start position
-                } else {
-                  return y(0) // placeholder because no data for this variable
-                }
-              })
-              .attr("cx", x(dvc.timepoints[a]))
-              .attr("fill", "#b0b0b0")
-              .attr("stroke", "black")
+          // add time dot for line2
+          g2.append("circle")
+            .attr("id", "currPoint2")
+            .attr('r', "4px")
+            .attr("cy", function() {
+              if (dvc.average[navvalue] != null) {
+                return y(dvc.average[navvalue][a]) // set start position
+              } else {
+                return y(0) // placeholder because no data for this variable
+              }
+            })
+            .attr("cx", x(dvc.timepoints[a]))
+            .attr("fill", "#b0b0b0")
+            .attr("stroke", "black")
 
-            g2.append("text")
-                .attr("id", "averagelabel")
-                .attr("x", function(d) {
-                  return x(linedata2[linedata2.length - 1][0])
-                })
-                .attr("y", function(d) {
-                  return y(linedata2[linedata2.length - 1][1]) - 10 // use this number at end to adjust height of label
-                })
-                .attr("font-size", "12px")
-                .attr("fill", "#757575")
-                .attr("text-anchor", "end")
-                .text(dvc.averageText);
+          g2.append("text")
+            .attr("id", "averagelabel")
+            .attr("x", function(d) {
+              return x(linedata2[linedata2.length - 1][0])
+            })
+            .attr("y", function(d) {
+              return y(linedata2[linedata2.length - 1][1]) - 10 // use this number at end to adjust height of label
+            })
+            .attr("font-size", "12px")
+            .attr("fill", "#757575")
+            .attr("text-anchor", "end")
+            .text(dvc.averageText);
 
-            }
+        }
 
 
       } else {
@@ -1244,7 +1254,7 @@ if (Modernizr.webgl) {
 
         svgkey = d3.select("#keydiv")
           .append("svg")
-          .attr("aria-hidden",true)
+          .attr("aria-hidden", true)
           .attr("id", "key")
           .attr("width", keywidth)
           .attr("height", keyheight);
@@ -1345,7 +1355,7 @@ if (Modernizr.webgl) {
 
         d3.select("#keydiv")
           .append("p")
-          .attr('aria-hidden',true)
+          .attr('aria-hidden', true)
           .attr("id", "keyunit")
           .style("margin-top", "-10px")
           .style("margin-left", "10px")
@@ -1437,7 +1447,7 @@ if (Modernizr.webgl) {
     function setSource() {
       d3.select("#source")
         .append("h5")
-        .text("Source: "+dvc.sourcetext)
+        .text("Source: " + dvc.sourcetext)
     }
 
     function selectlist(datacsv) {
@@ -1453,8 +1463,8 @@ if (Modernizr.webgl) {
       });
 
       //hide area dropdown to screen reader if on mobile
-      if(mobile==true){
-        d3.select("selectNav").attr('aria-hidden',true)
+      if (mobile == true) {
+        d3.select("selectNav").attr('aria-hidden', true)
       }
 
       // Build option menu for occupations
@@ -1482,8 +1492,8 @@ if (Modernizr.webgl) {
         allow_single_deselect: true
       })
 
-      d3.select('input.chosen-search-input').attr('id','chosensearchinput')
-      d3.select('div.chosen-search').insert('label','input.chosen-search-input').attr('class','visuallyhidden').attr('for','chosensearchinput').html("Type to select an area")
+      d3.select('input.chosen-search-input').attr('id', 'chosensearchinput')
+      d3.select('div.chosen-search').insert('label', 'input.chosen-search-input').attr('class', 'visuallyhidden').attr('for', 'chosensearchinput').html("Type to select an area")
 
       $('#areaselect').on('change', function() {
 
@@ -1513,9 +1523,10 @@ if (Modernizr.webgl) {
         }
 
       });
-    }
-    };
+    }//end selectlist
     pymChild.sendHeight()
+
+  };//end ready
 
 } else {
   //provide fallback for browsers that don't support webGL

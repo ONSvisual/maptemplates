@@ -839,7 +839,7 @@ if (Modernizr.webgl) {
       }
       return arr;
     }
-
+    pymChild.sendHeight();
   } //end function ready
 
 } else {
