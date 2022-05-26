@@ -1,9 +1,8 @@
 {"ons":{
 "maptitle": "Multi Map about life expectancy",
 "varcolour": ["YlGnBu",["#8c510a","#d8b365","#f6e8c3"],"YlGnBu","YlGnBu"],
-"varlabels": ["House prices","Average Salary","Public sector employment","% with degree"],
-"varload": 2,
-"varunit": ["£'s","£'s per week","per cent" ,"per cent"],
+"varlabels": ["2020-2021","2021-2022","Total 2017-2022","Total 2020-2022","another heading short"],"varload": 2,
+"varunit": ["£'s","£'s per week","1,140,500  |  1,140,500 | 1,140,500" ,"per cent"],
 "displaydecimals": 0,
 "legenddecimals": 0,
 "breaks": ["jenks","equal",[0,20,40,50,60,100],"jenks"],

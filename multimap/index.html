@@ -24,10 +24,20 @@
   <title>Multiple variables map</title>
 
   <link href='css/mapbox-gl.css' rel='stylesheet' />
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/chosen.css">
 
   <style>
+
+  text{
+    font-family: 'Open Sans', sans-serif;
+    max-width: 800px;
+    margin: 0px auto;
+    display: block;
+    height:100%;
+    color: #323132;
+  }
+
     body {
       margin: 0;
       padding: 0;
@@ -47,12 +57,14 @@
       width: 100%;
     }
 
+
+/* top dropdown in mobile */
     .dropdown {
       height: 44px;
       border-style: solid;
       color: #206095;
       background-color: #FFF;
-      font-size: 1.1em;
+      font-size: 16px;
       border: none;
       box-shadow: none;
       border-radius: 0;
@@ -60,11 +72,17 @@
       cursor: pointer;
       outline: none;
       padding-left: 6px;
-      margin-bottom: 20px;
+        margin-bottom: 10px;
       border: 2px solid #206095;
-      -moz-appearance: none;
+      -moz-appearance: red;
       -webkit-appearance: none;
+      font-family: Open Sans, sans-serif;
     }
+
+    .dropdown::selection {
+    background-color:#8CCA1E;
+    color:Black;
+}
 
     .dropdown:focus-within{
       box-shadow: 0 0 0px 3pt orange;
@@ -135,10 +153,14 @@
         z-index: 1;
       }
 
-      #currVal {
-        font-size: 14px;
 
-      }
+    }
+
+
+    #currVal, #currVal2 {
+      font-size: 14px;
+              font-weight:600;
+
     }
 
     /* mobile CSS */
@@ -185,16 +207,13 @@
         z-index: 1;
       }
 
-      #currVal {
-        font-size: 14px;
-
-      }
 
       .mapboxgl-ctrl-fullscreen {
         display: none !important;
       }
     }
 
+/* end mobile css */
     .tick line {
       stroke: #333;
       stroke-width: 1px;
@@ -202,6 +221,7 @@
 
     .tick text {
       font-size: 14px;
+
     }
 
     .domain {
@@ -210,14 +230,16 @@
 
     #source {
       font-size: 16px;
-      font-weight: 700;
-      line-height: 24px;
+      font-weight:500;
+      line-height: 20px;
       margin: 16px 0 8px 0;
+      color: #707071;
+
     }
 
 
     /* Button styles */
-    button {
+    /* button {
       cursor: pointer;
     }
 
@@ -243,7 +265,7 @@
 
     .btn--large {
       font-size: 16px;
-    }
+    } */
 
     /* Primary */
     .btn--primary {
@@ -299,7 +321,6 @@
       display: inline-flex;
       font-family: 'Open Sans', Arial, sans-serif;
       -webkit-font-smoothing: antialiased;
-      font-weight: 600;
       font-size: 16px;
       margin-bottom: 5px;
       width: 100%;
@@ -320,10 +341,10 @@
 
 
     .label-primary-fullwidth {
-      padding: 8px 16px;
+      padding: 8px 14px;
       cursor: pointer;
       color: #333;
-      background: #F9F9F9;
+      background: #F9F9;
       border-top: solid 1px #A6A8AB;
       border-left: solid 1px #A6A8AB;
       border-bottom: solid 1px #A6A8AB;
@@ -387,7 +408,7 @@
 
       .col-sm-12 {
         float: left;
-        width: 100%;
+        /* width: 100%; */
       }
 
       .col-sm-12 {}
@@ -413,7 +434,8 @@
     /* radio button group */
     fieldset {
       border: none;
-      padding: 0 0 10px 0;
+      padding: 0 0 0px 0;
+      margin: 10px 0 10px 3px;
     }
 
     input[type='radio'] {
@@ -421,24 +443,30 @@
     }
 
     input[type='radio']+label {
-      cursor: pointer;
-      vertical-align: middle;
-      text-align: center;
-      color: #206095;
+
     }
 
-    input[type='radio']+label::before {
+
+/* this is the box for radio */
+    input[type='radio']+label::before, .grid-cell{
       content: '';
       position: absolute;
-      left: -3px;
-      top: -10px;
+      left:1px;
+      top: 0px;
       border-radius: 0%;
-      border: 3px solid #206095;
-      width: 100%;
-      height: calc(100% + 20px);
+      border: 0px solid;
+      border-color:#206095;
+      /* width: 100%; */
+          /* height: 40px; */
       opacity: 1;
-      font-weight: 700;
-      min-height:42px;
+      font-weight: 400;
+      /* min-height: 30px; */
+      cursor: pointer;
+      text-align: center;
+      vertical-align: middle;
+      color: #206095;
+
+
     }
 
     input[type='radio']:checked+label::before {
@@ -454,36 +482,83 @@
       background: #206095;
     }
 
-    input[type='radio']:focus+label::before, input[type='radio']:hover+label::before {
-      box-shadow: 0 0 0px 3pt orange;
+    input[type='radio']:focus-visible+label {
+    box-shadow: 0 0 0px 3pt orange;
       outline: 2px dotted transparent;
-      border: 4px solid #206095;
+      z-index: 1;
+
+
+
+
+    }
+
+    input[type='radio']:focus+label::before {
+      outline: 2px dotted transparent;
+
+}
+input[type='radio']:hover+label::before {
+      /* box-shadow: 0 0 0px 3pt orange; */
+
+
     }
 
     .grid{
+    margin-top: 50px;
+    margin-bottom: 50px;
       display: flex;
       flex-wrap: wrap;
       list-style: none;
       margin: 0;
-      padding-top:14px;
-      padding-bottom:14px;
-      justify-content: space-between;
+
+      /* justify-content: space-between; */
     }
 
-    .grid-cell{
+
+/* labels */
+    .grid-cell, label{
       position: relative;
-      margin-left: 3px;
-      margin-right:3px;
-      text-align: center;
+   margin-left: -1px;
+   margin-right:-1px;
+   margin-top:  -1px;
+   margin-bottom:-1px;
+          border-width: 2px;
+       max-width:240px;
+       min-height:30px;
+          /* min-width:150px; */
+      /* width: fit-content(10%); */
+        /* padding-top:7px;
+      padding-bottom:7px; */
+      /* color:#206095; */
     }
 
+
+label{
+  padding-top: 8px;
+  padding-bottom: 2px;
+  padding-right:17px;
+  padding-left:17px;
+  margin-left: -1px;
+  margin-right:-1px;
+font-size: 16px;
+    display:block;
+
+}
+
+label:hover{
+background-color: rgba(31, 95, 147, 0.2);
+
+}
     .grid--full > .grid-cell {
-      flex: 0 0 100%;
+      /* flex: 0 0 100%; */
+      margin: 50 0 300 0;
     }
 
-    @media (min-width: 24em) {
+
+
+/* puts the flex in */
+    @media (min-width: 600px) {
       .large-grid--fit > .grid-cell {
-        flex: 1;
+        /* flex: 1; */
       }
     }
 
@@ -493,7 +568,7 @@
       height: 1px;
       margin: -1px;
       padding: 0;
-      overflow: hidden;
+          overflow: hidden;
       clip: rect(0, 0, 0, 0);
       border: 0;
     }
@@ -521,7 +596,7 @@
       </div>
     </div>
   </div>
-  <div class="row" id="source">Source: Office for National Statistics.</div>
+  <div class="row" id="source">Source: Office for National Statistics</div>
 
 
   <!--<script src="http://d3js.org/d3.v3.min.js"></script>

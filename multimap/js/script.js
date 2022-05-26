@@ -1,4 +1,3 @@
-
 //test if browser supports webGL
 
 if(Modernizr.webgl) {
@@ -158,8 +157,7 @@ if(Modernizr.webgl) {
 			cell.append('label')
 			.attr('for',function(d,i){return 'button'+i;})
 			.append('div')
-			.style("padding-right","10px")
-			.html(function(d){return d;});
+					.html(function(d){return d;});
 
 			d3.selectAll('input[type="radio"]').on('change', function(d) {
 				onchange(document.querySelector('input[name="button"]:checked').value);
@@ -322,7 +320,7 @@ if(Modernizr.webgl) {
 				  'layout': {
 					  "text-field": '{AREANM}',
 					  "text-font": ["Open Sans","Arial Unicode MS Regular"],
-					  "text-size": 14
+					  "text-size": 16
 				  },
 				  'paint': {
 					  "text-color": "#666",
@@ -553,6 +551,15 @@ if(Modernizr.webgl) {
 				.duration(400)
 				.attr("x", function(){if(!isNaN(rateById[code])) {return x(rateById[code])} else{return x(midpoint)}});
 
+			//	d3.select("#currVal2")
+			//		.text(function(){if(!isNaN(rateById[code]))  {return displayformat(rateById[code])} else {return "Data unavailable"}})
+			//		.style("opacity",1)
+			//		.transition()
+			//		.duration(400)
+			//		.attr("x", "13px");
+
+
+
 		}
 
 		function hideaxisVal() {
@@ -588,9 +595,10 @@ if(Modernizr.webgl) {
 
 
 			var xAxis = d3.axisBottom(x)
-				.tickSize(15)
+				.tickSize(14)
 				.tickValues(color.domain())
 				.tickFormat(legendformat);
+
 
 			var g2 = svgkey.append("g").attr("id","horiz")
 				.attr("transform", "translate(15,35)");
@@ -609,7 +617,7 @@ if(Modernizr.webgl) {
 				}))
 			  .enter().append("rect")
 				.attr("class", "blocks")
-				.attr("height", 8)
+				.attr("height", 14)
 				.attr("x", function(d) {
 					 return d.x0; })
 				.attr("width", function(d) {return d.x1 - d.x0; })
@@ -621,8 +629,8 @@ if(Modernizr.webgl) {
 				.attr("id", "currLine")
 				.attr("x1", x(10))
 				.attr("x2", x(10))
-				.attr("y1", -10)
-				.attr("y2", 8)
+				.attr("y1", -5)
+				.attr("y2", 14)
 				.attr("stroke-width","2px")
 				.attr("stroke","#000")
 				.attr("opacity",0);
@@ -630,9 +638,16 @@ if(Modernizr.webgl) {
 			g2.append("text")
 				.attr("id", "currVal")
 				.attr("x", x(10))
-				.attr("y", -15)
+				.attr("y", -10)
 				.attr("fill","#000")
 				.text("");
+
+				// g2.append("text")
+				// 	.attr("id", "currVal2")
+				// 	.attr("x", x(10))
+				// 	.attr("y", -10)
+				// 	.attr("fill","#000")
+				// 	.text("");
 
 			keyhor.selectAll("rect")
 				.data(color.range().map(function(d, i) {
@@ -668,8 +683,26 @@ if(Modernizr.webgl) {
 				);
 			}
 
+
+			//if(dvc.dropticks) {
+			//	d3.select("#horiz").selectAll("line").style("stroke",function(d,i){
+						// if there are more that 4 breaks, so > 5 ticks, then drop every other.
+		//				if(i % 2){return "red"} }
+		//		);
+		//	}
+
+
+			if(dvc.dropticks) {
+				d3.select("#horiz").selectAll("line").attr("transform",function(d,i){
+						// if there are more that 4 breaks, so > 5 ticks, then drop every other.
+						if(i % 2){return "scale(1,1.7)"} }
+				);
+			}
+
 			//label the units
-			d3.select("#keydiv").append("p").attr("id","keyunit").attr('aria-hidden',true).style("margin-top","-10px").style("margin-left","10px").style('font-size','14px').text(dvc.varunit[a]);
+			d3.select("#keydiv").append("p").attr("id","keyunit").attr('aria-hidden',true)
+			.style("margin-top","-10px").style("margin-left","10px")
+			.style('font-size','14px').text(dvc.varunit[a]);
 
 	} // Ends create key
 
