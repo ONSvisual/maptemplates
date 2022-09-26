@@ -22,7 +22,7 @@
         "analyticsOptOut": getUsageCookieValue(),
         "gtm.whitelist": ["google","hjtc","lcl"],
         "gtm.blacklist": ["customScripts","sp","adm","awct","k","d","j"],
-        "contentTitle": htmlUnescape("Age structure of the population, 2021, local authorities in Wales"),
+        "contentTitle": htmlUnescape("Population density, 2021 and changes since 2011, local authorities in Wales"),
     }];
 
     </script>
@@ -58,7 +58,6 @@
     display: block;
     height:100%;
     fill: #414042;
-    color: #414042;
   }
 
     body {
@@ -69,8 +68,8 @@
       margin: 0px auto;
       display: block;
       height:100%;
-      fill: #414042;
       color: #414042;
+      fill: #414042;
     }
 
     .mapboxgl-ctrl-group .mapboxgl-ctrl-compass {
@@ -151,12 +150,13 @@
         height: 500px;
         width: 100%;
         max-width: 800px;
+		margin-top:50px;
       }
 
-      .c1{background-color: "orange"}
-      .c2{background-color: "purple"}
-
-      #selectnav {
+      .mapboxgl-canvas-container{
+        margin-top: 0px;
+      }     
+       #selectnav {
         display: none;
       }
 
@@ -167,16 +167,16 @@
         width: calc(30% + 3px);
         height: 45px;
         background-color: rgba(255, 255, 255, 0.8);
-        z-index: 1;
+        z-index: 3;
       }
 
       #keydiv {
         position: absolute;
-        top: 45px;
+        top: 0px;
         left: 0px;
-        width: calc(30% + 3px);
-        height: 100px;
-        background-color: rgba(255, 255, 255, 0.8);
+        width: calc(158px);
+        /* height: 100%; */
+        /* background-color: rgba(255, 255, 255, 0.8); */
         z-index: 1;
       }
 
@@ -187,35 +187,31 @@
     #currVal, #currVal2 {
       font-size: 14px;
               font-weight:600;
+              text-anchor: start;
 
     }
 
     /* mobile CSS */
     @media (max-width: 599px) {
 
-
-      .c1{background-color: "yellow"}
-      .c2{background-color: "pink"}
-
-
       #nav {
         display: none;
       }
 
       #map {
-        margin-top: 145px;
-        height: 500px;
+        margin-top:140px;
+        height: 600px;
         width: 100%;
         overflow: visible;
       }
 
       #selectNav {
         position: absolute;
-        top: -145px;
+        top: 0px;
         left: 0px;
         width: 100%;
         height: 45px;
-        background-color: rgba(255, 255, 255, 0.8);
+        /* background-color: rgba(255, 255, 255, 0.8); */
         z-index: 3;
       }
 
@@ -231,12 +227,12 @@
 
       #keydiv {
         position: absolute;
-        top: -100px;
+        top: -90px;
         left: 0px;
         width: 100%;
         height: 100px;
-        background-color: rgba(255, 255, 255, 0.8);
-        z-index: 1;
+        background-color: rgba(255, 255, 255, 0);
+            z-index: 1;
       }
 
 
@@ -251,15 +247,10 @@
       stroke-width: 1px;
     }
 
-    .ticky text {
-      font-size: 14px;
-
-    }
     .tick text {
       font-size: 14px;
 
     }
-
 
     .domain {
       stroke: none;
@@ -380,7 +371,7 @@
     .label-primary-fullwidth {
       padding: 8px 14px;
       cursor: pointer;
-      color: #333;
+      color: #222222;
       background: #F9F9;
       border-top: solid 1px #A6A8AB;
       border-left: solid 1px #A6A8AB;
@@ -582,10 +573,10 @@ font-size: 16px;
 }
 
 label:hover{
-background-color: rgba(31, 95, 147, 0.2);
-cursor: pointer;
+  background-color: rgba(31, 95, 147, 0.2);
+  cursor: pointer;
 
-}
+  }
     .grid--full > .grid-cell {
       /* flex: 0 0 100%; */
       margin: 50 0 300 0;
@@ -624,13 +615,16 @@ cursor: pointer;
     </div>
     <div id='selectnav' class="col-xs-12">
     </div>
+    <div class="col-xs-12">
+    	<div id='selectNav'></div>
+ 	</div>
   </div>
   <div class="row">
     <div id='map' class="col-sm-12">
       <div id='keydiv'></div>
-      <div id='selectNav'></div>
+      
       <div id='accessibilityInfo'>
-        <p aria-live="polite" class='visuallyhidden'>Age structure of the population, 2021, local authorities in Wales.</p>
+        <p aria-live="polite" class='visuallyhidden'>Population density, 2021 and changes since 2011, local authorities in Wales.</p>
       </div>
     </div>
   </div>

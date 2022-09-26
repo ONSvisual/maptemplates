@@ -1,4 +1,3 @@
-
 //test if browser supports webGL
 
 if(Modernizr.webgl) {
@@ -30,6 +29,9 @@ if(Modernizr.webgl) {
 			variables.push(column);
 		}
 
+
+
+
 		a = dvc.varload;
 
 
@@ -46,7 +48,8 @@ if(Modernizr.webgl) {
 
 		//Set up number formats
 		displayformat = d3.format("." + dvc.displaydecimals + "f");
-		legendformat = d3.format("." + dvc.legenddecimals + "f");
+		legendformat = d3.format("." + dvc.legenddecimals + "f")
+		formatPercent=d3.format(".0f");
 
 		//set up basemap
 		map = new mapboxgl.Map({
@@ -158,8 +161,7 @@ if(Modernizr.webgl) {
 			cell.append('label')
 			.attr('for',function(d,i){return 'button'+i;})
 			.append('div')
-			.style("padding-right","10px")
-			.html(function(d){return d;});
+					.html(function(d){return d;});
 
 			d3.selectAll('input[type="radio"]').on('change', function(d) {
 				onchange(document.querySelector('input[name="button"]:checked').value);
@@ -235,10 +237,12 @@ if(Modernizr.webgl) {
 				ss.ckmeans(values, (dvc.numberBreaks[a])).map(function(cluster,i) {
 					if(i<dvc.numberBreaks[a]-1) {
 						breaks.push(cluster[0]);
+						//console.log(cluster[0])
 					} else {
 						breaks.push(cluster[0])
 						//if the last cluster take the last max value
 						breaks.push(cluster[cluster.length-1]);
+						//console.log(cluster[cluster.length-1])
 					}
 				});
 			}
@@ -247,7 +251,7 @@ if(Modernizr.webgl) {
 			}
 			else {breaks = config.ons.breaks[a];};
 
-
+//console.log(breaks);
 			//round breaks to specified decimal places
 			breaks = breaks.map(function(each_element){
 				return Number(each_element.toFixed(dvc.legenddecimals));
@@ -255,6 +259,7 @@ if(Modernizr.webgl) {
 
 			//work out halfway point (for no data position)
 			midpoint = breaks[0] + ((breaks[dvc.numberBreaks[a]] - breaks[0])/2)
+
 
 		}
 
@@ -292,7 +297,7 @@ if(Modernizr.webgl) {
 							type: 'identity',
 							property: 'fill'
 					   },
-					  'fill-opacity': 0.7,
+					  'fill-opacity': 0.8,
 					  'fill-outline-color': '#fff'
 				  }
 			  }, 'place_city');
@@ -322,7 +327,7 @@ if(Modernizr.webgl) {
 				  'layout': {
 					  "text-field": '{AREANM}',
 					  "text-font": ["Open Sans","Arial Unicode MS Regular"],
-					  "text-size": 14
+					  "text-size": 16
 				  },
 				  'paint': {
 					  "text-color": "#666",
@@ -547,11 +552,20 @@ if(Modernizr.webgl) {
 
 
 			d3.select("#currVal")
-				.text(function(){if(!isNaN(rateById[code]))  {return displayformat(rateById[code])} else {return "Data unavailable"}})
+				.text(function(){if(!isNaN(rateById[code]))  {return displayformat(rateById[code])+"%"} else {return "Data unavailable"}})
 				.style("opacity",1)
 				.transition()
 				.duration(400)
 				.attr("x", function(){if(!isNaN(rateById[code])) {return x(rateById[code])} else{return x(midpoint)}});
+
+			//	d3.select("#currVal2")
+			//		.text(function(){if(!isNaN(rateById[code]))  {return displayformat(rateById[code])} else {return "Data unavailable"}})
+			//		.style("opacity",1)
+			//		.transition()
+			//		.duration(400)
+			//		.attr("x", "13px");
+
+
 
 		}
 
@@ -567,7 +581,9 @@ if(Modernizr.webgl) {
 
 			d3.select("#keydiv").selectAll("*").remove();
 
-			keywidth = d3.select("#keydiv").node().getBoundingClientRect().width;
+			keywidth1 = d3.select("#keydiv").node().getBoundingClientRect().width;
+			var keywidth = keywidth1+10
+
 
 			var svgkey = d3.select("#keydiv")
 				.append("svg")
@@ -584,16 +600,18 @@ if(Modernizr.webgl) {
 			// Set up scales for legend
 			x = d3.scaleLinear()
 				.domain([breaks[0], breaks[dvc.numberBreaks[a]]]) /*range for data*/
-				.range([0,keywidth-30]); /*range for pixels*/
+				.range([0,keywidth-50]); /*range for pixels*/
 
 
 			var xAxis = d3.axisBottom(x)
-				.tickSize(15)
+				.tickSize(14)
 				.tickValues(color.domain())
-				.tickFormat(legendformat);
+				.tickFormat(formatPercent);
+
 
 			var g2 = svgkey.append("g").attr("id","horiz")
 				.attr("transform", "translate(15,35)");
+
 
 
 			keyhor = d3.select("#horiz");
@@ -609,7 +627,7 @@ if(Modernizr.webgl) {
 				}))
 			  .enter().append("rect")
 				.attr("class", "blocks")
-				.attr("height", 8)
+				.attr("height", 14)
 				.attr("x", function(d) {
 					 return d.x0; })
 				.attr("width", function(d) {return d.x1 - d.x0; })
@@ -621,8 +639,8 @@ if(Modernizr.webgl) {
 				.attr("id", "currLine")
 				.attr("x1", x(10))
 				.attr("x2", x(10))
-				.attr("y1", -10)
-				.attr("y2", 8)
+				.attr("y1", -5)
+				.attr("y2", 14)
 				.attr("stroke-width","2px")
 				.attr("stroke","#000")
 				.attr("opacity",0);
@@ -630,9 +648,16 @@ if(Modernizr.webgl) {
 			g2.append("text")
 				.attr("id", "currVal")
 				.attr("x", x(10))
-				.attr("y", -15)
+				.attr("y", -10)
 				.attr("fill","#000")
 				.text("");
+
+				// g2.append("text")
+				// 	.attr("id", "currVal2")
+				// 	.attr("x", x(10))
+				// 	.attr("y", -10)
+				// 	.attr("fill","#000")
+				// 	.text("");
 
 			keyhor.selectAll("rect")
 				.data(color.range().map(function(d, i) {
@@ -661,6 +686,29 @@ if(Modernizr.webgl) {
 				.attr("x",x(0));
 
 
+				d3.selectAll(".tick")
+				.attr("class",function(d,i){ return "ticky ticky"+i
+				})
+				d3.selectAll(".ticky5")
+				.append("text")
+				.attr("x","9")
+				.attr("y","27")
+				.style("text-anchor","start")
+				.text("%")
+
+				// d3.selectAll("#currVal")
+				// .append("text")
+				// .attr("x","9")
+				// .attr("y","27")
+				// .style("text-anchor","start")
+				// .text("%")
+
+
+				d3.selectAll(".ticky2").selectAll("text")
+				.attr("transform","translate(-3,0)")
+				d3.selectAll(".ticky3").selectAll("text")
+				.attr("transform","translate(2,0)")
+
 			if(dvc.dropticks) {
 				d3.select("#horiz").selectAll("text").attr("transform",function(d,i){
 						// if there are more that 4 breaks, so > 5 ticks, then drop every other.
@@ -668,10 +716,50 @@ if(Modernizr.webgl) {
 				);
 			}
 
+
+			//if(dvc.dropticks) {
+			//	d3.select("#horiz").selectAll("line").style("stroke",function(d,i){
+						// if there are more that 4 breaks, so > 5 ticks, then drop every other.
+		//				if(i % 2){return "red"} }
+		//		);
+		//	}
+
+
+			if(dvc.dropticks) {
+				d3.select("#horiz").selectAll("line").attr("transform",function(d,i){
+						// if there are more that 4 breaks, so > 5 ticks, then drop every other.
+						if(i % 2){return "scale(1,1.7)"} }
+				);
+			}
+
 			//label the units
-			d3.select("#keydiv").append("p").attr("id","keyunit").attr('aria-hidden',true).style("margin-top","-10px").style("margin-left","10px").style('font-size','14px').text(dvc.varunit[a]);
+			d3.select("#keydiv").append("p").attr("id","keyunit").attr('aria-hidden',true)
+			.style("margin-top","-12px").style("margin-left","10px")
+			.style('font-size','14px').text(dvc.varunit[a]);
+
+
+			d3.select("#key").attr("class","c2")
+
+			if(dvc.dropticks) {
+				d3.select("#keyunit").style("margin-top","-8px")
+
+d3.select("#key").attr("class","c1")
+				}
+				// d3.selectAll("#horiz")
+
+		//   .select("text")
+		//   .text("'08")
+
 
 	} // Ends create key
+
+
+	//couldn't get this to work
+		d3.selectAll("#horiz")
+		.selectAll(".tick")
+		  .attr("class",function(d,i){ return "ticky ticky"+i
+		  })
+		  d3.selectAll(".ticky0")
 
 	pymChild.sendHeight();
 

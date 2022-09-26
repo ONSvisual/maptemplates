@@ -1,0 +1,14 @@
+{"ons":{
+"maptitle": "Census 2021 - dvc1915",
+"varcolour": ["RdPu",["#3E558A","#958bba","#CAC6DE","#FED4A6","#FDA13C","#ED7320"],"RdPu",["#feebe2","#fcc5c0","#fa9fb5","#f768a1","#c51b8a","#7a0177"],["#feebe2","#fcc5c0","#fa9fb5","#f768a1","#c51b8a","#7a0177"],["#feebe2","#fcc5c0","#fa9fb5","#f768a1","#c51b8a","#7a0177"],["#c7e1de","#93c3c0","#65a2a8","#3c8096","#1a5c8b"],["#e4ceed","#ce9ed2","#bc6fab","#a83f7c","#890056"],["#bcd5e7","#85a9ce","#5b7db3","#395096","#172674"],["#e4ceed","#ce9ed2","#bc6fab","#a83f7c","#890056"],"YlGnBu"],
+"varlabels": ["2021","Percent change 2011-2021"],
+"varload":0,
+"varunit": ["People per square km","% change 2011-20"],
+"displayformat":[",.0f",",.1f",",.0f"],
+"legendformat": [",.0f",",.0f",",.0f"],
+"legenddecimals": ["0","0","0"],
+"breaks": [[0,100,200,400,800,1600,2600],[-10,-3,-1,0,3,6,10],[0,300,600,900,1200,1500,2600],[0,700,1400,2800,5600,11200],"jenks",[0,1500,3000,4500,6000,16000],[0,20,40,50,60,100],"equal"],
+"dropticks":  [false,false,false],
+"dropticksmobile":  [true,false,true],
+"numberBreaks": [6,6,6,6]
+}}

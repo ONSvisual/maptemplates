@@ -1,12 +1,15 @@
 {"ons":{
-"maptitle": "Multi Map about life expectancy",
-"varcolour": ["YlGnBu",["#8c510a","#d8b365","#f6e8c3"],"YlGnBu","YlGnBu"],
-"varlabels": ["House prices","Average Salary","Public sector employment","% with degree"],
-"varload": 2,
-"varunit": ["£'s","£'s per week","per cent" ,"per cent"],
-"displaydecimals": 0,
-"legenddecimals": 0,
-"breaks": ["jenks","equal",[0,20,40,50,60,100],"jenks"],
-"dropticks": true,
-"numberBreaks": [5,3,5,6]
+"maptitle": "Census 2021 - dvc1915",
+"varcolour": [
+    ["#e1fcf8", "#9ccad5", "#5e99af", "#136a85", "#003b55"],
+    ["#c4e2f5", "#84aad3", "#5473ae", "#2f3f81", "#000e56"],
+    ["#edd4f8", "#db99c7", "#bf6096", "#95305d", "#640026"],"YlGnBu"],
+"varlabels": ["Under 15 years","15 to 64 years","65 years and over"],
+"varload": 1,
+"varunit": ["Percentage of all people","Percentage of all people","Percentage of all people","per cent"],
+"displaydecimals": 1,
+"legenddecimals":0,
+"breaks": [[13.0,14.4,15.7,17.1,18,19],[57.0,58.9,60.6,62.3,64,70],[14,19,21,23,26,28],[0,20,40,50,60,100],"equal"],
+"dropticks": false,
+"numberBreaks": [5,5,5,6]
 }}
