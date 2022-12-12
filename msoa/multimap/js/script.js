@@ -105,7 +105,6 @@ if (Modernizr.webgl) {
         type: "fill",
         source: 'msoa-tiles',
         minzoom: 4,
-        maxzoom: 17,
         "source-layer": "msoa",
         "background-color": "#ccc",
         paint: {
@@ -116,9 +115,6 @@ if (Modernizr.webgl) {
         ]
         }
       }, 'mask-raster');
-
-
-      setFeatureState();
 
       //outlines around msoa
       map.addLayer({
@@ -141,7 +137,7 @@ if (Modernizr.webgl) {
         },
       }, 'place_other');
 
-
+      setFeatureState();
 
       //get location on click
       d3.select(".mapboxgl-ctrl-geolocate").on("click", geolocate);
@@ -181,14 +177,14 @@ if (Modernizr.webgl) {
 
     // When the user moves their mouse over the msoa boundaries layer, we'll update the
     // feature state for the feature under the mouse.
-    map.on('mousemove', 'msoa-boundaries', onMove);
+    map.on('mousemove', 'msoa-fill', onMove);
 
     // When the mouse leaves the msoa boundaries layer, update the feature state of the
     // previously hovered feature.
-    map.on('mouseleave', 'msoa-boundaries', onLeave);
+    map.on('mouseleave', 'msoa-fill', onLeave);
 
 
-    map.on('click', 'msoa-boundaries', onClick);
+    map.on('click', 'msoa-fill', onClick);
 
     function onClick(e) {
       disableMouseEvents();
@@ -218,15 +214,15 @@ if (Modernizr.webgl) {
     }
 
     function disableMouseEvents() {
-      map.off('mousemove', 'msoa-boundaries', onMove);
-      map.off('mouseleave', 'msoa-boundaries', onLeave);
+      map.off('mousemove', 'msoa-fill', onMove);
+      map.off('mouseleave', 'msoa-fill', onLeave);
 
       selected = true;
     }
     //
     function enableMouseEvents() {
-      map.on('mousemove', 'msoa-boundaries', onMove);
-      map.on('mouseleave', 'msoa-boundaries', onLeave);
+      map.on('mousemove', 'msoa-fill', onMove);
+      map.on('mouseleave', 'msoa-fill', onLeave);
 
       selected = false;
 
@@ -425,7 +421,7 @@ if (Modernizr.webgl) {
         var tilechecker = setInterval(function() {
           features = null;
           var features = map.queryRenderedFeatures(point, {
-            layers: ['msoa-boundaries']
+            layers: ['msoa-fill']
           });
           if (features.length != 0) {
             highlightArea(features);
@@ -450,13 +446,13 @@ if (Modernizr.webgl) {
         var tilechecker = setInterval(function() {
           features = null
           features = map.queryRenderedFeatures(point, {
-            layers: ['msoa-boundaries']
+            layers: ['msoa-fill']
           });
           if (features.length != 0) {
 
             setTimeout(function() {
               features = map.queryRenderedFeatures(point, {
-                layers: ['msoa-boundaries']
+                layers: ['msoa-fill']
               });
               highlightArea(features);
               disableMouseEvents();
@@ -621,6 +617,7 @@ if (Modernizr.webgl) {
         hoveredId = e[0].id;
         selectedArea = e[0].id
         selectedAreaName = e[0].properties.hclnm
+        console.log(e, hoveredId);
 
         map.setFeatureState({
           source: 'msoa-tiles',
