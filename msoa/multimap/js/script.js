@@ -99,31 +99,6 @@ if (Modernizr.webgl) {
         maxzoom: 12,
       });
 
-      map.addLayer({
-        id: 'msoa-boundaries',
-        type: 'fill',
-        source: 'msoa-tiles',
-        'source-layer': 'msoa',
-        minzoom: 4,
-        maxzoom: 17,
-        paint: {
-          'fill-color': ['case',
-            ['!=', ['feature-state', 'colour'], null],
-            ['feature-state', 'colour'],
-            'rgba(255, 255, 255, 0)'
-          ],
-          'fill-opacity': [
-            'interpolate',
-            ['linear'],
-            ['zoom'],
-            8,
-            0.9,
-            9,
-            0.1
-          ]
-        }
-      }, 'mask-raster');
-
       // Add layer from the vector tile source with data-driven style
       map.addLayer({
         id: "msoa-fill",
