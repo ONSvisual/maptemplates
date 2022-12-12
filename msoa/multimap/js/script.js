@@ -45,7 +45,7 @@ if (Modernizr.webgl) {
         [7.604, 55.945]
       ], //limit it to just E&W
       zoom: 12, // starting zoom
-      minZoom: 4,
+      minZoom: 6,
       maxZoom: 16.99, //
       attributionControl: false
     });
@@ -91,9 +91,9 @@ if (Modernizr.webgl) {
       // Add boundaries tileset
       map.addSource('msoa-tiles', {
         type: 'vector',
-        tiles: ['https://cdn.ons.gov.uk/maptiles/administrative/msoa/v1/boundaries/{z}/{x}/{y}.pbf'],
+        tiles: ['https://cdn.ons.gov.uk/maptiles/administrative/2021/msoa/v2/boundaries/{z}/{x}/{y}.pbf'],
         "promoteId": {
-          "boundaries": "areacd"
+          "msoa": "areacd"
         },
         minzoom: 4,
         maxzoom: 12,
@@ -103,7 +103,7 @@ if (Modernizr.webgl) {
         id: 'msoa-boundaries',
         type: 'fill',
         source: 'msoa-tiles',
-        'source-layer': 'boundaries',
+        'source-layer': 'msoa',
         minzoom: 4,
         maxzoom: 17,
         paint: {
@@ -122,36 +122,25 @@ if (Modernizr.webgl) {
             0.1
           ]
         }
-      }, 'place_suburb');
-
-      // Add buildings tileset
-      map.addSource('building-tiles', {
-        type: 'vector',
-        tiles: ['https://cdn.ons.gov.uk/maptiles/buildings/gb/v1/{z}/{x}/{y}.pbf'],
-        promoteId: {
-          buildings: "msoa11cd"
-        },
-        minzoom: 8,
-        maxzoom: 12,
-      });
+      }, 'mask-raster');
 
       // Add layer from the vector tile source with data-driven style
       map.addLayer({
-        id: 'msoa-building',
-        type: 'fill',
-        source: 'building-tiles',
-        'source-layer': 'buildings',
-        minzoom: 8,
+        id: "msoa-fill",
+        type: "fill",
+        source: 'msoa-tiles',
+        minzoom: 4,
         maxzoom: 17,
+        "source-layer": "msoa",
+        "background-color": "#ccc",
         paint: {
           'fill-color': ['case',
-            ['!=', ['feature-state', 'colour'], null],
-            ['feature-state', 'colour'],
-            'rgba(255, 255, 255, 0)'
-          ],
-          'fill-opacity': 0.8
+          ['!=', ['feature-state', 'colour'], null],
+          ['feature-state', 'colour'],
+          'rgba(255, 255, 255, 0)'
+        ]
         }
-      }, 'place_suburb');
+      }, 'mask-raster');
 
 
       setFeatureState();
@@ -163,7 +152,7 @@ if (Modernizr.webgl) {
         source: 'msoa-tiles',
         minzoom: 4,
         maxzoom: 17,
-        "source-layer": "boundaries",
+        "source-layer": "msoa",
         "background-color": "#ccc",
         paint: {
           'line-color': 'orange',
@@ -175,7 +164,9 @@ if (Modernizr.webgl) {
             0
           ]
         },
-      }, 'place_suburb');
+      }, 'place_other');
+
+
 
       //get location on click
       d3.select(".mapboxgl-ctrl-geolocate").on("click", geolocate);
@@ -278,6 +269,7 @@ if (Modernizr.webgl) {
         .style("margin-top", "10px")
         .style("margin-bottom", "5px")
         .style("margin-left", "10px")
+        .style("max-width","255px")
         .text("");
 
       var svgkey = d3.select("#keydiv")
@@ -644,7 +636,7 @@ if (Modernizr.webgl) {
         if (hoveredId) {
           map.setFeatureState({
             source: 'msoa-tiles',
-            sourceLayer: 'boundaries',
+            sourceLayer: 'msoa',
             id: hoveredId
           }, {
             hover: false
@@ -653,18 +645,18 @@ if (Modernizr.webgl) {
 
         hoveredId = e[0].id;
         selectedArea = e[0].id
-        selectedAreaName = e[0].properties.areanm
+        selectedAreaName = e[0].properties.hclnm
 
         map.setFeatureState({
           source: 'msoa-tiles',
-          sourceLayer: 'boundaries',
+          sourceLayer: 'msoa',
           id: hoveredId
         }, {
           hover: true
         });
 
-        setAxisVal(e[0].properties.areanm, json[a][e[0].properties.areacd]);
-        setScreenreader(e[0].properties.areanm, json[a][e[0].properties.areacd]);
+        setAxisVal(e[0].properties.hclnm, json[a][e[0].properties.areacd]);
+        setScreenreader(e[0].properties.hclnm, json[a][e[0].properties.areacd]);
       }
     }
 
@@ -672,7 +664,7 @@ if (Modernizr.webgl) {
       if (hoveredId) {
         map.setFeatureState({
           source: 'msoa-tiles',
-          sourceLayer: 'boundaries',
+          sourceLayer: 'msoa',
           id: hoveredId
         }, {
           hover: false
@@ -685,18 +677,18 @@ if (Modernizr.webgl) {
       //loop the json data and set feature state for building layer and boundary layer
       for (var key in json[a]) {
         // setFeatureState for buildlings
-        map.setFeatureState({
-          source: 'building-tiles',
-          sourceLayer: 'buildings',
-          id: key
-        }, {
-          colour: getColour(json[a][key])
-        });
+        // map.setFeatureState({
+        //   source: 'building-tiles',
+        //   sourceLayer: 'buildings',
+        //   id: key
+        // }, {
+        //   colour: getColour(json[a][key])
+        // });
 
         //setFeatureState for boundaries
         map.setFeatureState({
           source: 'msoa-tiles',
-          sourceLayer: 'boundaries',
+          sourceLayer: 'msoa',
           id: key
         }, {
           colour: getColour(json[a][key])
@@ -744,7 +736,7 @@ if (Modernizr.webgl) {
       if (hoveredId) {
         map.setFeatureState({
           source: 'msoa-tiles',
-          sourceLayer: 'boundaries',
+          sourceLayer: 'msoa',
           id: hoveredId
         }, {
           hover: false

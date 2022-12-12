@@ -1,16 +1,16 @@
 {"ons":{
 "maptitle": "Energy Efficiency",
-"varcolour": ["#E92730","#f0702f","#f6ae35","#f1ec37","#95ca53","#2ea949","#0a8647"],
-"varlabels": ["All dwellings","Existing houses","New houses","Existing flats","New flats"],
-"varunit": ["Median energy efficiency score","Median energy efficiency score","Median energy efficiency score","Median energy efficiency score"],
+"varcolour": ["#ffffcc","#a1dab4","#41b6c4","#2c7fb8","#253494"],
+"varlabels": ["No central heating","Mains gas only","Electric only","Oil only","Renewable energy only"],
+"varunit": ["% of usual residents","% of usual residents","% of usual residents","% of usual residents","% of usual residents"],
 "varload":0,
-"displayFormat": [".0f",".0f",",.0f",",.0f",",.0f"],
+"displayFormat": [".1f",".1f",",.1f",",.1f",",.1f"],
 "displaySuffix":["","","","",""],
 "legendFormat": [".0f",".0f",",.0f",",.0f",",.0f"],
-"legenddecimals":[0,0,0,0,0],
-"breaks": [[0,20,38,54,68,80,91,103],[0,20,38,54,68,80,91,103],[0,20,38,54,68,80,91,103],[0,20,38,54,68,80,91,103],[0,20,38,54,68,80,91,103]],
+"legenddecimals":[1,1,1,1,1],
+"breaks": [[0,1,2,3,4,18],[2,31,55,70,80,92],[1,6,12,21,42,84],[0,4,12,24,38,68],[0,1,2,4,6]],
 "dropticks": false,
-"numberBreaks": [7,7,7,7,7],
-"nullColour": "#666",
-"source":"Department for Levelling Up, Housing and Communities – Energy Performance Certificate data on Open Data Communities and Valuation Office Agency – Property Attributes data."
+"numberBreaks": [5,5,5,5,4],
+"nullColour": "#DADADA",
+"source":"Office for National Statistics – Census 2021"
 }}
