@@ -14,7 +14,7 @@
       "tiles": ["https://cdn.ons.gov.uk/maptiles/buildingmask/{z}/{x}/{y}.png"],
       "tileSize": 256,
       "maxzoom": 14,
-      "bounds": maxBounds,
+      "bounds":[-12.836, 49.441,7.604, 55.945],
       "attribution": "&copy; Ordnance Survey"
     }
   },
