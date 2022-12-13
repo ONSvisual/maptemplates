@@ -316,7 +316,7 @@ if (Modernizr.webgl) {
         .attr("width", function(d) {
           return d.x1 - d.x0;
         })
-        .style("opacity", 0.8)
+        .style("opacity", 1)
         .style("fill", function(d) {
           return d.z;
         });
