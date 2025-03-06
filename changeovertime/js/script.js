@@ -112,7 +112,7 @@ if (Modernizr.webgl) {
 
     setRates(thisdata);
 
-    defineBreaks(thisdata);
+    defineBreaks(thisdata,0);
 
     setupScales(thisdata);
 
@@ -122,7 +122,7 @@ if (Modernizr.webgl) {
     makeSlider();
 
     //now ranges are set we can call draw the key
-    createKey(config);
+    createKey(config,0);
 
     //convert topojson to geojson
     for (key in geog.objects) {
@@ -253,7 +253,8 @@ if (Modernizr.webgl) {
       d3.select("#timePeriod").select('p').text(dateformat(dateparse(dvc.timepoints[a])));
     }
 
-    function defineBreaks(data) {
+    function defineBreaks(data,i) {
+      
       //Flatten data values and work out breaks
       var values = thisdata.map(function(d) {
         return +eval("d." + variables[a]);
@@ -265,7 +266,7 @@ if (Modernizr.webgl) {
 
       // Work out how many timepoints we have in our dataset; number of rows - area name & code // Look at linechart templates to see how?
       // parse data into columns
-      if (config.ons.breaks == "jenks" || config.ons.breaks == "equal") {
+      if (config.ons.breaks[i] == "jenks" || config.ons.breaks[i] == "equal") {
         var values = [];
         allvalues = [];
 
@@ -285,7 +286,7 @@ if (Modernizr.webgl) {
 
       }
 
-      if (config.ons.breaks == "jenks") {
+      if (config.ons.breaks[i] == "jenks") {
         breaks = [];
 
         ss.ckmeans(allvalues, (dvc.numberBreaks)).map(function(cluster, i) {
@@ -297,10 +298,10 @@ if (Modernizr.webgl) {
             breaks.push(cluster[cluster.length - 1]);
           }
         });
-      } else if (config.ons.breaks == "equal") {
+      } else if (config.ons.breaks[i] == "equal") {
         breaks = ss.equalIntervalBreaks(allvalues, dvc.numberBreaks);
       } else {
-        breaks = config.ons.breaks;
+        breaks = config.ons.breaks[i];
       };
 
 
@@ -473,16 +474,16 @@ if (Modernizr.webgl) {
 
       chartDrawn = false;
       navvalue = i;
-      //load new csv file
 
+      //load new csv file
       filepth = "data/data" + i + ".csv"
 
       d3.csv(filepth, function(data) {
         thisdata = data;
         setRates(thisdata);
-        defineBreaks(thisdata);
+        defineBreaks(thisdata,i);
         setupScales(thisdata);
-        createKey(config);
+        createKey(config,i);
 
         if (selected) {
           setAxisVal($("#areaselect").val());
@@ -1088,7 +1089,13 @@ if (Modernizr.webgl) {
 
       if (mobile == false) {
 
-        d3.select("#keydiv").append("p").attr("id", "keyunit").attr('aria-hidden', true).style("margin-top", "25px").style("margin-left", "10px").style("font-size", "14px").text(dvc.varunit[b]);
+        d3.select("#keydiv")
+        .append("p")
+        .attr("id", "keyunit")
+        .attr('aria-hidden', true)
+        .style("margin-top", "25px")
+        .style("margin-left", "10px")
+        .style("font-size", "14px").text(dvc.varunit[i]);
 
         keyheight = dvc.keyHeight;
 
@@ -1226,10 +1233,10 @@ if (Modernizr.webgl) {
           g2.append("text")
             .attr("id", "averagelabel")
             .attr("x", function(d) {
-              return x(linedata2[linedata2.length - 1][0])
+              return x(linedata2[linedata2.length - 1][0]) - 5
             })
             .attr("y", function(d) {
-              return y(linedata2[linedata2.length - 1][1]) - 10 // use this number at end to adjust height of label
+              return y(linedata2[linedata2.length - 1][1]) + 5 // use this number at end to adjust height of label
             })
             .attr("font-size", "12px")
             .attr("fill", "#757575")
@@ -1250,7 +1257,7 @@ if (Modernizr.webgl) {
           .attr("aria-hidden", true)
           .attr("id", "key")
           .attr("width", keywidth)
-          .attr("height", keyheight);
+          .attr("height", keyheight + 10);
 
 
         xkey = d3.scaleLinear()
@@ -1350,13 +1357,13 @@ if (Modernizr.webgl) {
           .append("p")
           .attr('aria-hidden', true)
           .attr("id", "keyunit")
-          .style("margin-top", "-10px")
+          .style("margin-top", "5px")
           .style("margin-left", "10px")
           .text(dvc.varunit[b]);
 
 
         if (dvc.dropticks) {
-          d3.select("#timeaxis").selectAll("text").attr("transform", function(d, i) {
+          d3.select("#horiz").selectAll("text").attr("transform", function(d, i) {
             // if there are more that 4 breaks, so > 5 ticks, then drop every other.
             if (i % 2) {
               return "translate(0,10)"
@@ -1439,7 +1446,7 @@ if (Modernizr.webgl) {
 
     function setSource() {
       d3.select("#source")
-        .append("h5")
+        .append("div")
         .text("Source: " + dvc.sourcetext)
     }
 
