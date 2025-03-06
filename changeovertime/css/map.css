@@ -1,0 +1,506 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Open Sans", Helvetica, Arial, sans-serif;
+    max-width: 700px;
+    margin: 0px auto;
+    color: #323132;
+}
+
+button:focus {
+    outline: 3px solid #f93;
+}
+
+.mapboxgl-ctrl-group .mapboxgl-ctrl-compass {
+    display: none;
+}
+
+#nav {
+    width: 100%;
+}
+
+.dropdown {
+    position: static;
+    height: 40px;
+    border-radius: 0px !important;
+    font-size: 16px;
+    padding: 0 16px;
+    background-color: #FFF;
+    box-shadow: none;
+    width: 100%;
+    cursor: pointer;
+    padding-right: 35px;
+    padding-left: 15px;
+    border: 2px solid #206095;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    color: #206095;
+}
+
+select::-ms-expand {
+    display: none;
+}
+
+#selectnav:before {
+    width: 46px;
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    bottom: 1px;
+    background: #206095;
+    content: '';
+    pointer-events: none;
+}
+
+#selectnav:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 0;
+    height: 0;
+    right: 14px;
+    bottom: 0;
+    margin: auto;
+    border-style: solid;
+    border-width: 9px 10px 0 10px;
+    border-color: #ffffff transparent transparent transparent;
+    pointer-events: none;
+}
+
+#selectNav {
+    position: relative;
+    left: 4px;
+    width: calc(100% - 8px);
+}
+
+#map {
+    z-index: 1;
+}
+
+#chartcol {
+    z-index: 2;
+}
+
+.parameter-value path {
+    fill: #0F8243;
+    stroke: white;
+    stroke-width: 1.5px;
+}
+
+.parameter-value path:focus {
+    fill: #0F8243;
+    stroke: orange;
+    stroke-width: 3px;
+}
+
+@media (min-width: 600px) {
+    #map {
+        height: 500px;
+    }
+
+    #timePeriod {
+        display: none;
+    }
+
+    #horiz {
+        display: none;
+    }
+
+    #selectnav {
+        display: none;
+    }
+
+    #controls {
+        padding-top: 35px;
+        text-align: center;
+    }
+
+    #currVal {
+        font-size: 12px;
+    }
+
+}
+
+@media (max-width: 599px) {
+
+    body {
+        height: 620px;
+    }
+
+    #nav {
+        display: none;
+    }
+
+    #map {
+        height: 500px;
+        width: 100%;
+        overflow: visible;
+    }
+
+    #controls {
+        display: inline-block;
+        float: left;
+        margin-top: 5px;
+    }
+
+    #selectnav {
+        left: 4px;
+        top: 4px;
+        width: calc(100% - 8px);
+        margin-bottom: 10px;
+    }
+
+    #selectnav:focus-within {
+        box-shadow: 0 0 0px 3pt orange;
+
+    }
+
+    #selectNav {
+        background-color: rgba(255, 255, 255, 0.8);
+        z-index: 3;
+    }
+
+    #vert {
+        display: none;
+        font-family: 'Open Sans', sans-serif !important;
+    }
+
+    #chartgroup {
+        display: none;
+    }
+
+    #currVal {
+        font-size: 16px;
+
+    }
+
+    .mapboxgl-ctrl-fullscreen {
+        display: none !important;
+    }
+}
+
+/* Bootstrap Grid */
+
+.row:before,
+.row:after {
+    display: table;
+    content: " ";
+}
+
+.row:after {
+    clear: both;
+}
+
+.row {
+    margin-right: 0px;
+    margin-left: 0px;
+}
+
+.col-sm-4,
+.col-sm-8,
+.col-xs-12,
+.col-sm-12 {
+    position: relative;
+    min-height: 1px;
+}
+
+.col-xs-12 {
+    float: left;
+    width: 100%;
+}
+
+@media (min-width: 600px) {
+
+    .col-sm-12 {
+        float: left;
+        width: 100%;
+    }
+
+    .col-sm-12 {}
+
+    .col-sm-8 {
+        width: 66.66666667%;
+    }
+
+    .col-sm-4 {
+        width: 33.33333333%;
+    }
+
+    .col-sm-pull-4 {
+        right: 33.33333333%;
+    }
+
+    .col-sm-push-8 {
+        left: 66.66666667%;
+    }
+
+}
+
+/* Button styles */
+button {
+    cursor: pointer;
+}
+
+.btn {
+    font-family: "Open Sans", Helvetica, Arial, sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    display: inline-block;
+    width: auto;
+    cursor: pointer;
+    padding: 6px 16px 10px 16px;
+    border: 0 none;
+    text-align: center;
+    -webkit-appearance: none;
+    transition: background-color 0.25s ease-out;
+    text-decoration: none;
+    line-height: 24px;
+}
+
+.btn--bold {
+    font-weight: 700;
+}
+
+.btn--large {
+    font-size: 16px;
+}
+
+.btn:focus {
+    box-shadow: 0 0 0px 3pt orange;
+}
+
+/* Primary */
+.btn--primary {
+    background-color: #0F8243;
+    color: #fff;
+}
+
+.btn--primary:hover,
+.btn--primary:focus {
+    background-color: #0b5d30;
+}
+
+
+/* Alternative */
+.btn--primary-alternative {
+    background-color: #206095;
+    color: #fff;
+    padding: 15px 19px 11px 19px;
+}
+
+.btn--primary-alternative:hover,
+.btn--primary-alternative:focus {
+    background-color: #003C57;
+}
+
+/* Neutral */
+.btn--neutral {
+    background-color: #F9F9F9;
+    border: 1px solid #A6A8AB;
+    padding: 14px 16px 10px 16px;
+}
+
+.btn--neutral:hover,
+.btn--neutral:focus {
+    background-color: #E5E6E7;
+}
+
+.btn--neutral-disabled {
+    background-color: #eee;
+    opacity: 0.2;
+}
+
+.btn--neutral-disabled:hover,
+.btn--primary-disabled:focus {
+    cursor: not-allowed;
+}
+
+#timePeriod {
+    margin-left: 20px;
+}
+
+#timePeriod p {
+    position: absolute;
+    top: 0px;
+    z-index: 2;
+    margin: 30px 20px 20px 20px;
+    font-size: 30px;
+    font-weight: 700;
+    color: #414042;
+}
+
+#footer a {
+    text-decoration: underline;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 32px;
+}
+
+p {
+    font-size: 14px;
+}
+
+#source {
+    font-size: 16px !important;
+    margin: 16px 0 8px 0;
+    font-weight: 400;
+    color: #707071;
+}
+
+h6 {
+    font-size: 16px;
+    margin: 16px 0 8px 0;
+    font-weight: 700;
+}
+
+h6+ul,
+h6+ol {
+    margin: 16px 0;
+    margin-top: 8px;
+    margin-bottom: 0;
+    padding-left: 32px;
+}
+
+li {
+    margin: 0 0 8px 0;
+    line-height: 32px;
+    font-weight: 400;
+    font-size: 18px;
+    padding: 0;
+}
+
+.tick text {
+    font-size: 14px;
+    font-weight: 400;
+}
+
+@media (max-width: 767px) {
+    #footer a {
+        font-size: 16px;
+    }
+
+    li {
+        font-size: 16px;
+    }
+}
+
+.timeControlButtons {
+    background: none;
+    border: none;
+    color: #206095;
+    font-size: 27px;
+}
+
+.parameter-value text {
+    font-size: 28px;
+}
+
+/* Radio button */
+fieldset {
+    border: none;
+    padding: 0 0 10px 0;
+}
+
+input[type='radio'] {
+    opacity: 0;
+}
+
+input[type='radio']+label {
+    cursor: pointer;
+    vertical-align: middle;
+    text-align: center;
+    color: #206095;
+    max-width: 90%;
+    margin-left: -3px;
+    margin-bottom: 3px;
+    margin-top: 3px;
+}
+
+input[type='radio']+label::before {
+    content: '';
+    position: absolute;
+    left: -3px;
+    top: -10px;
+    border-radius: 0%;
+    border: 3px solid #206095;
+    width: 100%;
+    height: calc(100% + 20px);
+    opacity: 1;
+    font-weight: 700;
+    min-height: 42px;
+}
+
+input[type='radio']:checked+label::before {
+    display: block;
+    background: #206095;
+    position: absolute;
+    z-index: -1;
+    /* to be below the parent element */
+}
+
+input[type='radio']:checked+label {
+    color: white;
+    background: #206095;
+}
+
+input[type='radio']:focus+label::before,
+input[type='radio']:hover+label::before {
+    box-shadow: 0 0 0px 3pt orange;
+    outline: 2px dotted transparent;
+    border: 4px solid #206095;
+}
+
+.grid {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    margin: 0;
+    padding-top: 14px;
+    padding-bottom: 14px;
+    justify-content: space-between;
+}
+
+.grid-cell {
+    position: relative;
+    margin-left: 6px;
+    margin-right: 0px;
+    text-align: center;
+}
+
+.grid--full>.grid-cell {
+    flex: 0 0 100%;
+}
+
+@media (min-width: 24em) {
+    .large-grid--fit>.grid-cell {
+        flex: 1;
+    }
+}
+
+#slider-simple {
+    display: inline-block;
+    float: left;
+    /* right: 30px; */
+}
+
+#slider-svg {
+    display: inline-block;
+    float: left;
+    padding-top: 5px;
+}
+
+#slider-simple>svg {
+    position: relative;
+    right: 30px;
+}
+
+.visuallyhidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
